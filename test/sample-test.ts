@@ -19,4 +19,12 @@ describe("Starknet", function () {
     const balance = parseInt(balanceStr);
     expect(balance).to.equal(30);
   });
+
+  it("Should work for a previously deployed contract", async function() {
+    const contract = await getStarknetContract("contract");
+    contract.address = preservedAddress;
+    const balanceStr = await contract.call("get_balance");
+    const balance = parseInt(balanceStr);
+    expect(balance).to.equal(30);
+  });
 });
