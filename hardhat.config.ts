@@ -1,5 +1,4 @@
-require("@nomiclabs/hardhat-waffle");
-require("@shardlabs/starknet-hardhat-plugin");
+import "@shardlabs/starknet-hardhat-plugin";
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -10,6 +9,6 @@ require("@shardlabs/starknet-hardhat-plugin");
 module.exports = {
   solidity: "0.8.4",
   cairo: {
-    version: "0.4.0"
+    version: "0.4.2"
   }
 };
