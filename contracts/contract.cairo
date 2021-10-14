@@ -29,3 +29,17 @@ func get_balance{
     let (res) = balance.read()
     return (res)
 end
+
+############ tuples
+
+struct Point:
+    member x : felt
+    member y : felt
+end
+
+@view
+func sum_points(points : (Point, Point)) -> (x : felt, y : felt):
+    return (
+        x=points[0].x + points[1].x,
+        y=points[0].y + points[1].y)
+end
