@@ -6,10 +6,13 @@ describe("Starknet", function () {
   this.timeout(300_000); // 5 min
   let preservedAddress: string;
 
+  let contractFactory: StarknetContractFactory;
 
+  before(async function() {
+    contractFactory = await starknet.getContractFactory("contract");
+  });
 
   it("should work for a fresh deployment", async function () {
-    const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
     const contract: StarknetContract = await contractFactory.deploy();
     console.log("Deployed at", contract.address);
     preservedAddress = contract.address;
@@ -22,7 +25,6 @@ describe("Starknet", function () {
   });
 
   it("should work for a previously deployed contract", async function() {
-    const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
     const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
     const balanceStr = await contract.call("get_balance");
     const balance = parseInt(balanceStr);
@@ -30,11 +32,19 @@ describe("Starknet", function () {
   });
 
   it("should work with tuples", async function() {
-    const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
     const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
     // passing points (1, 2) and (3, 4)
     // works with alpha network, doesn't work with starknet-devnet
     const sum = await contract.call("sum_points", [1, 2, 3, 4]);
-    expect(sum).to.equal("4 6\n");
+    expect(sum).to.equal("4 6");
+  });
+
+  it("should work with imported custom functions", async function() {
+    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const almostComparison1_3 = await contract.call("use_almost_equal", [1, 3]);
+    expect(almostComparison1_3).to.equal("0"); // 0 as in false
+
+    const almostComparison1_2 = await contract.call("use_almost_equal", [1, 2]);
+    expect(almostComparison1_2).to.equal("1"); // 1 as in true
   });
 });

@@ -5,6 +5,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.storage import Storage
+from util import almost_equal as aeq
 
 # Define a storage variable.
 @storage_var
@@ -42,4 +43,10 @@ func sum_points(points : (Point, Point)) -> (x : felt, y : felt):
     return (
         x=points[0].x + points[1].x,
         y=points[0].y + points[1].y)
+end
+
+@view
+func use_almost_equal(a, b) -> (res):
+    let (res) = aeq(a=a, b=b)
+    return (res)
 end
