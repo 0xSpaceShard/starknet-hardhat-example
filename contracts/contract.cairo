@@ -50,3 +50,14 @@ func use_almost_equal(a, b) -> (res):
     let (res) = aeq(a=a, b=b)
     return (res)
 end
+
+########### arrays
+@external
+func sum_array(
+        a_len : felt, a : felt*) -> (res):
+    if a_len == 0:
+        return (res=0)
+    end
+    let (rest) = sum_array(a_len=a_len - 1, a=a + 1)
+    return (res=a[0] + rest)
+end

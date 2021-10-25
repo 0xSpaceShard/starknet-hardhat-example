@@ -39,6 +39,13 @@ describe("Starknet", function () {
     expect(sum).to.equal("4 6");
   });
 
+  it("should work with arrays", async function() {
+    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const arr = [1, 2, 3, 4];
+    const sum = await contract.call("sum_array", [arr.length, ...arr]);
+    expect(sum).to.equal("10");
+  });
+
   it("should work with imported custom functions", async function() {
     const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
     const almostComparison1_3 = await contract.call("use_almost_equal", [1, 3]);
