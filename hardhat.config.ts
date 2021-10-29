@@ -9,6 +9,15 @@ import "@shardlabs/starknet-hardhat-plugin";
 module.exports = {
   solidity: "0.8.4",
   cairo: {
-    version: "0.4.2"
+    version: "0.5.0"
+  },
+  networks: {
+    starknetLocalhost: {
+      url: "http://localhost:5000"
+    }
+  },
+  mocha: {
+    // starknetNetwork: "starknetLocalhost"
+    starknetNetwork: "alpha"
   }
 };
