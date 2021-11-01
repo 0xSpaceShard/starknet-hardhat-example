@@ -4,6 +4,7 @@
 %builtins pedersen range_check
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.starknet.common.syscalls import get_tx_signature
 from util import almost_equal as aeq
 
 # Define a storage variable.
@@ -51,6 +52,7 @@ func use_almost_equal(a, b) -> (res):
 end
 
 ########### arrays
+
 @external
 func sum_array(
         a_len : felt, a : felt*) -> (res):
@@ -59,4 +61,11 @@ func sum_array(
     end
     let (rest) = sum_array(a_len=a_len - 1, a=a + 1)
     return (res=a[0] + rest)
+end
+
+@external
+func get_signature{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*}() -> (
+        res_len : felt, res : felt*):
+    let (sig_len, sig) = get_tx_signature()
+    return (res_len=sig_len, res=sig)
 end
