@@ -33,10 +33,17 @@ describe("Starknet", function () {
 
   it("should work with tuples", async function() {
     const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
-    // passing points (1, 2) and (3, 4)
-    // works with alpha network, doesn't work with starknet-devnet
+    // passing Points (1, 2) and (3, 4)
     const sum = await contract.call("sum_points", [1, 2, 3, 4]);
     expect(sum).to.equal("4 6");
+  });
+
+  it("should work with complex tuples", async function() {
+    const contract: StarknetContract = contractFactory. getContractAt(preservedAddress);
+    // passing PointPair ((1, 2), (3, 4), 5)
+    // the five is an extra number added to each member of the sum Point
+    const sum = await contract.call("sum_point_pair", [1, 2, 3, 4, 5]);
+    expect(sum).to.equal("9 11");
   });
 
   it("should work with arrays", async function() {
@@ -44,6 +51,14 @@ describe("Starknet", function () {
     const arr = [1, 2, 3, 4];
     const sum = await contract.call("sum_array", [arr.length, ...arr]);
     expect(sum).to.equal("10");
+  });
+
+  it("should work with returned arrays", async function() {
+    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const arr = [1, 2, 3];
+    const ret = await contract.call("identity", [arr.length, ...arr]);
+    const arrLengthSquared = arr.length * arr.length;
+    expect(ret).to.equal(`${arr.join(" ")} ${arrLengthSquared}`);
   });
 
   it("should work with imported custom functions", async function() {

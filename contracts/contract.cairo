@@ -38,11 +38,61 @@ struct Point:
     member y : felt
 end
 
+struct PointPair:
+    member p1 : Point
+    member p2 : Point
+    member extra : felt
+end
+
+struct TupleHolder:
+    member tuple : (felt, felt)
+    member extra : felt
+end
+
+@view
+func dummy_tuple_holder() -> (tuple_holder: TupleHolder):
+    return (
+        tuple_holder=TupleHolder(
+            tuple=(2, 3),
+            extra=4
+        )
+    )
+end
+
+@view
+func identity(a_len: felt, a: felt*) -> (res_len: felt, res: felt*, res_len_squared: felt):
+    return(
+        res_len=a_len,
+        res=a,
+        res_len_squared=a_len * a_len
+    )
+end
+
 @view
 func sum_points(points : (Point, Point)) -> (x : felt, y : felt):
     return (
         x=points[0].x + points[1].x,
         y=points[0].y + points[1].y)
+end
+
+@view
+func sum_point_pair(pointPair: PointPair) -> (res: Point):
+    return (
+        res=Point(
+            x=pointPair.p1.x + pointPair.p2.x + pointPair.extra,
+            y=pointPair.p1.y + pointPair.p2.y + pointPair.extra
+        )
+    )
+end
+
+@view
+func add_extra_to_tuple(tuple_holder: TupleHolder) -> (res: Point):
+    return (
+        res=Point(
+            x=tuple_holder.tuple[0] + tuple_holder.extra,
+            y=tuple_holder.tuple[1] + tuple_holder.extra
+        )
+    )
 end
 
 @view
