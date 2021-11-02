@@ -58,7 +58,7 @@ describe("Starknet", function () {
     const arr = [1, 2, 3];
     const ret = await contract.call("identity", [arr.length, ...arr]);
     const arrLengthSquared = arr.length * arr.length;
-    expect(ret).to.equal(`${arr.join(" ")} ${arrLengthSquared}`);
+    expect(ret).to.equal(`${arr.length} ${arr.join(" ")} ${arrLengthSquared}`);
   });
 
   it("should work with imported custom functions", async function() {
