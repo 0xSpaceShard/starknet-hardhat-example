@@ -46,11 +46,18 @@ describe("Starknet", function () {
     expect(sum).to.equal("9 11");
   });
 
-  it("should work with arrays", async function() {
+  async function testArray(arr: number[], expected: number) {
     const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
-    const arr = [1, 2, 3, 4];
     const sum = await contract.call("sum_array", [arr.length, ...arr]);
-    expect(sum).to.equal("10");
+    expect(sum).to.equal(expected.toString());
+  }
+
+  it("should work with a non-empty array", async function() {
+    await testArray([1, 2, 3, 4], 10);
+  });
+
+  it("should work with an empty array", async function() {
+    await testArray([], 0);
   });
 
   it("should work with returned arrays", async function() {
