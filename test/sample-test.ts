@@ -16,12 +16,17 @@ describe("Starknet", function () {
     const contract: StarknetContract = await contractFactory.deploy();
     console.log("Deployed at", contract.address);
     preservedAddress = contract.address;
+
+    const balanceStrBefore = await contract.call("get_balance");
+    const balanceBefore = parseInt(balanceStrBefore);
+    expect(balanceBefore).to.equal(0);
+
     await contract.invoke("increase_balance", [10, 20]);
     console.log("Increased by 10+20");
 
-    const balanceStr = await contract.call("get_balance");
-    const balance = parseInt(balanceStr);
-    expect(balance).to.equal(30);
+    const balanceStrAfter = await contract.call("get_balance");
+    const balanceAfter = parseInt(balanceStrAfter);
+    expect(balanceAfter).to.equal(30);
   });
 
   it("should work for a previously deployed contract", async function() {
