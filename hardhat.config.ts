@@ -7,7 +7,6 @@ import "@shardlabs/starknet-hardhat-plugin";
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.4",
   cairo: {
     version: "0.5.1"
   },
