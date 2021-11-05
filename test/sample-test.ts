@@ -30,21 +30,21 @@ describe("Starknet", function () {
   });
 
   it("should work for a previously deployed contract", async function() {
-    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const contract = contractFactory.getContractAt(preservedAddress);
     const balanceStr = await contract.call("get_balance");
     const balance = parseInt(balanceStr);
     expect(balance).to.equal(30);
   });
 
   it("should work with tuples", async function() {
-    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const contract = contractFactory.getContractAt(preservedAddress);
     // passing Points (1, 2) and (3, 4)
     const sum = await contract.call("sum_points", [1, 2, 3, 4]);
     expect(sum).to.equal("4 6");
   });
 
   it("should work with complex tuples", async function() {
-    const contract: StarknetContract = contractFactory. getContractAt(preservedAddress);
+    const contract = contractFactory. getContractAt(preservedAddress);
     // passing PointPair ((1, 2), (3, 4), 5)
     // the five is an extra number added to each member of the sum Point
     const sum = await contract.call("sum_point_pair", [1, 2, 3, 4, 5]);
@@ -52,7 +52,7 @@ describe("Starknet", function () {
   });
 
   async function testArray(arr: number[], expected: number) {
-    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const contract = contractFactory.getContractAt(preservedAddress);
     const sum = await contract.call("sum_array", [arr.length, ...arr]);
     expect(sum).to.equal(expected.toString());
   }
@@ -66,7 +66,7 @@ describe("Starknet", function () {
   });
 
   it("should work with returned arrays", async function() {
-    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const contract = contractFactory.getContractAt(preservedAddress);
     const arr = [1, 2, 3];
     const ret = await contract.call("identity", [arr.length, ...arr]);
     const arrLengthSquared = arr.length * arr.length;
@@ -74,11 +74,33 @@ describe("Starknet", function () {
   });
 
   it("should work with imported custom functions", async function() {
-    const contract: StarknetContract = contractFactory.getContractAt(preservedAddress);
+    const contract = contractFactory.getContractAt(preservedAddress);
     const almostComparison1_3 = await contract.call("use_almost_equal", [1, 3]);
     expect(almostComparison1_3).to.equal("0"); // 0 as in false
 
     const almostComparison1_2 = await contract.call("use_almost_equal", [1, 2]);
     expect(almostComparison1_2).to.equal("1"); // 1 as in true
   });
+
+  it("should handle rejected transactions", async function() {
+    const contract = contractFactory.getContractAt(preservedAddress);
+
+    const balanceStrBeforeEven = await contract.call("get_balance");
+    const balanceBeforeEven = parseInt(balanceStrBeforeEven);
+
+    // should pass
+    await contract.invoke("increase_balance_with_even", [2]);
+
+    const balanceStrAfterEven = await contract.call("get_balance");
+    const balanceAfterEven = parseInt(balanceStrAfterEven);
+    expect(balanceAfterEven).to.equal(balanceBeforeEven + 2);
+
+    try {
+      await contract.invoke("increase_balance_with_even", [3]);
+    } catch (err) {
+      return;
+    }
+
+    expect.fail("Should have failed on invoking with an odd number");
+  })
 });
