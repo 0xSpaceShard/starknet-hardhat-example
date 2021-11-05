@@ -97,10 +97,9 @@ describe("Starknet", function () {
 
     try {
       await contract.invoke("increase_balance_with_even", [3]);
-    } catch (err) {
-      return;
+      expect.fail("Should have failed on invoking with an odd number");
+    } catch (err: any) {
+      expect(err.message).to.equal("Transaction rejected.");
     }
-
-    expect.fail("Should have failed on invoking with an odd number");
-  })
+  });
 });
