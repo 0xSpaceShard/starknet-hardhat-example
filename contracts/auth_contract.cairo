@@ -10,6 +10,16 @@ from starkware.cairo.common.signature import (
     verify_ecdsa_signature)
 from starkware.starknet.common.syscalls import get_tx_signature
 
+@constructor
+func constructor{
+    syscall_ptr : felt*,
+    pedersen_ptr : HashBuiltin*,
+    range_check_ptr
+} (lucky_user : felt, initial_balance : felt):
+    balance.write(lucky_user, initial_balance)
+    return ()
+end
+
 # Define a storage variable.
 @storage_var
 func balance(user : felt) -> (res : felt):
