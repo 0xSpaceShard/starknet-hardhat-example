@@ -20,19 +20,19 @@ describe("Starknet", function () {
     preservedAddress = contract.address;
 
     const { res: balanceBefore } = await contract.call("get_balance");
-    expect(balanceBefore).to.deep.equal(0);
+    expect(balanceBefore).to.deep.equal(0n);
 
     await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
     console.log("Increased by 10 + 20");
 
     const { res: balanceAfter } = await contract.call("get_balance");
-    expect(balanceAfter).to.deep.equal(30);
+    expect(balanceAfter).to.deep.equal(30n);
   });
 
   it("should work for a previously deployed contract", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: balance } = await contract.call("get_balance");
-    expect(balance).to.deep.equal(30);
+    expect(balance).to.deep.equal(30n);
   });
 
   it("should work with tuples", async function() {
@@ -44,7 +44,7 @@ describe("Starknet", function () {
         { x: 3, y: 4 }
       ]
     });
-    expect(sum).to.deep.equal([4, 6]);
+    expect(sum).to.deep.equal([4n, 6n]);
   });
 
   it("should work with complex tuples", async function() {
@@ -58,48 +58,48 @@ describe("Starknet", function () {
         extra: 5
       }
     });
-    expect(sum).to.deep.equal({ x: 9, y: 11 });
+    expect(sum).to.deep.equal({ x: 9n, y: 11n });
   });
 
-  async function testArray(args: {a: number[]}, expected: number) {
+  async function testArray(args: {a: number[]}, expected: BigInt) {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: sum } = await contract.call("sum_array", args);
     expect(sum).to.deep.equal(expected);
   }
 
   it("should work with a non-empty array", async function() {
-    await testArray({a: [1, 2, 3, 4] }, 10);
+    await testArray({a: [1, 2, 3, 4] }, 10n);
   });
 
   it("should work with an empty array", async function() {
-    await testArray({a: []}, 0);
+    await testArray({a: []}, 0n);
   });
 
   it("should work with returned arrays", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
-    const a = [1, 2, 3];
+    const a = [1n, 2n, 3n];
     const execution = await contract.call("identity", { a });
     const arrLengthSquared = a.length * a.length;
     expect(execution).to.deep.equal({
       res: a,
-      res_len: a.length,
-      res_len_squared: arrLengthSquared
+      res_len: BigInt(a.length),
+      res_len_squared: BigInt(arrLengthSquared)
     });
   });
 
   it("should work with imported custom functions", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: res0 } = await contract.call("use_almost_equal", {a: 1, b: 3});
-    expect(res0).to.deep.equal(0); // 0 as in false
+    expect(res0).to.deep.equal(0n); // 0 as in false
 
     const { res: res1 } = await contract.call("use_almost_equal", {a: 1, b: 2});
-    expect(res1).to.deep.equal(1); // 1 as in true
+    expect(res1).to.deep.equal(1n); // 1 as in true
   });
 
-  it("should work with strings instead of numbers", async function() {
+  it("should work with BigInt arguments instead of numbers", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
-    const { res: res1 } = await contract.call("use_almost_equal", { a: "1", b: 2 });
-    expect(res1).to.deep.equal(1); // 1 as in true
+    const { res: res1 } = await contract.call("use_almost_equal", { a: 1n, b: 2 });
+    expect(res1).to.deep.equal(1n); // 1 as in true
   });
 
   it("should handle rejected transactions", async function() {
@@ -108,10 +108,10 @@ describe("Starknet", function () {
     const { res: balanceBeforeEven } = await contract.call("get_balance");
 
     // should pass
-    await contract.invoke("increase_balance_with_even", { amount: 2 });
+    await contract.invoke("increase_balance_with_even", { amount: 2n });
 
     const { res: balanceAfterEven } = await contract.call("get_balance");
-    expect(balanceAfterEven).to.deep.equal(balanceBeforeEven + 2);
+    expect(balanceAfterEven).to.deep.equal(balanceBeforeEven + 2n);
 
     try {
       await contract.invoke("increase_balance_with_even", { amount: 3 });
@@ -126,14 +126,14 @@ describe("Starknet", function () {
     const authContractFactory = await starknet.getContractFactory("auth_contract");
 
     // be sure to pass big numbers as strings to avoid precision errors
-    const publicKey = "1628448741648245036800002906075225705100596136133912895015035902954123957052";
+    const publicKey = BigInt("1628448741648245036800002906075225705100596136133912895015035902954123957052");
     const authContract = await authContractFactory.deploy({
       lucky_user: publicKey,
       initial_balance: 1000
     });
     const signature = [// previously calculated for amount and publicKey used in this case
-      "1225578735933442828068102633747590437426782890965066746429241472187377583468",
-      "3568809569741913715045370357918125425757114920266578211811626257903121825123"
+      BigInt("1225578735933442828068102633747590437426782890965066746429241472187377583468"),
+      BigInt("3568809569741913715045370357918125425757114920266578211811626257903121825123")
     ];
 
     await authContract.invoke("increase_balance", {
@@ -144,6 +144,6 @@ describe("Starknet", function () {
     const { res: balance } = await authContract.call("get_balance", {
       user: publicKey
     });
-    expect(balance).to.deep.equal(5321);
-  })
+    expect(balance).to.deep.equal(5321n);
+  });
 });
