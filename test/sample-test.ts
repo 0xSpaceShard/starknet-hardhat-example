@@ -61,6 +61,21 @@ describe("Starknet", function () {
     expect(sum).to.deep.equal({ x: 9n, y: 11n });
   });
 
+  it("should fail if object key is missing", async function() {
+    const contract = contractFactory.getContractAt(preservedAddress);
+    try {
+      await contract.call("sum_point_pair", {
+        pointPair: {
+          p1: { x: 1, /* y missing */ },
+          p2: { x: 3, y: 4 },
+          extra: 5
+        }
+      })
+    } catch (err: any) {
+      expect(err.message).to.equal("y is undefined");
+    }
+  });
+
   async function testArray(args: {a: number[]}, expected: BigInt) {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: sum } = await contract.call("sum_array", args);
@@ -98,6 +113,8 @@ describe("Starknet", function () {
 
   it("should work with BigInt arguments instead of numbers", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
+
+    // mixing bigint and number on purpose (to show it's possible)
     const { res: res1 } = await contract.call("use_almost_equal", { a: 1n, b: 2 });
     expect(res1).to.deep.equal(1n); // 1 as in true
   });
