@@ -70,7 +70,8 @@ describe("Starknet", function () {
           p2: { x: 3, y: 4 },
           extra: 5
         }
-      })
+      });
+      expect.fail("Should have failed on calling with malformed input");
     } catch (err: any) {
       expect(err.message).to.equal("y is undefined");
     }
