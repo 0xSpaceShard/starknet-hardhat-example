@@ -13,6 +13,16 @@ from util import almost_equal as aeq
 func balance() -> (res : felt):
 end
 
+@constructor
+func constructor{
+    syscall_ptr : felt*,
+    pedersen_ptr : HashBuiltin*,
+    range_check_ptr
+} (initial_balance : felt):
+    balance.write(initial_balance)
+    return ()
+end
+
 # Increases the balance by the given amount.
 @external
 func increase_balance{
@@ -82,10 +92,13 @@ func identity(a_len: felt, a: felt*) -> (res_len: felt, res: felt*, res_len_squa
 end
 
 @view
-func sum_points(points : (Point, Point)) -> (x : felt, y : felt):
+func sum_points_to_tuple(points : (Point, Point)) -> (res: (felt, felt)):
     return (
-        x=points[0].x + points[1].x,
-        y=points[0].y + points[1].y)
+        res=(
+            points[0].x + points[1].x,
+            points[0].y + points[1].y
+        )
+    )
 end
 
 @view
