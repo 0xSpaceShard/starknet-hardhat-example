@@ -5,7 +5,7 @@ import "@shardlabs/starknet-hardhat-plugin";
  */
 module.exports = {
   cairo: {
-    version: "0.5.2"
+    version: "0.6.0"
   },
   networks: {
     devnet: {
