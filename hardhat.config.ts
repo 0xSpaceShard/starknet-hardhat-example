@@ -1,8 +1,5 @@
 import "@shardlabs/starknet-hardhat-plugin";
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -11,12 +8,12 @@ module.exports = {
     version: "0.5.2"
   },
   networks: {
-    starknetLocalhost: {
+    devnet: {
       url: "http://localhost:5000"
     }
   },
   mocha: {
-    // starknetNetwork: "starknetLocalhost"
+    // starknetNetwork: "devnet"
     starknetNetwork: "alpha"
   }
 };
