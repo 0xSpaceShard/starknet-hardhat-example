@@ -13,6 +13,15 @@ describe("Starknet", function () {
     contractFactory = await starknet.getContractFactory("contract");
   });
 
+  it("should fail if constructor arguments not provided", async function() {
+    try {
+      await contractFactory.deploy();
+      expect.fail("Should have failed on not passing constructor calldata.");
+    } catch(err: any) {
+      expect(err.message).to.equal("Constructor arguments required but not provided.");
+    }
+  });
+
   it("should work for a fresh deployment", async function() {
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
@@ -71,7 +80,7 @@ describe("Starknet", function () {
           extra: 5
         }
       });
-      expect.fail("Should have failed on calling with malformed input");
+      expect.fail("Should have failed on calling with malformed input.");
     } catch (err: any) {
       expect(err.message).to.equal("y is undefined");
     }
@@ -133,7 +142,7 @@ describe("Starknet", function () {
 
     try {
       await contract.invoke("increase_balance_with_even", { amount: 3 });
-      expect.fail("Should have failed on invoking with an odd number");
+      expect.fail("Should have failed on invoking with an odd number.");
     } catch (err: any) {
       expect(err.message).to.deep.equal("Transaction rejected.");
     }
