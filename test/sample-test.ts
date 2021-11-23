@@ -86,7 +86,7 @@ describe("Starknet", function () {
     }
   });
 
-  async function testArray(args: {a: number[]}, expected: BigInt) {
+  async function testArray(args: {a: number[]}, expected: bigint) {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: sum } = await contract.call("sum_array", args);
     expect(sum).to.deep.equal(expected);
