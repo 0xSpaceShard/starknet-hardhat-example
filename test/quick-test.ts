@@ -6,7 +6,7 @@ describe("Starknet", function() {
     this.timeout(600_000);
     it("should work for a fresh deployment", async function() {
         console.log("Started deployment");
-        const contractFactory: StarknetContractFactory = starknet.getContractFactory("contract");
+        const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
         const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
         console.log("Deployed at", contract.address);
     
