@@ -7,29 +7,42 @@ describe("getContractFactory", function() {
     this.timeout(600_000);
 
     it("should handle file name without extension", async function() {
-        await starknet.getContractFactory("auth_contract");
+        await starknet.getContractFactory("contract");
     });
 
     it("should handle file name with extension", async function() {
-        await starknet.getContractFactory("auth_contract.cairo");
+        await starknet.getContractFactory("contract.cairo");
     });
 
     it("should handle path without extension", async function() {
-        await starknet.getContractFactory("contracts/auth_contract");
+        await starknet.getContractFactory("contracts/contract");
     });
 
     it("should handle path with extension", async function() {
-        await starknet.getContractFactory("contracts/auth_contract.cairo");
+        await starknet.getContractFactory("contracts/contract.cairo");
     });
 
     it("should throw if name without extension ambiguous", async function() {
         try {
-            await starknet.getContractFactory("contract");
+            await starknet.getContractFactory("util");
             expect.fail("Should have failed");
         } catch (err: any) {
             expect(err.message).to.equal(AMBIGUOUS_ERR_MSG);
         }
 
-        await starknet.getContractFactory("contracts/contract.cairo");
+        await starknet.getContractFactory("contracts/util");
+        await starknet.getContractFactory("contracts/submodule/util");
+    });
+
+    it("should throw if name with extension ambiguous", async function() {
+        try {
+            await starknet.getContractFactory("util.cairo");
+            expect.fail("Should have failed");
+        } catch (err: any) {
+            expect(err.message).to.equal(AMBIGUOUS_ERR_MSG);
+        }
+
+        await starknet.getContractFactory("contracts/util.cairo");
+        await starknet.getContractFactory("contracts/submodule/util.cairo");
     });
 });
