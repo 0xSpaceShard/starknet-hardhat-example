@@ -148,29 +148,4 @@ describe("Starknet", function () {
     }
   });
 
-  it("should handle signing transactions", async function() {
-    // assumes auth_contract.cairo has been compiled
-    const authContractFactory = await starknet.getContractFactory("auth_contract");
-
-    // be sure to pass big numbers as strings to avoid precision errors
-    const publicKey = BigInt("1628448741648245036800002906075225705100596136133912895015035902954123957052");
-    const authContract = await authContractFactory.deploy({
-      lucky_user: publicKey,
-      initial_balance: 1000
-    });
-    const signature = [// previously calculated for amount and publicKey used in this case
-      BigInt("1225578735933442828068102633747590437426782890965066746429241472187377583468"),
-      BigInt("3568809569741913715045370357918125425757114920266578211811626257903121825123")
-    ];
-
-    await authContract.invoke("increase_balance", {
-      user: publicKey,
-      amount: 4321
-    }, signature);
-
-    const { res: balance } = await authContract.call("get_balance", {
-      user: publicKey
-    });
-    expect(balance).to.deep.equal(5321n);
-  });
 });
