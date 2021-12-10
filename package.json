@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test-configuration-tests": "npx hardhat test --dirname=configuration-tests",
-    "test-general-tests": "npx hardhat test --dirname=general-tests"
+    "test": "npx hardhat test"
   },
   "author": "",
   "license": "ISC",
