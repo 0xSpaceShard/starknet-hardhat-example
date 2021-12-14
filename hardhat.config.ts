@@ -5,7 +5,7 @@ import "@shardlabs/starknet-hardhat-plugin";
  */
 module.exports = {
   cairo: {
-    version: "0.6.1" // alternatively choose one of the two venv options below
+    version: "0.6.2" // alternatively choose one of the two venv options below
 
     // uses (my-venv) defined by `python -m venv path/to/my-venv`
     // venv: "path/to/my-venv"
