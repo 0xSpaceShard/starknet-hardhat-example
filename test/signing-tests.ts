@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { pedersen, ec, sign } from "@toruslabs/starkware-crypto"
 
 describe("Starknet", function () {
