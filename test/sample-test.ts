@@ -149,4 +149,33 @@ describe("Starknet", function () {
     }
   });
 
+  it("should convert a string to a BigInt", async function() {
+    const contract = contractFactory.getContractAt(preservedAddress);
+    let inputString = "string with more than 31 characters";
+    let convertedInput;
+    try{
+      convertedInput = starknet.parseShortString(inputString);
+      expect.fail("Should have failed on converting a string with more than 31 characters.");
+    } catch (err: any) {
+      expect(err.message).to.deep.equal("Strings must have a max of 31 characters.");
+    }
+    inputString = "Hello";
+    convertedInput = starknet.parseShortString(inputString);
+    await contract.invoke("write_string", { input: convertedInput });
+
+    const { res: output } = await contract.call("read_string");
+
+    const convertedOutput = hex_to_ascii(output.toString(16));
+    console.log(convertedOutput);
+    expect(convertedOutput).to.deep.equal(inputString);
+  });
+
+  function hex_to_ascii(str1: { toString: () => any; } ) {
+    const hex  = str1.toString();
+    let str = '';
+    for (var n = 0; n < hex.length; n += 2) {
+      str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+    }
+    return str;
+ }
 });
