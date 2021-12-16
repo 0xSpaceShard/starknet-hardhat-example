@@ -1,9 +1,10 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { pedersen, ec, sign } from "@toruslabs/starkware-crypto"
+import { TIMEOUT } from "./constants";
 
 describe("Starknet", function () {
-  this.timeout(600_000); // 10 min
+  this.timeout(TIMEOUT);
 
   it("should handle signing transactions with previously calculated hashes", async function() {
     // assumes auth_contract.cairo has been compiled

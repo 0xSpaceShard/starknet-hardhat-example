@@ -1,9 +1,10 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+import { TIMEOUT } from "./constants";
 
 describe("Starknet", function () {
-  this.timeout(600_000); // 10 min
+  this.timeout(TIMEOUT);
   let preservedAddress: string;
 
   let contractFactory: StarknetContractFactory;

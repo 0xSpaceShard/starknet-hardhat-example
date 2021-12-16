@@ -1,10 +1,11 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
+import { TIMEOUT } from "./constants";
 
 const AMBIGUOUS_ERR_MSG = "More than one file was found because the path provided is ambiguous, please specify a relative path";
 
 describe("getContractFactory", function() {
-    this.timeout(600_000);
+    this.timeout(TIMEOUT);
 
     it("should handle file name without extension", async function() {
         await starknet.getContractFactory("contract");

@@ -1,9 +1,10 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+import { TIMEOUT } from "./constants";
 
 describe("Starknet", function() {
-    this.timeout(600_000);
+    this.timeout(TIMEOUT);
     it("should work for a fresh deployment", async function() {
         console.log("Started deployment");
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
