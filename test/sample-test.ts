@@ -130,8 +130,6 @@ describe("Starknet", function () {
     expect(res1).to.deep.equal(1n); // 1 as in true
   });
 
-
-
   it("should handle rejected transactions", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
 
