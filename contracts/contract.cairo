@@ -13,10 +13,6 @@ from util import almost_equal as aeq
 func balance() -> (res : felt):
 end
 
-@storage_var
-func shortString() -> (res: felt):
-end
-
 @constructor
 func constructor{
     syscall_ptr : felt*,
@@ -148,28 +144,4 @@ func get_signature{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*}() -> (
         res_len : felt, res : felt*):
     let (sig_len, sig) = get_tx_signature()
     return (res_len=sig_len, res=sig)
-end
-
-
-
-########### short strings
-
-@external
-func write_string{
-    syscall_ptr : felt*,
-    pedersen_ptr : HashBuiltin*,
-    range_check_ptr
-} (input : felt) -> ():
-    shortString.write(input)
-    return()
-end
-
-@view
-func read_string{
-    syscall_ptr : felt*,
-    pedersen_ptr : HashBuiltin*,
-    range_check_ptr
-}() -> (res : felt):
-    let (res) = shortString.read()
-    return (res)
 end
