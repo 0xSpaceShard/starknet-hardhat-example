@@ -81,12 +81,27 @@ describe("Starknet", function () {
     }
   });
 
-  it("should fail if providing a wrong number of arguments to a nested struct", async function() {
+  it("should fail if providing a too few arguments to a nested struct", async function() {
     try {
       // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
         points: [
-          { x: 1, y: 2 },
+          { x: 1 },
+          { x: 3, y: 4, z: 5 }
+        ]
+      });
+      expect.fail("Should have failed on passing extra argument.");
+    } catch(err: any) {
+      expect(err.message).to.equal('"points[0]": Expected 2 arguments, got 1.');
+    }
+  });
+
+  it("should fail if providing a too many arguments to a nested struct", async function() {
+    try {
+      // passing Points (1, 2) and (3, 4) in a tuple
+      await contract.call("sum_points_to_tuple", {
+        points: [
+          { x: 1, y: 2},
           { x: 3, y: 4, z: 5 }
         ]
       });
