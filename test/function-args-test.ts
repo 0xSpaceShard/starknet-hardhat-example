@@ -53,7 +53,6 @@ describe("Starknet", function () {
 
   it("should fail if providing more than 2 arguments in a tuple", async function() {
     try {
-      console.log("Here");
       // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
         points: [
@@ -70,7 +69,6 @@ describe("Starknet", function () {
 
   it("should fail if providing less than 2 arguments in a tuple", async function() {
     try {
-      console.log("Here");
       // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
         points: [
@@ -85,7 +83,6 @@ describe("Starknet", function () {
 
   it("should fail if providing a wrong number of arguments to a nested struct", async function() {
     try {
-      console.log("Here");
       // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
         points: [
