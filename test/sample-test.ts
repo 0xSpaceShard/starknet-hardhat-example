@@ -71,22 +71,6 @@ describe("Starknet", function () {
     expect(sum).to.deep.equal({ x: 9n, y: 11n });
   });
 
-  it("should fail if object key is missing", async function() {
-    const contract = contractFactory.getContractAt(preservedAddress);
-    try {
-      await contract.call("sum_point_pair", {
-        pointPair: {
-          p1: { x: 1, /* y missing */ },
-          p2: { x: 3, y: 4 },
-          extra: 5
-        }
-      });
-      expect.fail("Should have failed on calling with malformed input.");
-    } catch (err: any) {
-      expect(err.message).to.equal("y is undefined");
-    }
-  });
-
   async function testArray(args: {a: number[]}, expected: bigint) {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: sum } = await contract.call("sum_array", args);
