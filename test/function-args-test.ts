@@ -51,9 +51,18 @@ describe("Starknet", function () {
     }
   });
 
-  it("should fail if providing more than 2 arguments in a tuple", async function() {
+  it("should work if providing the exact amount of members in a tuple, with the exact amount of members in a nested struct", async function() {
+    const { res: sum } = await contract.call("sum_points_to_tuple", {
+      points: [
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+      ]
+    });
+    expect(sum).to.deep.equal([ 4n, 6n ]);
+  });
+
+  it("should fail if providing too many members in a tuple", async function() {
     try {
-      // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
         points: [
           { x: 1, y: 2 },
@@ -61,13 +70,13 @@ describe("Starknet", function () {
           { x: 3, y: 4 }
         ]
       });
-      expect.fail("Should have failed on passing extra argument.");
+      expect.fail("Should have failed on passing extra members.");
     } catch(err: any) {
-      expect(err.message).to.equal('Expected "points" to have exactly 2 arguments');
+      expect(err.message).to.equal('"points": Expected 2 members, got 3.');
     }
   });
 
-  it("should fail if providing less than 2 arguments in a tuple", async function() {
+  it("should fail if providing too few members in a tuple", async function() {
     try {
       // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
@@ -77,11 +86,11 @@ describe("Starknet", function () {
       });
       expect.fail("Should have failed on passing extra argument.");
     } catch(err: any) {
-      expect(err.message).to.equal('Expected "points" to have exactly 2 arguments');
+      expect(err.message).to.equal('"points": Expected 2 members, got 1.');
     }
   });
 
-  it("should fail if providing a too few arguments to a nested struct", async function() {
+  it("should fail if providing too few arguments to a nested struct", async function() {
     try {
       // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
@@ -92,11 +101,11 @@ describe("Starknet", function () {
       });
       expect.fail("Should have failed on passing extra argument.");
     } catch(err: any) {
-      expect(err.message).to.equal('"points[0]": Expected 2 arguments, got 1.');
+      expect(err.message).to.equal('"points[0]": Expected 2 members, got 1.');
     }
   });
 
-  it("should fail if providing a too many arguments to a nested struct", async function() {
+  it("should fail if providing too many arguments to a nested struct", async function() {
     try {
       // passing Points (1, 2) and (3, 4) in a tuple
       await contract.call("sum_points_to_tuple", {
@@ -107,7 +116,7 @@ describe("Starknet", function () {
       });
       expect.fail("Should have failed on passing extra argument.");
     } catch(err: any) {
-      expect(err.message).to.equal('"points[1]": Expected 2 arguments, got 3.');
+      expect(err.message).to.equal('"points[1]": Expected 2 members, got 3.');
     }
   });
 
