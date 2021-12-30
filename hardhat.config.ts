@@ -1,9 +1,10 @@
+import { HardhatUserConfig } from "hardhat/config";
 import "@shardlabs/starknet-hardhat-plugin";
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-module.exports = {
+const config: HardhatUserConfig = {
   cairo: {
     version: "0.6.2" // alternatively choose one of the two venv options below
 
@@ -23,3 +24,5 @@ module.exports = {
     starknetNetwork: "alpha"
   }
 };
+
+export default config;
