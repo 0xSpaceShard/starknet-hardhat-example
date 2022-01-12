@@ -133,4 +133,15 @@ describe("Starknet", function () {
     }
   });
 
+  it("should provide an expected address when a contract is deployed with salt", async function() {
+    const EXPECTED_ADDRESS = "0x0479ace715103887f28e331401eb05bfe8c4bf3c3efa6943367c9e741f23297c";
+    const addressSalt: string = "0x99";
+
+    console.log("Started deployment");
+    const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
+    const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 },addressSalt);
+    console.log("Deployed at", contract.address);
+
+    expect(contract.address).to.deep.equal(EXPECTED_ADDRESS);
+  });
 });
