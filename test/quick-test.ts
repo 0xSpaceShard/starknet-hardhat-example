@@ -19,6 +19,5 @@ describe("Starknet", function() {
     
         const { res: balanceAfter } = await contract.call("get_balance");
         expect(balanceAfter).to.deep.equal(30n);
-    });    
-
+    });
 });
