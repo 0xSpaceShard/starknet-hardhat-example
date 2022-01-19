@@ -134,7 +134,7 @@ describe("Starknet", function () {
   });
 
   it("should provide an expected address when a contract is deployed with salt", async function() {
-    const EXPECTED_ADDRESS = "0x0479ace715103887f28e331401eb05bfe8c4bf3c3efa6943367c9e741f23297c";
+    const EXPECTED_ADDRESS = "0x0712fb6184610884d61877ffe44f28bafd60d54b6b7a99884507d65566f79fe3";
     const addressSalt: string = "0x99";
 
     console.log("Started deployment");
