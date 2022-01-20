@@ -7,7 +7,7 @@ describe("Starknet", function () {
   this.timeout(TIMEOUT);
   let contractFactory: StarknetContractFactory;
   let contract: StarknetContract;
-
+  
   before(async function() {
     // assumes contract.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
@@ -120,4 +120,21 @@ describe("Starknet", function () {
     }
   });
 
+/*
+  it("should work with negative inputs", async function() {
+    const { res: sum } = await contract.call("increase_balance", {amount1: -1, amount2: -3});
+    expect(sum).to.deep.equal(-4n);
+
+    const { res: sumArray } = await contract.call("sum_array", {a: [-1, -2, -3, -4] });
+    expect(sumArray).to.deep.equal(-10n);
+  });
+
+  it("should work with an array of struct", async function() {
+    //const { res: res } = await structsContract.call("increment_point_array", {a: [{x: -1, y: -3},{x: 2, y: -2}],i: 1});
+    //expect(res).to.deep.equal([2,[{x: 0, y: -2},{x: 3, y: -1}]]);
+
+    const { res: complexRes } = await structsContract.call("complex_array", {a: [{x: -1, y: -3},{x: 2, y: -2}],i: 1,b: [{i:1,point:{x: 4, y: 6},m:2},{i:3,point:{x: 9, y: 8},m:3}]});
+    expect(complexRes).to.deep.equal([2,[{x: 0, y: -2},{x: 3, y: -1}],2,[{i:1,point:{x: 4, y: 6},m:2},{i:3,point:{x: 9, y: 8},m:3}]]);
+  });
+*/
 });
