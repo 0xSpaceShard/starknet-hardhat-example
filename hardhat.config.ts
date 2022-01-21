@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from "hardhat/types";
-import "@shardlabs/starknet-hardhat-plugin";
-
+import "/mnt/c/Git/starknet-hardhat-plugin/dist/index";
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */

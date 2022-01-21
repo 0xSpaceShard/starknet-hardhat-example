@@ -154,7 +154,7 @@ describe("Starknet", function () {
 
     const { res: sumArray } = await contract.call("sum_array", {a: [-1, -2, -3, -4] });
     expect(sumArray).to.deep.equal(-10n);
-  });*/
+  });
 
   it("should work with an array of struct", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
@@ -172,6 +172,6 @@ describe("Starknet", function () {
     expect(pointsResp).to.deep.equal(pointsArray);
     expect(complexResp).to.deep.equal(complexArray);
 
-  });
 
+  });*/
 });
