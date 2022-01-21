@@ -153,13 +153,12 @@ func increment_point_array(
     if a_len == 1:
         let (local struct_array : Point*) = alloc()
         let (result_len, result) = add_point_to_array(0,struct_array,Point(a[0].x + i, a[0].y + i))
-        return (res_len = 1, res=result)
+        return (res_len = result_len, res=result)
     end
     let (rest_len, rest) = increment_point_array(a_len=a_len - 1, a=a + Point.SIZE, i=i)
     let (result_len, result) = add_point_to_array(rest_len, rest, Point(a[0].x + i, a[0].y + i))
-    return (res_len = rest_len + 1, res=result)
+    return (res_len = result_len, res=result)
 end
-
 
 func add_point_to_array(
         a_len : felt, a : Point*, r : Point) -> (res_len : felt, res : Point*):
