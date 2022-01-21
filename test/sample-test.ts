@@ -134,7 +134,7 @@ describe("Starknet", function () {
   });
 
   it("should provide an expected address when a contract is deployed with salt", async function() {
-    const EXPECTED_ADDRESS = "0x0712fb6184610884d61877ffe44f28bafd60d54b6b7a99884507d65566f79fe3";
+    const EXPECTED_ADDRESS = "0x0116c1e1281f88c68d7ef61dc7b49bd1d7c4a3dcbe821b1c868735fd712947f0";
     const addressSalt: string = "0x99";
 
     console.log("Started deployment");
@@ -144,4 +144,34 @@ describe("Starknet", function () {
 
     expect(contract.address).to.deep.equal(EXPECTED_ADDRESS);
   });
+/*
+  it("should work with negative inputs", async function() {
+    const contract = contractFactory.getContractAt(preservedAddress);
+
+    await contract.invoke("increase_balance", {amount1: -1, amount2: -3});
+    const { res: sum } = await contract.call("get_balance");
+    expect(sum).to.deep.equal(-4n);
+
+    const { res: sumArray } = await contract.call("sum_array", {a: [-1, -2, -3, -4] });
+    expect(sumArray).to.deep.equal(-10n);
+  });*/
+
+  it("should work with an array of struct", async function() {
+    const contract = contractFactory.getContractAt(preservedAddress);
+    
+    const { res: res } = await contract.call("increment_point_array", {a: [{x: -1, y: -3},{x: 2, y: -2}],i: 1});
+
+    // Array for this function is returned in reverse due to cairo limitations
+    const respArray = [{x: 3n, y: -1n},{x: 0n, y: -2n}];
+    expect(res).to.deep.equal(respArray);
+    
+    const pointsArray = [{x: -1n, y: -3n},{x: 2n, y: -2n}];
+    const complexArray = [{i:1n, point:{x: 4n, y: 6n}, m:2n},{i:3n, point:{x: 9n, y: 8n}, m:3n}];
+    const { points: pointsResp, complex_struct: complexResp } = await contract.call("complex_array", {a: pointsArray,i: 1,b: complexArray});
+    
+    expect(pointsResp).to.deep.equal(pointsArray);
+    expect(complexResp).to.deep.equal(complexArray);
+
+  });
+
 });
