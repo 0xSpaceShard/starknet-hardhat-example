@@ -144,7 +144,7 @@ describe("Starknet", function () {
 
     expect(contract.address).to.deep.equal(EXPECTED_ADDRESS);
   });
-/*
+
   it("should work with negative inputs", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
 
@@ -171,7 +171,6 @@ describe("Starknet", function () {
     
     expect(pointsResp).to.deep.equal(pointsArray);
     expect(complexResp).to.deep.equal(complexArray);
-
-
-  });*/
+  });
+  
 });
