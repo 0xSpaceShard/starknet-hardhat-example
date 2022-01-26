@@ -12,7 +12,7 @@ const config: HardhatUserConfig = {
     // venv: "path/to/my-venv"
     
     // uses the currently active Python environment (hopefully with available Starknet commands!) 
-    // venv: "active"
+    //venv: "active"
   },
   networks: {
     devnet: {
@@ -20,8 +20,15 @@ const config: HardhatUserConfig = {
     }
   },
   mocha: {
-    // starknetNetwork: "devnet"
+    //starknetNetwork: "devnet"
     starknetNetwork: "alpha"
+  },
+  wallets: {
+    OpenZeppelin: {
+      accountName: "OpenZeppelin",
+      modulePath: "starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount",
+      accountPath: "~/.starknet_accounts"
+    }
   }
 };
 
