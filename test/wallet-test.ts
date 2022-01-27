@@ -32,14 +32,14 @@ describe("Starknet", function () {
   });
 
   it("should succeed when calling with a configured wallet", async function() {
-    const { res: balanceBefore } = await contract.call("get_balance",{},validWallet);
+    const { res: balanceBefore } = await contract.call("get_balance",undefined,undefined,validWallet);
     expect(balanceBefore).to.deep.equal(0n);
   });
 
   it("should succeed when invoking with a configured wallet", async function() {
-    await contract.invoke("increase_balance", { amount1: 10, amount2: 20 },validWallet);
+    await contract.invoke("increase_balance", { amount1: 10, amount2: 20 },undefined,validWallet);
     console.log("Increased by 10 + 20");
-    const { res: balanceAfter } = await contract.call("get_balance",{},validWallet);
+    const { res: balanceAfter } = await contract.call("get_balance",undefined,undefined,validWallet);
     expect(balanceAfter).to.deep.equal(30n);
   });
 
