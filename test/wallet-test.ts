@@ -27,7 +27,7 @@ describe("Starknet", function () {
       invalidWallet = starknet.getWallet("invalidWallet");
       expect.fail("Should have failed on passing a wallet not configured in 'hardhat.config' file.");
     } catch(err: any) {
-      expect(err.message).to.equal("Invalid wallet provided: invalidWallet.\nValid wallets: OpenZeppelin");
+      expect(err.message).to.equal("Invalid wallet name provided: invalidWallet.\nValid wallets: OpenZeppelin");
     }
   });
 
