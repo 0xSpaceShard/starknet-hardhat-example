@@ -129,7 +129,8 @@ describe("Starknet", function () {
       await contract.invoke("increase_balance_with_even", { amount: 3 });
       expect.fail("Should have failed on invoking with an odd number.");
     } catch (err: any) {
-      expect(err.message).to.deep.equal("Transaction rejected.");
+      expect(err.message).to.deep.contain("Transaction rejected. Error message:");
+      expect(err.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
     }
   });
 
@@ -146,11 +147,17 @@ describe("Starknet", function () {
   });
 
   it("should work with negative inputs", async function() {
+    
     const contract = contractFactory.getContractAt(preservedAddress);
+    const { res: currentBalance } = await contract.call("get_balance");
 
-    await contract.invoke("increase_balance", {amount1: -1, amount2: -3});
+    const amount1 = -1;
+    const amount2 = -3;
+    const expectedBalance= currentBalance+BigInt(amount1)+BigInt(amount2);
+
+    await contract.invoke("increase_balance", {amount1: amount1, amount2: amount2});
     const { res: sum } = await contract.call("get_balance");
-    expect(sum).to.deep.equal(-4n);
+    expect(sum).to.deep.equal(expectedBalance);
 
     const { res: sumArray } = await contract.call("sum_array", {a: [-1, -2, -3, -4] });
     expect(sumArray).to.deep.equal(-10n);
