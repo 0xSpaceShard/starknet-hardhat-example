@@ -136,11 +136,10 @@ describe("Starknet", function () {
 
   it("should provide an expected address when a contract is deployed with salt", async function() {
     const EXPECTED_ADDRESS = "0x0116c1e1281f88c68d7ef61dc7b49bd1d7c4a3dcbe821b1c868735fd712947f0";
-    const addressSalt: string = "0x99";
 
     console.log("Started deployment");
     const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
-    const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 },addressSalt);
+    const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 }, { salt: "0x99" });
     console.log("Deployed at", contract.address);
 
     expect(contract.address).to.deep.equal(EXPECTED_ADDRESS);
