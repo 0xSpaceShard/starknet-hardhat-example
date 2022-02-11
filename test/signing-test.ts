@@ -27,7 +27,7 @@ describe("Starknet", function () {
     await authContract.invoke("increase_balance", {
       user: publicKey,
       amount: 4321
-    }, signature);
+    }, { signature });
 
     const { res: balance } = await authContract.call("get_balance", {
       user: publicKey
@@ -61,7 +61,7 @@ describe("Starknet", function () {
     await authContract.invoke("increase_balance", {
       user: publicKeyFelt,
       amount: amount
-    }, signature);
+    }, { signature });
 
     const { res: balance } = await authContract.call("get_balance", {
       user: publicKeyFelt
