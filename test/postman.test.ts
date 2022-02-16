@@ -8,7 +8,7 @@ import {
   HttpNetworkConfig,
 } from 'hardhat/types';
 
-describe.only('Postman', () => {
+describe('Postman', () => {
   let L2contractFactory: StarknetContractFactory;
   let L2contract: StarknetContract;
   let networkUrl: string;
