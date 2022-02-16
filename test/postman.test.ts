@@ -44,7 +44,7 @@ describe('Postman', () => {
     const {
       address: deployedTo,
       l1_provider: L1Provider,
-    } = (await starknet.devnet.loadL1MessagingContract(networkUrl)) as any;
+    } = await starknet.devnet.loadL1MessagingContract(networkUrl);
 
     assert.exists(deployedTo);
     assert.equal(L1Provider, networkUrl);
@@ -53,10 +53,10 @@ describe('Postman', () => {
   it('should load the already deployed contract if address is provided', async () => {
     const {
       address: loadedFrom,
-    } = (await starknet.devnet.loadL1MessagingContract(
+    } = await starknet.devnet.loadL1MessagingContract(
       networkUrl,
       mockStarknetMessaging.address,
-    )) as any;
+    );
 
     assert.equal(mockStarknetMessaging.address, loadedFrom);
   });
