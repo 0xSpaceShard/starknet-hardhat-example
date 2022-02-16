@@ -9,14 +9,14 @@ import {
 } from 'hardhat/types';
 
 describe('Postman', () => {
+  const user = 1;
+  const networkUrl: string = (network.config as HttpNetworkConfig).url;
   let L2contractFactory: StarknetContractFactory;
   let L2contract: StarknetContract;
-  let networkUrl: string;
   let L1L2Example: ContractFactory;
   let MockStarknetMessaging: ContractFactory;
   let mockStarknetMessaging: Contract;
   let l1l2Example: Contract;
-  let user = 1;
   let signer: SignerWithAddress;
 
   before(async function () {
@@ -36,8 +36,6 @@ describe('Postman', () => {
     L1L2Example = await ethers.getContractFactory('L1L2Example', signer);
     l1l2Example = await L1L2Example.deploy(mockStarknetMessaging.address);
     await l1l2Example.deployed();
-
-    networkUrl = (network.config as HttpNetworkConfig).url;
   });
 
   it('should deploy the messaging contract', async () => {
