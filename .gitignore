@@ -7,7 +7,6 @@ artifacts
 #Python artifacts
 __pycache__
 .pytest_cache
-env/
 
 #Starknet plugin
 starknet-artifacts
