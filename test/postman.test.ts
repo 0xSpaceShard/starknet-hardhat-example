@@ -12,7 +12,7 @@ describe('Postman', () => {
   const user = 1;
   const networkUrl: string = (network.config as HttpNetworkConfig).url;
   let L2contractFactory: StarknetContractFactory;
-  let L2contract: StarknetContract;
+  let l2contract: StarknetContract;
   let L1L2Example: ContractFactory;
   let MockStarknetMessaging: ContractFactory;
   let mockStarknetMessaging: Contract;
@@ -21,7 +21,7 @@ describe('Postman', () => {
 
   before(async function () {
     L2contractFactory = await starknet.getContractFactory('l1l2');
-    L2contract = await L2contractFactory.deploy();
+    l2contract = await L2contractFactory.deploy();
 
     const signers = await ethers.getSigners();
     signer = signers[0];
@@ -66,16 +66,16 @@ describe('Postman', () => {
       mockStarknetMessaging.address,
     );
 
-    await L2contract.invoke('increase_balance', {
+    await l2contract.invoke('increase_balance', {
       user,
       amount: 100,
     });
-    await L2contract.invoke('withdraw', {
+    await l2contract.invoke('withdraw', {
       user,
       amount: 10,
       L1_CONTRACT_ADDRESS: BigInt(l1l2Example.address),
     });
-    let l2getBalanceResponse = await L2contract.call('get_balance', {
+    let l2getBalanceResponse = await l2contract.call('get_balance', {
       user,
     });
 
@@ -87,24 +87,24 @@ describe('Postman', () => {
 
     assert.equal(userBalance, 0n);
 
-    await l1l2Example.withdraw(L2contract.address, user, 10);
+    await l1l2Example.withdraw(l2contract.address, user, 10);
     userBalance = await l1l2Example.userBalances(user);
 
     assert.equal(userBalance, 10n);
 
-    await l1l2Example.deposit(L2contract.address, user, 5);
+    await l1l2Example.deposit(l2contract.address, user, 5);
 
     userBalance = await l1l2Example.userBalances(user);
 
     assert.equal(userBalance, 5n);
 
-    l2getBalanceResponse = await L2contract.call('get_balance', {
+    l2getBalanceResponse = await l2contract.call('get_balance', {
       user,
     });
 
     assert.equal(l2getBalanceResponse.balance, 90n);
 
-    l2getBalanceResponse = await L2contract.call('get_balance', {
+    l2getBalanceResponse = await l2contract.call('get_balance', {
       user,
     });
 
