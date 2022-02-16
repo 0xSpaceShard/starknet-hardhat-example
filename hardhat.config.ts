@@ -1,10 +1,13 @@
 import { HardhatUserConfig } from "hardhat/types";
 import "@shardlabs/starknet-hardhat-plugin";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-ganache";
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 const config: HardhatUserConfig = {
+  solidity: '0.6.12',
   starknet: {
     dockerizedVersion: "0.7.1", // alternatively choose one of the two venv options below
     // uses (my-venv) defined by `python -m venv path/to/my-venv`
@@ -24,7 +27,7 @@ const config: HardhatUserConfig = {
   networks: {
     devnet: {
       url: "http://localhost:5000"
-    }
+    },
   },
 };
 
