@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { assert } from 'chai';
-import { Contract, ContractFactory } from 'ethers';
+import { BigNumber, Contract, ContractFactory } from 'ethers';
 import { starknet, network, ethers } from 'hardhat';
 import {
   StarknetContractFactory,
@@ -45,10 +45,11 @@ describe('Postman', () => {
     } = await starknet.devnet.loadL1MessagingContract(networkUrl);
 
     assert.exists(deployedTo);
-    assert.equal(L1Provider, networkUrl);
+    assert(L1Provider === networkUrl, `L1 provider is ${L1Provider}, should be ${networkUrl}`);
   });
 
-  it('should load the already deployed contract if address is provided', async () => {
+  it('should load the already deployed contract if the address is provided', async () => {
+
     const {
       address: loadedFrom,
     } = await starknet.devnet.loadL1MessagingContract(
@@ -56,7 +57,7 @@ describe('Postman', () => {
       mockStarknetMessaging.address,
     );
 
-    assert.equal(mockStarknetMessaging.address, loadedFrom);
+    assert(mockStarknetMessaging.address === loadedFrom, `Loaded from address is ${loadedFrom}, should be ${mockStarknetMessaging.address}`);
   });
 
   it('should exchange messages between L1 and L2', async () => {
@@ -75,39 +76,45 @@ describe('Postman', () => {
       amount: 10,
       L1_CONTRACT_ADDRESS: BigInt(l1l2Example.address),
     });
-    let l2getBalanceResponse = await l2contract.call('get_balance', {
+    let getBalanceResponse = await l2contract.call('get_balance', {
       user,
     });
 
-    assert.equal(l2getBalanceResponse.balance, 0n);
+    assert(getBalanceResponse.balance === 90n, `L2 balance should be 90, but got ${getBalanceResponse.balance}`);
 
-    await starknet.devnet.flush();
+    const {
+      n_consumed_l2_to_l1_messages,
+    } = await starknet.devnet.flush();
 
-    let userBalance = await l1l2Example.userBalances(user);
+    assert(n_consumed_l2_to_l1_messages === 1, `${n_consumed_l2_to_l1_messages} messages were consumed, should be 1.`);
 
-    assert.equal(userBalance, 0n);
+    let userBalanceL1: BigNumber = await l1l2Example.userBalances(user);
+
+    assert(userBalanceL1.eq(0), `Initial L1 should be 0, but got ${userBalanceL1}`);
 
     await l1l2Example.withdraw(l2contract.address, user, 10);
-    userBalance = await l1l2Example.userBalances(user);
+    userBalanceL1 = await l1l2Example.userBalances(user);
 
-    assert.equal(userBalance, 10n);
+    assert(userBalanceL1.eq(10), `After the withdraw of 10 L1 balance should be 10, but got ${userBalanceL1}`);
 
-    await l1l2Example.deposit(l2contract.address, user, 5);
+    await l1l2Example.deposit(l2contract.address, user, 2);
 
-    userBalance = await l1l2Example.userBalances(user);
+    userBalanceL1 = await l1l2Example.userBalances(user);
 
-    assert.equal(userBalance, 5n);
+    assert(userBalanceL1.eq(8), `After the deposit of 2 L1 balance should be 8, but got ${userBalanceL1}`);
 
-    l2getBalanceResponse = await l2contract.call('get_balance', {
+    getBalanceResponse = await l2contract.call('get_balance', {
       user,
     });
 
-    assert.equal(l2getBalanceResponse.balance, 90n);
+    assert(getBalanceResponse.balance === 90n, `L2 balance should stay 90 before the flush, but got ${getBalanceResponse.balance}`);
 
-    l2getBalanceResponse = await l2contract.call('get_balance', {
+    // Flush gets called by the devnet when the L2 contract method is invoked
+
+    getBalanceResponse = await l2contract.call('get_balance', {
       user,
     });
 
-    assert.equal(l2getBalanceResponse.balance, 95n);
+    assert(getBalanceResponse.balance === 92n, `L2 balance should be 92 after the flush, but got ${getBalanceResponse.balance}`);
   });
 });
