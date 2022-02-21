@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test"
+    "test": "npx hardhat --network localhost test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@shardlabs/starknet-hardhat-plugin": "0.4.0",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
@@ -19,7 +20,7 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
-    "hardhat": "2.8.2",
-    "@toruslabs/starkware-crypto": "^1.0.0"
+    "@toruslabs/starkware-crypto": "^1.0.0",
+    "hardhat": "2.8.4"
   }
 }
