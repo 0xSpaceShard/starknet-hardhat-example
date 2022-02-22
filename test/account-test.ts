@@ -49,12 +49,12 @@ describe("Starknet", function () {
   it("should succeed when using the account to invoke a function on another contract", async function() {
 
     const { response: currBalance } = await account.call(preservedAddress, "get_balance");
-    const amount1 = 10;
-    const amount2 = 20;
+    const amount1 = 10n;
+    const amount2 = 20n;
     await account.invoke(preservedAddress, "increase_balance", { amount1: amount1, amount2: amount2 });
 
     const { response: newBalance } = await account.call(preservedAddress, "get_balance");
-    expect(newBalance[0]).to.deep.equal(currBalance[0] + BigInt(amount1) + BigInt(amount2));
+    expect(newBalance[0]).to.deep.equal(currBalance[0] + amount1 + amount2);
   });
 
 });
