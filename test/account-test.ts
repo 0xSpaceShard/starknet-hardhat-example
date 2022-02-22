@@ -6,7 +6,6 @@ import { TIMEOUT } from "./constants";
 describe("Starknet", function () {
   this.timeout(TIMEOUT);
 
-  let preservedAddress: string;
   let contractFactory: StarknetContractFactory;
   let contract: StarknetContract;
 
@@ -20,7 +19,6 @@ describe("Starknet", function () {
     console.log("Started deployment");
     contract = await contractFactory.deploy({ initial_balance: 0 });
     console.log("Deployed at", contract.address);
-    preservedAddress = contract.address;
 
     account = await starknet.deployAccountFromABI("Account", "OpenZeppelin");
     accountAddress = account.starknetContract.address;
@@ -48,12 +46,12 @@ describe("Starknet", function () {
 
   it("should succeed when using the account to invoke a function on another contract", async function() {
 
-    const { response: currBalance } = await account.call(preservedAddress, "get_balance");
+    const { response: currBalance } = await account.call(contract.address, "get_balance");
     const amount1 = 10n;
     const amount2 = 20n;
-    await account.invoke(preservedAddress, "increase_balance", { amount1: amount1, amount2: amount2 });
+    await account.invoke(contract.address, "increase_balance", { amount1, amount2 });
 
-    const { response: newBalance } = await account.call(preservedAddress, "get_balance");
+    const { response: newBalance } = await account.call(contract.address, "get_balance");
     expect(newBalance[0]).to.deep.equal(currBalance[0] + amount1 + amount2);
   });
 
