@@ -15,7 +15,9 @@ describe("Starknet", function () {
   let publicKey: string;
 
   before(async function() {
+    
     contractFactory = await starknet.getContractFactory("contract");
+
     console.log("Started deployment");
     contract = await contractFactory.deploy({ initial_balance: 0 });
     console.log("Deployed at", contract.address);
@@ -37,7 +39,7 @@ describe("Starknet", function () {
 
   it("should fail when loading an already deployed account with a wrong private key", async function() {
     try{
-      await starknet.getAccountFromAddress("Account" , accountAddress, "fakeprivatekey", "OpenZeppelin");
+      await starknet.getAccountFromAddress("Account" , accountAddress, "0x0123", "OpenZeppelin");
       expect.fail("Should have failed on passing an incorrect private key.");
     } catch(err: any) {
       expect(err.message).to.equal("The provided private key is not compatible with the public key stored in the contract.");
@@ -45,14 +47,13 @@ describe("Starknet", function () {
   });
 
   it("should succeed when using the account to invoke a function on another contract", async function() {
-
-    const { response: currBalance } = await account.call(contract.address, "get_balance");
+    const { res: currBalance } = await account.call(contract, "get_balance");
     const amount1 = 10n;
     const amount2 = 20n;
-    await account.invoke(contract.address, "increase_balance", { amount1, amount2 });
+    await account.invoke(contract, "increase_balance", { amount1, amount2 });
 
-    const { response: newBalance } = await account.call(contract.address, "get_balance");
-    expect(newBalance[0]).to.deep.equal(currBalance[0] + amount1 + amount2);
+    const { res: newBalance } = await account.call(contract, "get_balance");
+    expect(newBalance).to.deep.equal(currBalance + amount1 + amount2);
   });
 
 });
