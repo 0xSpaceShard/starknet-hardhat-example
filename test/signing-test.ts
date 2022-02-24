@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { pedersen, ec, sign } from "@toruslabs/starkware-crypto"
+import * as starkwareCrypto from "@toruslabs/starkware-crypto"
 import { TIMEOUT } from "./constants";
 
 describe("Starknet", function () {
@@ -42,8 +42,8 @@ describe("Starknet", function () {
     const amount = 4321;
     // be sure to pass big numbers as strings to avoid precision errors
     const privateKey = BigInt("1628448741648245036800002906075225705100596136133912895015035902954123957052");
-    const keyPair = ec.keyFromPrivate(privateKey, 'hex');
-    const publicKey = ec.keyFromPublic(keyPair.getPublic(true, 'hex'), 'hex').pub.getX().toString(16);
+    const keyPair = starkwareCrypto.ec.keyFromPrivate(privateKey, 'hex');
+    const publicKey = starkwareCrypto.ec.keyFromPublic(keyPair.getPublic(true, 'hex'), 'hex').pub.getX().toString(16);
     const publicKeyFelt = BigInt("0x" + publicKey)
     const authContract = await authContractFactory.deploy({
       lucky_user: publicKeyFelt,
@@ -51,8 +51,8 @@ describe("Starknet", function () {
     });
     console.log("Deployed authContract at", authContract.address);
 
-    const messageHash = pedersen([amount,0]);
-    const signedMessage = sign(keyPair, messageHash);
+    const messageHash = starkwareCrypto.pedersen([amount,0]);
+    const signedMessage = starkwareCrypto.sign(keyPair, messageHash);
     const signature = [// previously calculated for amount and publicKey used in this case
       BigInt("0x" + signedMessage.r.toString(16)),
       BigInt("0x" + signedMessage.s.toString(16))
