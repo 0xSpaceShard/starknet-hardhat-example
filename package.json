@@ -12,6 +12,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@shardlabs/starknet-hardhat-plugin": "0.4.0",
     "@types/chai": "^4.2.22",
+    "@types/elliptic": "^6.4.14",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.10",
     "chai": "^4.3.4",

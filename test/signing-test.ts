@@ -41,9 +41,9 @@ describe("Starknet", function () {
 
     const amount = 4321;
     // be sure to pass big numbers as strings to avoid precision errors
-    const privateKey = BigInt("1628448741648245036800002906075225705100596136133912895015035902954123957052");
-    const keyPair = starkwareCrypto.ec.keyFromPrivate(privateKey, 'hex');
-    const publicKey = starkwareCrypto.ec.keyFromPublic(keyPair.getPublic(true, 'hex'), 'hex').pub.getX().toString(16);
+    const privateKey = "1628448741648245036800002906075225705100596136133912895015035902954123957052";
+    const keyPair = starkwareCrypto.ec.keyFromPrivate(privateKey);
+    const publicKey = starkwareCrypto.ec.keyFromPublic(keyPair.getPublic(true, 'hex'), 'hex').getPublic().getX().toString(16);
     const publicKeyFelt = BigInt("0x" + publicKey)
     const authContract = await authContractFactory.deploy({
       lucky_user: publicKeyFelt,
