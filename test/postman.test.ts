@@ -9,6 +9,11 @@ import {
 } from 'hardhat/types';
 import { TIMEOUT } from './constants';
 
+/**
+ * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
+ * Shows the communication between an L2 contract defined in l1l2.cairo
+ * and an L1 contract defined in https://www.cairo-lang.org/docs/_static/L1L2Example.sol
+ */
 describe('Postman', function() {
   this.timeout(TIMEOUT);
 
