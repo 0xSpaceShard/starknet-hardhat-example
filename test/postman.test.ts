@@ -9,7 +9,7 @@ import {
 } from 'hardhat/types';
 import { TIMEOUT } from './constants';
 
-function assertAddressEquality(actual: string, expected: string) {
+function expectAddressEquality(actual: string, expected: string) {
   expect(BigInt(actual).toString()).to.equal(BigInt(expected).toString());
 }
 
@@ -111,8 +111,8 @@ describe('Postman', function() {
     const flushL2Messages = flushL2Response.consumed_messages.from_l2;
 
     expect(flushL2Messages).to.have.a.lengthOf(1);
-    assertAddressEquality(flushL2Messages[0].from_address, l2contract.address);
-    assertAddressEquality(flushL2Messages[0].to_address, l1l2Example.address);
+    expectAddressEquality(flushL2Messages[0].from_address, l2contract.address);
+    expectAddressEquality(flushL2Messages[0].to_address, l1l2Example.address);
 
     /**
      * Check the L1 balance and withdraw 10 which will consume the L2 message.
