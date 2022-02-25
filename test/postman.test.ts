@@ -1,5 +1,5 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { BigNumber, Contract, ContractFactory } from 'ethers';
 import { starknet, network, ethers } from 'hardhat';
 import {
@@ -97,11 +97,13 @@ describe('Postman', function() {
      * Flushing the L2 messages so that they can be consumed by the L1.
      */
 
-    const {
-      n_consumed_l2_to_l1_messages,
-    } = await starknet.devnet.flush();
+    const flushL2Response = await starknet.devnet.flush();
+    expect(flushL2Response.consumed_messages.from_l1).to.be.empty;
+    const flushL2Messages = flushL2Response.consumed_messages.from_l2;
 
-    expect(n_consumed_l2_to_l1_messages).to.equal(1);
+    expect(flushL2Messages).to.have.a.lengthOf(1);
+    expect(flushL2Messages[0].from_address).to.equal(l2contract.address);
+    expect(flushL2Messages[0].to_address).to.equal(l1l2Example.address);
 
     /**
      * Check the L1 balance and withdraw 10 which will consume the L2 message.
@@ -136,7 +138,18 @@ describe('Postman', function() {
 
     expect(userL2Balance).to.deep.equal({ balance: 90n });
 
-    await starknet.devnet.flush();
+    /**
+     * Flushing the L1 messages so that they can be consumed by the L2.
+     */
+
+    const flushL1Response = await starknet.devnet.flush();
+    const flushL1Messages = flushL1Response.consumed_messages.from_l1;
+    expect(flushL1Messages).to.have.a.lengthOf(1);
+    expect(flushL1Response.consumed_messages.from_l2).to.be.empty;
+
+    expect(flushL1Messages[0].address).to.equal(signer.address);
+    expect(flushL1Messages[0].args.from_address).to.equal(l1l2Example.address);
+    expect(flushL1Messages[0].args.to_address).to.equal(l2contract.address);
 
     userL2Balance = await l2contract.call('get_balance', {
       user,
