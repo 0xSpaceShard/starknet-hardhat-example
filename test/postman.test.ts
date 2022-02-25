@@ -9,6 +9,10 @@ import {
 } from 'hardhat/types';
 import { TIMEOUT } from './constants';
 
+function assertAddressEquality(actual: string, expected: string) {
+  expect(BigInt(actual).toString()).to.equal(BigInt(expected).toString());
+}
+
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
  * Shows the communication between an L2 contract defined in l1l2.cairo
@@ -107,8 +111,8 @@ describe('Postman', function() {
     const flushL2Messages = flushL2Response.consumed_messages.from_l2;
 
     expect(flushL2Messages).to.have.a.lengthOf(1);
-    expect(BigInt(flushL2Messages[0].from_address)).to.equal(BigInt(l2contract.address));
-    expect(BigInt(flushL2Messages[0].to_address)).to.equal(BigInt(l1l2Example.address));
+    assertAddressEquality(flushL2Messages[0].from_address, l2contract.address);
+    assertAddressEquality(flushL2Messages[0].to_address, l1l2Example.address);
 
     /**
      * Check the L1 balance and withdraw 10 which will consume the L2 message.
@@ -152,9 +156,9 @@ describe('Postman', function() {
     expect(flushL1Messages).to.have.a.lengthOf(1);
     expect(flushL1Response.consumed_messages.from_l2).to.be.empty;
 
-    expect(BigInt(flushL1Messages[0].address)).to.equal(BigInt(signer.address));
-    expect(BigInt(flushL1Messages[0].args.from_address)).to.equal(BigInt(l1l2Example.address));
-    expect(BigInt(flushL1Messages[0].args.to_address)).to.equal(BigInt(l2contract.address));
+    expectAddressEquality(flushL1Messages[0].address, signer.address);
+    expectAddressEquality(flushL1Messages[0].args.from_address, l1l2Example.address);
+    expectAddressEquality(flushL1Messages[0].args.to_address, l2contract.address);
 
     userL2Balance = await l2contract.call('get_balance', {
       user,
