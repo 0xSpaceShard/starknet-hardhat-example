@@ -9,8 +9,23 @@ import {
 } from 'hardhat/types';
 import { TIMEOUT } from './constants';
 
+/**
+ * Receives a hex address, converts it to bigint, converts it back to hex.
+ * This is done to strip leading zeros.
+ * @param address a hex string representation of an address
+ * @returns an adapted hex string representation of the address
+ */
+function adaptAddress(address: string) {
+  return "0x" + BigInt(address).toString(16);
+}
+
+/**
+ * Expects address equality after adapting them.
+ * @param actual 
+ * @param expected 
+ */
 function expectAddressEquality(actual: string, expected: string) {
-  expect(BigInt(actual).toString()).to.equal(BigInt(expected).toString());
+  expect(adaptAddress(actual)).to.equal(adaptAddress(expected));
 }
 
 /**
