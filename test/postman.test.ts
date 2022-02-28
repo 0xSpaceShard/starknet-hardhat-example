@@ -171,9 +171,12 @@ describe('Postman', function() {
     expect(flushL1Messages).to.have.a.lengthOf(1);
     expect(flushL1Response.consumed_messages.from_l2).to.be.empty;
 
-    expectAddressEquality(flushL1Messages[0].address, signer.address);
+    console.log("DEBUG flushL1Response", flushL1Response);
+    console.log("DEBUG signer", signer);
+
     expectAddressEquality(flushL1Messages[0].args.from_address, l1l2Example.address);
     expectAddressEquality(flushL1Messages[0].args.to_address, l2contract.address);
+    expectAddressEquality(flushL1Messages[0].address, signer.address);
 
     userL2Balance = await l2contract.call('get_balance', {
       user,
