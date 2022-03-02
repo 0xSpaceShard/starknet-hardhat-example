@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
@@ -15,7 +16,6 @@ describe("Starknet", function () {
   let publicKey: string;
 
   before(async function() {
-    
     contractFactory = await starknet.getContractFactory("contract");
 
     console.log("Started deployment");
@@ -26,9 +26,11 @@ describe("Starknet", function () {
     accountAddress = account.starknetContract.address;
     privateKey = account.privateKey;
     publicKey = account.publicKey;
+    console.log("Deployed account at address:", account.starknetContract.address);
+    console.log("Private and public key:", privateKey, publicKey);
   });
 
-  it("should succeed when loading an already deployed account with the correct private key", async function() {
+  it("should load an already deployed account with the correct private key", async function() {
 
     const loadedAccount = await starknet.getAccountFromAddress("Account", accountAddress, privateKey, "OpenZeppelin");
 
@@ -46,7 +48,7 @@ describe("Starknet", function () {
     }
   });
 
-  it("should succeed when using the account to invoke a function on another contract", async function() {
+  it("should invoke a function on another contract", async function() {
     const { res: currBalance } = await account.call(contract, "get_balance");
     const amount1 = 10n;
     const amount2 = 20n;
@@ -54,6 +56,22 @@ describe("Starknet", function () {
 
     const { res: newBalance } = await account.call(contract, "get_balance");
     expect(newBalance).to.deep.equal(currBalance + amount1 + amount2);
+  });
+
+  it("should work with arrays through an account", async function() {
+    const { res } = await account.call(contract, "sum_array", { a: [1, 2, 3] });
+    expect(res).to.equal(6n);
+  });
+
+  it("should work with BigNumbers and tuples through an account", async function() {
+    // passing Points (1, 2) and (3, 4) in a tuple
+    const { res: sum } = await account.call(contract, "sum_points_to_tuple", {
+      points: [
+        { x: BigNumber.from(1), y: BigNumber.from(2) },
+        { x: 3, y: 4 }
+      ]
+    });
+    expect(sum).to.deep.equal([4n, 6n]);
   });
 
 });
