@@ -10,7 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
-    "@shardlabs/starknet-hardhat-plugin": "0.4.2",
+    "@shardlabs/starknet-hardhat-plugin": "0.4.3",
     "@types/chai": "^4.2.22",
     "@types/elliptic": "^6.4.14",
     "@types/mocha": "^9.0.0",
