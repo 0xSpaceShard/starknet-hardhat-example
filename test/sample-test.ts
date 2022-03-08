@@ -33,6 +33,7 @@ describe("Starknet", function () {
     expect(balanceBefore).to.deep.equal(0n);
 
     const txHash = await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
+    expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
     console.log("Increased by 10 + 20");
 
@@ -122,6 +123,7 @@ describe("Starknet", function () {
 
     // should pass
     const txHash = await contract.invoke("increase_balance_with_even", { amount: 2n });
+    expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
 
     const { res: balanceAfterEven } = await contract.call("get_balance");
@@ -157,7 +159,9 @@ describe("Starknet", function () {
     const expectedBalance= currentBalance+BigInt(amount1)+BigInt(amount2);
 
     const txHash = await contract.invoke("increase_balance", {amount1: amount1, amount2: amount2});
+    expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
+    
     const { res: sum } = await contract.call("get_balance");
     expect(sum).to.deep.equal(expectedBalance);
 
