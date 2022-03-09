@@ -22,7 +22,7 @@ describe("Starknet", function () {
     contract = await contractFactory.deploy({ initial_balance: 0 });
     console.log("Deployed at", contract.address);
 
-    account = await starknet.deployAccountFromABI("OpenZeppelin");
+    account = await starknet.deployAccount("OpenZeppelin");
     accountAddress = account.starknetContract.address;
     privateKey = account.privateKey;
     publicKey = account.publicKey;
