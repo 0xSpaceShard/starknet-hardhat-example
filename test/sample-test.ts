@@ -14,15 +14,6 @@ describe("Starknet", function () {
     contractFactory = await starknet.getContractFactory("contract");
   });
 
-  it("should fail if constructor arguments not provided", async function() {
-    try {
-      await contractFactory.deploy();
-      expect.fail("Should have failed on not passing constructor calldata.");
-    } catch(err: any) {
-      expect(err.message).to.equal("Constructor arguments required but not provided.");
-    }
-  });
-
   it("should work for a fresh deployment", async function() {
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
