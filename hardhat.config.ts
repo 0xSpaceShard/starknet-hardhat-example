@@ -25,7 +25,7 @@ const config: HardhatUserConfig = {
   },
   networks: {
     devnet: {
-      url: "http://localhost:5000"
+      url: "http://localhost:5050"
     },
   },
 };
