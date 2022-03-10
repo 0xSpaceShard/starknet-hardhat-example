@@ -5,7 +5,7 @@ This project demonstrates a basic Hardhat project, but with [Starknet plugin](ht
 `package.json` is fixed to use the latest `starknet-hardhat-plugin` version this example repository is synced with.
 
 ## Troubleshooting
-If you're having issues trying to use this example repo with the Starknet plugin, try using the `npm install` and\or `npm update` commands, as it may be due to version mismatch in the dependencies.
+If you're having issues trying to use this example repo with the Starknet plugin, try using the `npm install` and/or `npm update` commands, as it may be due to version mismatch in the dependencies.
 
 ## Branches
 - `master` - latest stable examples
