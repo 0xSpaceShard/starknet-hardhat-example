@@ -5,7 +5,7 @@ import "@nomiclabs/hardhat-ethers";
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-module.exports = {
+const config: HardhatUserConfig = {
   solidity: '0.6.12',
   starknet: {
     dockerizedVersion: "0.7.1", // alternatively choose one of the two venv options below
@@ -14,7 +14,7 @@ module.exports = {
 
     // uses the currently active Python environment (hopefully with available Starknet commands!)
     // venv: "active",
-    network: "devnet",
+    network: "alpha",
     wallets: {
       OpenZeppelin: {
         accountName: "OpenZeppelin",
@@ -29,3 +29,5 @@ module.exports = {
     },
   },
 };
+
+export default config;
