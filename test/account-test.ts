@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { starknet } from "hardhat";
+import { ArgentAccount } from "@shardlabs/starknet-hardhat-plugin/dist/account"
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 
