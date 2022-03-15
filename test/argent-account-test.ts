@@ -28,7 +28,7 @@ describe("Starknet", function () {
     console.log("Main deployed at", mainContract.address);
     console.log("Util deployed at", utilContract.address);
 
-    account = (await starknet.deployAccount("ArgentAccount")) as ArgentAccount;
+    account = (await starknet.deployAccount("Argent")) as ArgentAccount;
     accountAddress = account.starknetContract.address;
     privateKey = account.privateKey;
     publicKey = account.publicKey;
@@ -38,7 +38,7 @@ describe("Starknet", function () {
 
   
   it("should load an already deployed account with the correct private key", async function() {
-    const loadedAccount = (await starknet.getAccountFromAddress(accountAddress, privateKey, "ArgentAccount")) as ArgentAccount;
+    const loadedAccount = (await starknet.getAccountFromAddress(accountAddress, privateKey, "Argent")) as ArgentAccount;
     await loadedAccount.setGuardian(account.guardianPrivateKey);
 
     expect(loadedAccount.starknetContract.address).to.deep.equal(accountAddress);
@@ -50,7 +50,7 @@ describe("Starknet", function () {
 
   it("should fail when loading an already deployed account with a wrong private key", async function() {
     try{
-      await starknet.getAccountFromAddress(accountAddress, "0x0123", "ArgentAccount");
+      await starknet.getAccountFromAddress(accountAddress, "0x0123", "Argent");
       expect.fail("Should have failed on passing an incorrect private key.");
     } catch(err: any) {
       expect(err.message).to.equal("The provided private key is not compatible with the public key stored in the contract.");
