@@ -114,15 +114,14 @@ describe("Starknet", function () {
   });
 
   it("should handle multiple calls through an account", async function() {
-    const { res: currBalance } = await account.call(mainContract, "get_balance");
-
+    
     const callArray = [
       {
         toContract: mainContract,
         functionName: "sum_points_to_tuple",
         calldata: {
             points: [
-            { x: BigNumber.from(1), y: BigNumber.from(2) },
+            { x: 1, y: 2 },
             { x: 3, y: 4 }
           ]
         }
@@ -155,12 +154,9 @@ describe("Starknet", function () {
 
     const results = await account.multiCall(callArray);
 
+    expect(results.length).to.deep.equal(callArray.length);
     expect(results[0].res).to.deep.equal([4n, 6n]);
-    expect(results[1].res).to.deep.equal(1n);
-    expect(results[2].res).to.deep.equal(0n);
-    expect(results[3].res).to.deep.equal(6n);
-    expect(results[4].res).to.deep.equal(currBalance);
-    expect(results[5].res).to.deep.equal(1n);
+    
   });
 
 });
