@@ -30,7 +30,7 @@ describe("Starknet", function () {
 
     // can also be declared as
     // account = (await starknet.deployAccount("OpenZeppelin")) as OpenZeppelinAccount
-    // if imported from "@shardlabs/starknet-hardhat-plugin/dist/account"
+    // if imported from hardhat/types/runtime"
     account = await starknet.deployAccount("OpenZeppelin");
     accountAddress = account.starknetContract.address;
     privateKey = account.privateKey;
