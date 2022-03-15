@@ -110,20 +110,11 @@ describe("Starknet", function () {
     const txHashArray = await account.multiInvoke(invokeArray);
     console.log(txHashArray);
     const { res: newBalance } = await account.call(mainContract, "get_balance");
-    expect(newBalance).to.deep.equal(currBalance + 3n * (amount1 + amount2));
+    expect(newBalance).to.deep.equal(currBalance + 90n);
   });
 
   it("should handle multiple calls through an account", async function() {
     const { res: currBalance } = await account.call(mainContract, "get_balance");
-
-    const resultArray = [
-      { res: [4n,6n] },
-      { res: 1n },
-      { res: 0n },
-      { res: 6n },
-      { res: currBalance },
-      { res: 1n }
-    ]
 
     const callArray = [
       {
@@ -165,7 +156,14 @@ describe("Starknet", function () {
     const results = await account.multiCall(callArray);
 
     
-    expect(results).to.deep.equal(resultArray);
+    expect(results).to.deep.equal([
+      { res: [4n,6n] },
+      { res: 1n },
+      { res: 0n },
+      { res: 6n },
+      { res: currBalance },
+      { res: 1n }
+    ]);
   });
 
 });
