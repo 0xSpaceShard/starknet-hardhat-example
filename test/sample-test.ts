@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
+import { BigNumber } from "ethers";
 
 describe("Starknet", function () {
   this.timeout(TIMEOUT);
@@ -99,12 +100,20 @@ describe("Starknet", function () {
     expect(res1).to.deep.equal(1n); // 1 as in true
   });
 
-  it("should work with BigInt arguments instead of numbers", async function() {
+  it("should work with number, BigInt, decimal string, hex string, BigNumber", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
+    const a = [
+      10, // number
+      10n, // BigInt with -n syntax
+      BigInt(10), // BigInt with wrapper function
+      "10", // decimal string
+      "0xa", // hex string
+      "0xA", // capital hex string
+      BigNumber.from(10) // BigNumber
+    ];
 
-    // mixing bigint and number on purpose (to show it's possible)
-    const { res: res1 } = await contract.call("use_almost_equal", { a: 1n, b: 2 });
-    expect(res1).to.deep.equal(1n); // 1 as in true
+    const { res } = await contract.call("sum_array", { a });
+    expect(res).to.deep.equal(70n);
   });
 
   it("should handle rejected transactions", async function() {
