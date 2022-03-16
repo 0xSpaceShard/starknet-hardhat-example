@@ -217,7 +217,7 @@ describe("Starknet", function () {
     expect(tx.transaction.calldata).to.deep.equal(["10"]);
     expectAddressEquality(tx.transaction.contract_address,contract.address);
 
-    const receipt = await starknet.getTxReceipt(txHash);
+    const receipt = await starknet.getTransactionReceipt(txHash);
     console.log(receipt);
     expect(receipt.status).to.deep.equal("ACCEPTED_ON_L2");
     expectAddressEquality(receipt.events[0].from_address,contract.address);
