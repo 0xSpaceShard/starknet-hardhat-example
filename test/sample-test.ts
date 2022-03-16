@@ -4,8 +4,23 @@ import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
 
-function adaptAddress(address: string) {
+/**
+ * Receives a hex address, converts it to bigint, converts it back to hex.
+ * This is done to strip leading zeros.
+ * @param address a hex string representation of an address
+ * @returns an adapted hex string representation of the address
+ */
+ function adaptAddress(address: string) {
   return "0x" + BigInt(address).toString(16);
+}
+
+/**
+ * Expects address equality after adapting them.
+ * @param actual 
+ * @param expected 
+ */
+function expectAddressEquality(actual: string, expected: string) {
+  expect(adaptAddress(actual)).to.equal(adaptAddress(expected));
 }
 
 describe("Starknet", function () {
@@ -200,12 +215,12 @@ describe("Starknet", function () {
     console.log(tx);
     expect(tx.status).to.deep.equal("ACCEPTED_ON_L2");
     expect(tx.transaction.calldata).to.deep.equal(["10"]);
-    expect(adaptAddress(tx.transaction.contract_address)).to.deep.equal(adaptAddress(contract.address));
+    expectAddressEquality(tx.transaction.contract_address,contract.address);
 
     const receipt = await starknet.getTxReceipt(txHash);
     console.log(receipt);
     expect(receipt.status).to.deep.equal("ACCEPTED_ON_L2");
-    expect(adaptAddress(receipt.events[0].from_address)).to.deep.equal(adaptAddress(contract.address));
+    expectAddressEquality(receipt.events[0].from_address,contract.address);
     expect(receipt.events[0].data).to.deep.equal(["0", "10"]);
 
   });
