@@ -38,6 +38,7 @@ describe("Starknet", function () {
   it("should work for a fresh deployment", async function() {
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
+    console.log("Deployment transaction hash:", contract.deployTxHash);
     console.log("Deployed at", contract.address);
     preservedAddress = contract.address;
 
@@ -53,6 +54,7 @@ describe("Starknet", function () {
     expect(balanceAfter).to.deep.equal(30n);
   });
 
+  
   it("should work for a previously deployed contract", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: balance } = await contract.call("get_balance");
