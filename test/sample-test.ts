@@ -37,7 +37,7 @@ describe("Starknet", function () {
     const { res: balanceAfter } = await contract.call("get_balance");
     expect(balanceAfter).to.deep.equal(30n);
   });
-  
+
   it("should work for a previously deployed contract", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: balance } = await contract.call("get_balance");
