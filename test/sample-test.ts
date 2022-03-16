@@ -4,15 +4,20 @@ import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
 
+function adaptAddress(address: string) {
+  return "0x" + BigInt(address).toString(16);
+}
+
 describe("Starknet", function () {
   this.timeout(TIMEOUT);
   let preservedAddress: string;
 
   let contractFactory: StarknetContractFactory;
-
+  let eventsContractFactory: StarknetContractFactory;
   before(async function() {
     // assumes contract.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
+    eventsContractFactory = await starknet.getContractFactory("events");
   });
 
   it("should work for a fresh deployment", async function() {
@@ -32,7 +37,7 @@ describe("Starknet", function () {
     const { res: balanceAfter } = await contract.call("get_balance");
     expect(balanceAfter).to.deep.equal(30n);
   });
-
+  
   it("should work for a previously deployed contract", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: balance } = await contract.call("get_balance");
@@ -184,6 +189,25 @@ describe("Starknet", function () {
     
     expect(pointsResp).to.deep.equal(pointsArray);
     expect(complexResp).to.deep.equal(complexArray);
+  });
+
+  it("should retrieve transaction details", async function() {
+    const contract = await eventsContractFactory.deploy();
+    
+    const txHash = await contract.invoke("increase_balance", { amount: 10 });
+
+    const tx = await starknet.getTransaction(txHash);
+    console.log(tx);
+    expect(tx.status).to.deep.equal("ACCEPTED_ON_L2");
+    expect(tx.transaction.calldata).to.deep.equal(["10"]);
+    expect(adaptAddress(tx.transaction.contract_address)).to.deep.equal(adaptAddress(contract.address));
+
+    const receipt = await starknet.getTxReceipt(txHash);
+    console.log(receipt);
+    expect(receipt.status).to.deep.equal("ACCEPTED_ON_L2");
+    expect(adaptAddress(receipt.events[0].from_address)).to.deep.equal(adaptAddress(contract.address));
+    expect(receipt.events[0].data).to.deep.equal(["0", "10"]);
+
   });
 
   it("should estimate fee", async function() {
