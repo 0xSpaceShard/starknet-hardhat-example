@@ -189,9 +189,11 @@ describe("Starknet", function () {
   it("should estimate fee", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const fee = await contract.estimateFee("increase_balance", { amount1: 10, amount2: 20 });
+
     console.log("Estimated fee:", fee);
     expect(fee).to.haveOwnProperty("amount");
-    expect(fee).to.haveOwnProperty("unit");
+    expect(typeof fee.amount).to.equal("bigint");
+    expect(fee).to.haveOwnProperty("unit")
   });
   
 });

@@ -82,6 +82,19 @@ describe("Starknet", function () {
     expect(sum).to.deep.equal([4n, 6n]);
   });
 
+  it("should estimate fee through an account", async function() {
+    const fee = await account.estimateFee(
+      mainContract,
+      "increase_balance",
+      { amount1: 10, amount2: 20 }
+    );
+
+    console.log("Estimated fee:", fee);
+    expect(fee).to.haveOwnProperty("amount");
+    expect(typeof fee.amount).to.equal("bigint");
+    expect(fee).to.haveOwnProperty("unit")
+  });
+
   // Multicall / Multiinvoke testing
   it("should handle multiple invokes through an account", async function() {
     const { res: currBalance } = await account.call(mainContract, "get_balance");
@@ -162,6 +175,30 @@ describe("Starknet", function () {
       { res: 1n }
     ]);
     
+  });
+
+  it("should handle multiple fee estimations through an account", async function() {
+    const amount1 = 10n;
+    const amount2 = 20n;
+    const invokeArray = [
+      {
+        toContract: mainContract,
+        functionName: "increase_balance",
+        calldata: { amount1, amount2 }
+      },
+      {
+        toContract: mainContract,
+        functionName: "increase_balance",
+        calldata: { amount1, amount2 }
+      }
+    ];
+
+    const fee = await account.multiEstimateFee(invokeArray);
+
+    console.log("Estimated fee (multi):", fee);
+    expect(fee).to.haveOwnProperty("amount");
+    expect(typeof fee.amount).to.equal("bigint");
+    expect(fee).to.haveOwnProperty("unit")
   });
 
 });
