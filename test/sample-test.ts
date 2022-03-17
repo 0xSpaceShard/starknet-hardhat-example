@@ -39,7 +39,9 @@ describe("Starknet", function () {
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
     console.log("Deployment transaction hash:", contract.deployTxHash);
+    expect(contract.deployTxHash.startsWith("0x")).to.be.true
     console.log("Deployed at", contract.address);
+    expect(contract.address.startsWith("0x")).to.be.true
     preservedAddress = contract.address;
 
     const { res: balanceBefore } = await contract.call("get_balance");
