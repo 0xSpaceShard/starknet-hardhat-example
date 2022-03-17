@@ -218,14 +218,14 @@ describe("Starknet", function () {
     const tx = await starknet.getTransaction(txHash);
     console.log(tx);
     expect(tx.status).to.deep.equal("ACCEPTED_ON_L2");
-    expect(tx.transaction.calldata).to.deep.equal(["10"]);
+    expect(tx.transaction.calldata).to.deep.equal(["0xa"]);
     expectAddressEquality(tx.transaction.contract_address,contract.address);
 
     const receipt = await starknet.getTransactionReceipt(txHash);
     console.log(receipt);
     expect(receipt.status).to.deep.equal("ACCEPTED_ON_L2");
     expectAddressEquality(receipt.events[0].from_address,contract.address);
-    expect(receipt.events[0].data).to.deep.equal(["0", "10"]);
+    expect(receipt.events[0].data).to.deep.equal(["0x0", "0xa"]);
 
   });
 
@@ -238,5 +238,5 @@ describe("Starknet", function () {
     expect(typeof fee.amount).to.equal("bigint");
     expect(fee).to.haveOwnProperty("unit")
   });
-  
+
 });
