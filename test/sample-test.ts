@@ -4,21 +4,44 @@ import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
 
+/**
+ * Receives a hex address, converts it to bigint, converts it back to hex.
+ * This is done to strip leading zeros.
+ * @param address a hex string representation of an address
+ * @returns an adapted hex string representation of the address
+ */
+ function adaptAddress(address: string) {
+  return "0x" + BigInt(address).toString(16);
+}
+
+/**
+ * Expects address equality after adapting them.
+ * @param actual 
+ * @param expected 
+ */
+function expectAddressEquality(actual: string, expected: string) {
+  expect(adaptAddress(actual)).to.equal(adaptAddress(expected));
+}
+
 describe("Starknet", function () {
   this.timeout(TIMEOUT);
   let preservedAddress: string;
 
   let contractFactory: StarknetContractFactory;
-
+  let eventsContractFactory: StarknetContractFactory;
   before(async function() {
     // assumes contract.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
+    eventsContractFactory = await starknet.getContractFactory("events");
   });
 
   it("should work for a fresh deployment", async function() {
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
+    console.log("Deployment transaction hash:", contract.deployTxHash);
+    expect(contract.deployTxHash.startsWith("0x")).to.be.true
     console.log("Deployed at", contract.address);
+    expect(contract.address.startsWith("0x")).to.be.true
     preservedAddress = contract.address;
 
     const { res: balanceBefore } = await contract.call("get_balance");
@@ -33,6 +56,7 @@ describe("Starknet", function () {
     expect(balanceAfter).to.deep.equal(30n);
   });
 
+  
   it("should work for a previously deployed contract", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: balance } = await contract.call("get_balance");
@@ -184,6 +208,25 @@ describe("Starknet", function () {
     
     expect(pointsResp).to.deep.equal(pointsArray);
     expect(complexResp).to.deep.equal(complexArray);
+  });
+
+  it("should retrieve transaction details", async function() {
+    const contract = await eventsContractFactory.deploy();
+    
+    const txHash = await contract.invoke("increase_balance", { amount: 10 });
+
+    const tx = await starknet.getTransaction(txHash);
+    console.log(tx);
+    expect(tx.status).to.deep.equal("ACCEPTED_ON_L2");
+    expect(tx.transaction.calldata).to.deep.equal(["10"]);
+    expectAddressEquality(tx.transaction.contract_address,contract.address);
+
+    const receipt = await starknet.getTransactionReceipt(txHash);
+    console.log(receipt);
+    expect(receipt.status).to.deep.equal("ACCEPTED_ON_L2");
+    expectAddressEquality(receipt.events[0].from_address,contract.address);
+    expect(receipt.events[0].data).to.deep.equal(["0", "10"]);
+
   });
 
   it("should estimate fee", async function() {
