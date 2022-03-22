@@ -3,6 +3,7 @@ import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
+import { expectFeeEstimationStructure } from "./util";
 
 /**
  * Receives a hex address, converts it to bigint, converts it back to hex.
@@ -232,11 +233,7 @@ describe("Starknet", function () {
   it("should estimate fee", async function() {
     const contract = contractFactory.getContractAt(preservedAddress);
     const fee = await contract.estimateFee("increase_balance", { amount1: 10, amount2: 20 });
-
-    console.log("Estimated fee:", fee);
-    expect(fee).to.haveOwnProperty("amount");
-    expect(typeof fee.amount).to.equal("bigint");
-    expect(fee).to.haveOwnProperty("unit")
+    expectFeeEstimationStructure(fee);
   });
 
 });

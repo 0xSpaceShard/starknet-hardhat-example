@@ -3,6 +3,7 @@ import { BigNumber } from "ethers";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
+import { expectFeeEstimationStructure } from "./util";
 
 describe("Starknet", function () {
   this.timeout(TIMEOUT);
@@ -83,17 +84,37 @@ describe("Starknet", function () {
     expect(sum).to.deep.equal([4n, 6n]);
   });
 
-  it("should estimate fee through an account", async function() {
-    const fee = await account.estimateFee(
+  it("should fail if maxFee too low", async function() {
+    const { res: initialBalance } = await account.call(mainContract, "get_balance");
+    const estimatedFee = await account.estimateFee(
       mainContract,
       "increase_balance",
       { amount1: 10, amount2: 20 }
     );
 
-    console.log("Estimated fee:", fee);
-    expect(fee).to.haveOwnProperty("amount");
-    expect(typeof fee.amount).to.equal("bigint");
-    expect(fee).to.haveOwnProperty("unit")
+    expectFeeEstimationStructure(estimatedFee);
+
+    try {
+      await account.invoke(
+        mainContract,
+        "increase_balance",
+        { amount1: 10, amount2: 20 },
+        { maxFee: estimatedFee.amount / 10n }
+      );
+    } catch (err: any) {
+      expect(err.message).to.contain("Actual fee exceeded max fee");
+    }
+
+    // TODO uncomment when supported on both alpha and devnet
+    // await account.invoke(
+    //   mainContract,
+    //   "increase_balance",
+    //   { amount1: 10, amount2: 20 },
+    //   { maxFee: estimatedFee.amount * 10n }
+    // );
+
+    const { res: finalBalance } = await account.call(mainContract, "get_balance");
+    expect(finalBalance).to.equal(initialBalance);
   });
 
   // Multicall / Multiinvoke testing
@@ -196,10 +217,6 @@ describe("Starknet", function () {
     ];
 
     const fee = await account.multiEstimateFee(invokeArray);
-
-    console.log("Estimated fee (multi):", fee);
-    expect(fee).to.haveOwnProperty("amount");
-    expect(typeof fee.amount).to.equal("bigint");
-    expect(fee).to.haveOwnProperty("unit")
+    expectFeeEstimationStructure(fee);
   });
 });
