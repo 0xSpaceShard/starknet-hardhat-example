@@ -105,7 +105,7 @@ describe("Starknet", function () {
       expect(err.message).to.contain("Actual fee exceeded max fee");
     }
 
-    // TODO uncomment
+    // TODO uncomment when supported on both alpha and devnet
     // await account.invoke(
     //   mainContract,
     //   "increase_balance",
