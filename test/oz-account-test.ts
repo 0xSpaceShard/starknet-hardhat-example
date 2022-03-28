@@ -101,6 +101,7 @@ describe("Starknet", function () {
         { amount1: 10, amount2: 20 },
         { maxFee: estimatedFee.amount / 10n }
       );
+      expect.fail("Should have failed earlier");
     } catch (err: any) {
       expect(err.message).to.contain("Actual fee exceeded max fee");
     }
