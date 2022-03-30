@@ -37,6 +37,13 @@ describe('Postman', function() {
   this.timeout(TIMEOUT);
 
   const user = 1;
+  /**
+   * The URL of the L1 network to interact with. It is expected to be already running.
+   * Possibilities include and are not limited to:
+   * - Hardhat node: https://hardhat.org/hardhat-network/#running-stand-alone-in-order-to-support-wallets-and-other-software
+   * - Ganache node
+   * - Goerli testnet
+   */
   const networkUrl: string = (network.config as HttpNetworkConfig).url;
   let L2contractFactory: StarknetContractFactory;
   let l2contract: StarknetContract;
