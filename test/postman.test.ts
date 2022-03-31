@@ -43,6 +43,9 @@ describe('Postman', function() {
    * - Hardhat node: https://hardhat.org/hardhat-network/#running-stand-alone-in-order-to-support-wallets-and-other-software
    * - Ganache node
    * - Goerli testnet
+   * Supply the L1 network with `npx hardhat test --network <L1_NETWORK_NAME>`.
+   * The network is expected to be defined in hardhat.config.
+   * The `localhost` network is predefined, so `--network localhost` works for e.g. `npx hardhat node`.
    */
   const networkUrl: string = (network.config as HttpNetworkConfig).url;
   let L2contractFactory: StarknetContractFactory;
