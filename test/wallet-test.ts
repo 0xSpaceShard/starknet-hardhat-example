@@ -3,7 +3,7 @@ import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Wallet } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 
-describe("Starknet", function () {
+describe.skip("Starknet", function () {
   this.timeout(TIMEOUT);
 
   let preservedAddress: string;
