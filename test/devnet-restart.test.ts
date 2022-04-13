@@ -9,12 +9,8 @@ describe.only("Devnet restart", function() {
     const salt = "0x99";
 
     it("should pass", async () => {
-        try {
-            const response = await starknet.devnet.restart();
-            expect(response).to.be.undefined;
-        } catch (error) {
-            expect.fail("Should not throw");
-        }
+        const response = await starknet.devnet.restart();
+        expect(response).to.be.undefined;
     });
 
     it("should restart deployed contracts", async () => {
@@ -42,12 +38,8 @@ describe.only("Devnet restart", function() {
 
         starknet.devnet.restart();
 
-        try {
-            contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
-            expect(contract.address).to.equal(initialAddress);
-        } catch {
-            expect.fail("Should not throw");
-        }
+        contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
+        expect(contract.address).to.equal(initialAddress);
     })
 
     it("should enable to use the same instance", async () => {
@@ -66,12 +58,8 @@ describe.only("Devnet restart", function() {
         const { res: balanceAfterRestart } = await contract.call("get_balance");
         expect(balanceAfterRestart).to.deep.equal(0n);
 
-        try {
-            await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
-            expect(contract.address).to.equal(initialAddress);
-        } catch {
-            expect.fail("Should not throw");
-        }
+        await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
+        expect(contract.address).to.equal(initialAddress);
 
         const { res: balanceAfterInvoke } = await contract.call("get_balance");
         expect(balanceAfterInvoke).to.deep.equal(30n);
