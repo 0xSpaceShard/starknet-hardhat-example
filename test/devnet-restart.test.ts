@@ -3,7 +3,7 @@ import { starknet } from "hardhat";
 
 import { TIMEOUT } from "./constants";
 
-describe.only("Devnet restart", function() {
+describe("Devnet restart", function() {
     this.timeout(TIMEOUT);
 
     const salt = "0x99";
@@ -21,7 +21,7 @@ describe.only("Devnet restart", function() {
         const { res: balanceAfter } = await contract.call("get_balance");
         expect(balanceAfter).to.deep.equal(30n);
 
-        starknet.devnet.restart();
+        await starknet.devnet.restart();
 
         try {
             await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
@@ -36,7 +36,7 @@ describe.only("Devnet restart", function() {
         let contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
         const initialAddress = contract.address;
 
-        starknet.devnet.restart();
+        await starknet.devnet.restart();
 
         contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
         expect(contract.address).to.equal(initialAddress);
@@ -51,7 +51,7 @@ describe.only("Devnet restart", function() {
         const { res: initialBalance } = await contract.call("get_balance");
         expect(initialBalance).to.deep.equal(30n);
 
-        starknet.devnet.restart();
+        await   starknet.devnet.restart();
 
         // redeploy
         await contractFactory.deploy({ initial_balance: 0 }, { salt });
