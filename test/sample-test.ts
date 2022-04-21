@@ -213,7 +213,7 @@ describe("Starknet", function () {
     expect(complexResp).to.deep.equal(complexArray);
   });
 
-  it.only("should retrieve transaction details", async function() {
+  it("should retrieve transaction details", async function() {
     const contract = await eventsContractFactory.deploy();
     
     const txHash = await contract.invoke("increase_balance", { amount: 10 });
