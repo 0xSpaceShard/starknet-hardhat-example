@@ -15,6 +15,8 @@ import { expectFeeEstimationStructure } from "./util";
   return "0x" + BigInt(address).toString(16);
 }
 
+const OK_TX_STATUSES = ["PENDING", "ACCEPTED_ON_L2", "ACCEPTED_ON_L1"]
+
 /**
  * Expects address equality after adapting them.
  * @param actual 
@@ -218,13 +220,13 @@ describe("Starknet", function () {
 
     const tx = await starknet.getTransaction(txHash);
     console.log(tx);
-    expect(tx.status).to.deep.equal("ACCEPTED_ON_L2");
+    expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
     expect(tx.transaction.calldata).to.deep.equal(["0xa"]);
     expectAddressEquality(tx.transaction.contract_address,contract.address);
 
     const receipt = await starknet.getTransactionReceipt(txHash);
     console.log(receipt);
-    expect(receipt.status).to.deep.equal("ACCEPTED_ON_L2");
+    expect(receipt.status).to.be.oneOf(OK_TX_STATUSES);
     expectAddressEquality(receipt.events[0].from_address,contract.address);
     expect(receipt.events[0].data).to.deep.equal(["0x0", "0xa"]);
 
