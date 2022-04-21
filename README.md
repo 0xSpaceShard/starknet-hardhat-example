@@ -9,13 +9,8 @@ If you're having issues trying to use this example repo with the Starknet plugin
 
 ## Branches
 - `master` - latest stable examples
-- `plugin` - used for testing by [Starknet plugin](https://github.com/Shard-Labs/starknet-hardhat-plugin)
-- `devnet` - used for testing by [Starknet devnet](https://github.com/Shard-Labs/starknet-devnet)
+- `plugin` - used for testing by [Starknet Hardhat Plugin](https://github.com/Shard-Labs/starknet-hardhat-plugin)
 
 ### Branch updating (for developers)
 - New PRs and features should be targeted to the `plugin` branch.
-- After releasing a new plugin version, `master` should be reset to `plugin` (so no need for merging/rebasing for these two branches).
-- When needed, the `devnet` branch should be updated:
-  - Since Devnet testing uses the latest plugin version, rebasing `devnet` should be done onto `plugin`.
-  - After rebasing, a force push of the `devnet` branch is required.
-  - New commits can be added to the `devnet` branch if they introduce devnet-specific files or configurations.
+- After releasing a new plugin version, `master` should ideally be reset (fast forwarded) to `plugin` (less ideally merged).
