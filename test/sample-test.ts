@@ -36,7 +36,7 @@ describe("Starknet", function () {
     // assumes contract.cairo and events.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
     eventsContractFactory = await starknet.getContractFactory("events");
-    });
+  });
 
   it("should work for a fresh deployment", async function() {
     console.log("Started deployment");
