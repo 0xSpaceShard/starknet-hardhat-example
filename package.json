@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat --network localhost test"
+    "prepare": "node scripts/smart-compiler.js",
+    "test": "npm run prepare && npx hardhat --network localhost test"
   },
   "author": "",
   "license": "ISC",
