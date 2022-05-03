@@ -245,11 +245,11 @@ describe("Starknet", function () {
     const transaction = await starknet.getTransaction(txHash);
 
     // Get latest block data
-    const latestBlock = await starknet.getBlock();
+    const latestBlock = await starknet.getBlock({});
     // Get block data by block number
-    const blockByNumber = await starknet.getBlock(transaction.block_number);
+    const blockByNumber = await starknet.getBlock({ blockNumber: transaction.block_number });
     // Get block data by block hash
-    const blockByHash = await starknet.getBlock(undefined, transaction.block_hash);
+    const blockByHash = await starknet.getBlock({ blockHash: transaction.block_hash });
 
     expect(blockByHash.block_number).to.be.a('number');
     expect(latestBlock.block_number).to.deep.equal(transaction.block_number);
