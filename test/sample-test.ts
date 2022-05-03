@@ -33,7 +33,7 @@ describe("Starknet", function () {
   let contractFactory: StarknetContractFactory;
   let eventsContractFactory: StarknetContractFactory;
   before(async function() {
-    // assumes contract.cairo has been compiled
+    // assumes contract.cairo and events.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
     eventsContractFactory = await starknet.getContractFactory("events");
   });
@@ -236,6 +236,25 @@ describe("Starknet", function () {
     const contract = contractFactory.getContractAt(preservedAddress);
     const fee = await contract.estimateFee("increase_balance", { amount1: 10, amount2: 20 });
     expectFeeEstimationStructure(fee);
+  });
+
+  it("should return block data", async function () {
+    const contract = await contractFactory.deploy({ initial_balance: 0 });
+
+    const txHash = await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
+    const transaction = await starknet.getTransaction(txHash);
+
+    // Get latest block data
+    const latestBlock = await starknet.getBlock();
+    // Get block data by block number
+    const blockByNumber = await starknet.getBlock({ blockNumber: transaction.block_number });
+    // Get block data by block hash
+    const blockByHash = await starknet.getBlock({ blockHash: transaction.block_hash });
+
+    expect(blockByHash.block_number).to.be.a('number');
+    expect(latestBlock.block_number).to.deep.equal(transaction.block_number);
+    expect(blockByNumber.block_number).to.deep.equal(transaction.block_number);
+    expect(blockByHash.block_number).to.deep.equal(transaction.block_number);
   });
 
 });
