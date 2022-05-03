@@ -245,7 +245,7 @@ describe("Starknet", function () {
     const transaction = await starknet.getTransaction(txHash);
 
     // Get latest block data
-    const latestBlock = await starknet.getBlock({});
+    const latestBlock = await starknet.getBlock();
     // Get block data by block number
     const blockByNumber = await starknet.getBlock({ blockNumber: transaction.block_number });
     // Get block data by block hash
