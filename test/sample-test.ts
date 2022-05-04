@@ -28,10 +28,13 @@ function expectAddressEquality(actual: string, expected: string) {
 
 describe("Starknet", function () {
   this.timeout(TIMEOUT);
+
   let preservedAddress: string;
+  let preservedDeployTxHash: string;
 
   let contractFactory: StarknetContractFactory;
   let eventsContractFactory: StarknetContractFactory;
+
   before(async function() {
     // assumes contract.cairo and events.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
@@ -46,6 +49,7 @@ describe("Starknet", function () {
     console.log("Deployed at", contract.address);
     expect(contract.address.startsWith("0x")).to.be.true
     preservedAddress = contract.address;
+    preservedDeployTxHash = contract.deployTxHash;
 
     const { res: balanceBefore } = await contract.call("get_balance");
     expect(balanceBefore).to.deep.equal(0n);
@@ -238,23 +242,21 @@ describe("Starknet", function () {
     expectFeeEstimationStructure(fee);
   });
 
-  it("should return block data", async function () {
-    const contract = await contractFactory.deploy({ initial_balance: 0 });
+  it("should handle block data", async function () {
+    const tx = await starknet.getTransaction(preservedDeployTxHash);
 
-    const txHash = await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
-    const transaction = await starknet.getTransaction(txHash);
+    // Get block by hash
+    const blockByHash = await starknet.getBlock({ blockHash: tx.block_hash });
+    const blockTransactionHashes = blockByHash.transactions.map(tx => tx.transaction_hash);
+    expect(blockTransactionHashes).to.include(preservedDeployTxHash);
+
+    // Get block by number
+    const blockByNumber = await starknet.getBlock({ blockNumber: tx.block_number });
+    expect(blockByHash).to.deep.equal(blockByNumber);
 
     // Get latest block data
     const latestBlock = await starknet.getBlock();
-    // Get block data by block number
-    const blockByNumber = await starknet.getBlock({ blockNumber: transaction.block_number });
-    // Get block data by block hash
-    const blockByHash = await starknet.getBlock({ blockHash: transaction.block_hash });
-
-    expect(blockByHash.block_number).to.be.a('number');
-    expect(latestBlock.block_number).to.deep.equal(transaction.block_number);
-    expect(blockByNumber.block_number).to.deep.equal(transaction.block_number);
-    expect(blockByHash.block_number).to.deep.equal(transaction.block_number);
+    expect(latestBlock.block_number).to.be.greaterThan(blockByHash.block_number);
   });
 
 });
