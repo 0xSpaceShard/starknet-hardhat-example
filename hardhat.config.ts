@@ -25,8 +25,13 @@ const config: HardhatUserConfig = {
   },
   networks: {
     devnet: {
-      url: "http://localhost:5000"
+      url: "http://127.0.0.1:5050"
     },
+    integratedDevnet: {
+      url: "http://127.0.0.1:5050",
+      // venv: "active",
+      // dockerizedVersion: "0.2.0"
+    }
   },
 };
 
