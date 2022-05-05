@@ -57,6 +57,15 @@ describe("Starknet", function () {
     }
   });
 
+  it("should deploy account with optional parameters", async function() {
+    const account = await starknet.deployAccount("Argent", {
+      salt: "0x42",
+      privateKey: "0x123",
+      token: "0x987"
+    });
+    expect(account.privateKey).to.equal("0x123");
+  });
+
   it("should invoke a function on another contract", async function() {
     const { res: currBalance } = await account.call(mainContract, "get_balance");
     const amount1 = 10n;
