@@ -59,7 +59,7 @@ describe("Starknet", function () {
 
   it("should deploy account with optional parameters", async function() {
     const account = await starknet.deployAccount("Argent", {
-      salt: "0x42",
+      salt: `0x${Math.random().toString().slice(2)}`, // cannot deploy to the same address multiple times on alpha-goerli
       privateKey: "0x123",
       token: "0x987"
     });
