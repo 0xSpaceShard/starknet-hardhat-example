@@ -6,8 +6,6 @@ import { TIMEOUT } from "./constants";
 describe("Devnet restart", function() {
     this.timeout(TIMEOUT);
 
-    const salt = "0xc3";
-
     it("should pass", async () => {
         const response = await starknet.devnet.restart();
         expect(response).to.be.undefined;
@@ -32,6 +30,8 @@ describe("Devnet restart", function() {
     })
 
     it("should enable to redeploy to the same address", async () => {
+        const salt = "0xbabe"
+
         const contractFactory = await starknet.getContractFactory("contract");
         let contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
         const initialAddress = contract.address;
@@ -43,6 +43,8 @@ describe("Devnet restart", function() {
     })
 
     it("should enable to use the same instance", async () => {
+        const salt = "0xb0a";
+
         const contractFactory = await starknet.getContractFactory("contract");
         const contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
         const initialAddress = contract.address;
@@ -51,7 +53,7 @@ describe("Devnet restart", function() {
         const { res: initialBalance } = await contract.call("get_balance");
         expect(initialBalance).to.deep.equal(30n);
 
-        await   starknet.devnet.restart();
+        await starknet.devnet.restart();
 
         // redeploy
         await contractFactory.deploy({ initial_balance: 0 }, { salt });
