@@ -6,7 +6,7 @@ import { TIMEOUT } from "./constants";
 describe("Devnet restart", function() {
     this.timeout(TIMEOUT);
 
-    const salt = "0x42";
+    const salt = "0xc3";
 
     it("should pass", async () => {
         const response = await starknet.devnet.restart();

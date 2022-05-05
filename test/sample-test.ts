@@ -169,15 +169,14 @@ describe("Starknet", function () {
     }
   });
 
-  it("should provide an expected address when a contract is deployed with salt", async function() {
-    const EXPECTED_ADDRESS = "0x03ffc1d4aca9668dfd9b5b6d374367b9dc52daed0ae23c54cb93ea2ea6e2dc72";
-
+  it("should deploy to expected address when using salt", async function() {
+    const EXPECTED_ADDRESS = "0x05736c162a7cd243e6e9b417f0c5f8c77006f386e13562986b40e9e51528a6d7";
     console.log("Started deployment");
     const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
-    const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 }, { salt: "0x99" });
+    const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 }, { salt: "0xa0" });
     console.log("Deployed at", contract.address);
 
-    expect(contract.address).to.deep.equal(EXPECTED_ADDRESS);
+    expectAddressEquality(contract.address, EXPECTED_ADDRESS);
   });
 
   it("should work with negative inputs", async function() {
