@@ -29,10 +29,10 @@ describe("Starknet", function () {
     console.log("Util deployed at", utilContract.address);
 
     account = (await starknet.deployAccount("Argent")) as ArgentAccount;
-    accountAddress = account.starknetContract.address;
+    accountAddress = account.address;
     privateKey = account.privateKey;
     publicKey = account.publicKey;
-    console.log("Deployed account at address:", account.starknetContract.address);
+    console.log("Deployed account at address:", account.address);
     console.log("Private and public key:", privateKey, publicKey);
   });
 
@@ -41,7 +41,7 @@ describe("Starknet", function () {
     const loadedAccount = (await starknet.getAccountFromAddress(accountAddress, privateKey, "Argent")) as ArgentAccount;
     await loadedAccount.setGuardian(account.guardianPrivateKey);
 
-    expect(loadedAccount.starknetContract.address).to.deep.equal(accountAddress);
+    expect(loadedAccount.address).to.deep.equal(accountAddress);
     expect(loadedAccount.privateKey).to.deep.equal(privateKey);
     expect(loadedAccount.publicKey).to.deep.equal(publicKey);
 
