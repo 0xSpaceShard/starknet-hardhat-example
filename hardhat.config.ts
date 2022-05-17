@@ -8,7 +8,7 @@ import "@nomiclabs/hardhat-ethers";
 const config: HardhatUserConfig = {
   solidity: '0.6.12',
   starknet: {
-    dockerizedVersion: "0.8.1", // alternatively choose one of the two venv options below
+    dockerizedVersion: "0.8.2", // alternatively choose one of the two venv options below
     // uses (my-venv) defined by `python -m venv path/to/my-venv`
     // venv: "path/to/my-venv",
 
@@ -30,8 +30,9 @@ const config: HardhatUserConfig = {
     integratedDevnet: {
       url: "http://127.0.0.1:5050",
       // venv: "active",
-      // dockerizedVersion: "0.2.0"
-    }
+      dockerizedVersion: "0.2.1"
+    },
+    hardhat: {}
   },
 };
 
