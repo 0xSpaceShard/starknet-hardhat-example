@@ -33,10 +33,10 @@ describe("Starknet", function () {
     // account = (await starknet.deployAccount("OpenZeppelin")) as OpenZeppelinAccount
     // if imported from hardhat/types/runtime"
     account = await starknet.deployAccount("OpenZeppelin");
-    accountAddress = account.starknetContract.address;
+    accountAddress = account.address;
     privateKey = account.privateKey;
     publicKey = account.publicKey;
-    console.log("Deployed account at address:", account.starknetContract.address);
+    console.log("Deployed account at address:", account.address);
     console.log("Private and public key:", privateKey, publicKey);
   });
 
@@ -44,7 +44,7 @@ describe("Starknet", function () {
 
     const loadedAccount = await starknet.getAccountFromAddress(accountAddress, privateKey, "OpenZeppelin");
 
-    expect(loadedAccount.starknetContract.address).to.deep.equal(accountAddress);
+    expect(loadedAccount.address).to.deep.equal(accountAddress);
     expect(loadedAccount.privateKey).to.deep.equal(privateKey);
     expect(loadedAccount.publicKey).to.deep.equal(publicKey);
   });
