@@ -11,7 +11,7 @@ describe("Starknet", function () {
 
     before(async function () {
         contractFactory = await starknet.getContractFactory("contract");
-        helloContractFactory = await starknet.getContractFactory("hello");
+        helloContractFactory = await starknet.getContractFactory("contract_test");
     });
 
     it("should get contract artifacts on recompilation", async function () {

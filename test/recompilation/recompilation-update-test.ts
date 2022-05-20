@@ -6,7 +6,7 @@ describe("Starknet", function () {
     let helloContractFactory: StarknetContractFactory;
 
     before(async function () {
-        helloContractFactory = await starknet.getContractFactory("hello");
+        helloContractFactory = await starknet.getContractFactory("contract_test");
     });
 
     it("should check updated contract with new function after recompilation", async function () {

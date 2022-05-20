@@ -6,7 +6,7 @@ describe("Starknet", function () {
     let helloContractFactory: StarknetContractFactory;
 
     before(async function () {
-        helloContractFactory = await starknet.getContractFactory("hello");
+        helloContractFactory = await starknet.getContractFactory("contract_test");
     });
 
     it("should check a changed dependency", async function () {
