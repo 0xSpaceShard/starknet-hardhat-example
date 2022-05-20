@@ -14,6 +14,7 @@ const config: HardhatUserConfig = {
 
     // uses the currently active Python environment (hopefully with available Starknet commands!)
     // venv: "active",
+    recompile: false,
     network: "alpha",
     wallets: {
       OpenZeppelin: {
