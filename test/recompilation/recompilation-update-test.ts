@@ -3,14 +3,14 @@ import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types";
 
 describe("Starknet", function () {
-    let helloContractFactory: StarknetContractFactory;
+    let testCacheContractFactory: StarknetContractFactory;
 
     before(async function () {
-        helloContractFactory = await starknet.getContractFactory("contract_test");
+        testCacheContractFactory = await starknet.getContractFactory("contract_test_cache");
     });
 
     it("should check updated contract with new function after recompilation", async function () {
-        const contract: StarknetContract = await helloContractFactory.deploy();
+        const contract: StarknetContract = await testCacheContractFactory.deploy();
         console.log("Deployed at", contract.address);
 
         const { res: balanceBefore } = await contract.call("get_balance");

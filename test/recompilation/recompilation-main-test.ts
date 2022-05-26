@@ -1,22 +1,22 @@
 import fs from "fs";
 import path from "path";
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { starknet, config } from "hardhat";
 import { StarknetContractFactory } from "hardhat/types";
 
 describe("Starknet", function () {
-    const cacheDirpath = path.join(__dirname, "..", "..", "cache/cairo-files-cache.json");
+    const cacheDirpath = path.join(config.paths.cache, "cairo-files-cache.json");
     let contractFactory: StarknetContractFactory;
-    let helloContractFactory: StarknetContractFactory;
+    let testCacheContractFactory: StarknetContractFactory;
 
     before(async function () {
         contractFactory = await starknet.getContractFactory("contract");
-        helloContractFactory = await starknet.getContractFactory("contract_test");
+        testCacheContractFactory = await starknet.getContractFactory("contract_test_cache");
     });
 
     it("should get contract artifacts on recompilation", async function () {
         expect(contractFactory.getAbiPath()).to.contain('contract_abi.json');
-        expect(helloContractFactory).not.to.be.undefined;
+        expect(testCacheContractFactory).not.to.be.undefined;
     });
 
     it("should handle cache existense", async function () {
