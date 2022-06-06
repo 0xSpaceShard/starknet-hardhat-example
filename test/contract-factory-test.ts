@@ -6,6 +6,6 @@ describe("ContractFactory", () => {
     });
 
     it('load artifact outside artifacts folder', async () => {
-        await starknet.getContractFactory("../test/test-artifacts/contract");
+        await starknet.getContractFactory("../test/test-aritfacts/contract");
     })
 });
