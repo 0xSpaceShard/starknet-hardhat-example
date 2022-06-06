@@ -1,0 +1,394 @@
+[
+    {
+        "members": [
+            {
+                "name": "tuple",
+                "offset": 0,
+                "type": "(felt, felt)"
+            },
+            {
+                "name": "extra",
+                "offset": 2,
+                "type": "felt"
+            }
+        ],
+        "name": "TupleHolder",
+        "size": 3,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "x",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "y",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "Point",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "p1",
+                "offset": 0,
+                "type": "Point"
+            },
+            {
+                "name": "p2",
+                "offset": 2,
+                "type": "Point"
+            },
+            {
+                "name": "extra",
+                "offset": 4,
+                "type": "felt"
+            }
+        ],
+        "name": "PointPair",
+        "size": 5,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "i",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "point",
+                "offset": 1,
+                "type": "Point"
+            },
+            {
+                "name": "m",
+                "offset": 3,
+                "type": "felt"
+            }
+        ],
+        "name": "ComplexStruct",
+        "size": 4,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "felt"
+            },
+            {
+                "name": "b",
+                "type": "felt"
+            }
+        ],
+        "name": "almost_equal",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "initial_balance",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "name": "amount1",
+                "type": "felt"
+            },
+            {
+                "name": "amount2",
+                "type": "felt"
+            }
+        ],
+        "name": "increase_balance",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "increase_balance_with_even",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_balance",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "dummy_tuple_holder",
+        "outputs": [
+            {
+                "name": "tuple_holder",
+                "type": "TupleHolder"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a_len",
+                "type": "felt"
+            },
+            {
+                "name": "a",
+                "type": "felt*"
+            }
+        ],
+        "name": "identity",
+        "outputs": [
+            {
+                "name": "res_len",
+                "type": "felt"
+            },
+            {
+                "name": "res",
+                "type": "felt*"
+            },
+            {
+                "name": "res_len_squared",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "points",
+                "type": "(Point, Point)"
+            }
+        ],
+        "name": "sum_points_to_tuple",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "(felt, felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "pointPair",
+                "type": "PointPair"
+            }
+        ],
+        "name": "sum_point_pair",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "Point"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "tuple_holder",
+                "type": "TupleHolder"
+            }
+        ],
+        "name": "add_extra_to_tuple",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "Point"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "felt"
+            },
+            {
+                "name": "b",
+                "type": "felt"
+            }
+        ],
+        "name": "use_almost_equal",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a_len",
+                "type": "felt"
+            },
+            {
+                "name": "a",
+                "type": "felt*"
+            }
+        ],
+        "name": "sum_array",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a_len",
+                "type": "felt"
+            },
+            {
+                "name": "a",
+                "type": "Point*"
+            },
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "name": "increment_point_array",
+        "outputs": [
+            {
+                "name": "res_len",
+                "type": "felt"
+            },
+            {
+                "name": "res",
+                "type": "Point*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "points_len",
+                "type": "felt"
+            },
+            {
+                "name": "points",
+                "type": "Point*"
+            }
+        ],
+        "name": "sum_point_array",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "Point"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a_len",
+                "type": "felt"
+            },
+            {
+                "name": "a",
+                "type": "Point*"
+            },
+            {
+                "name": "i",
+                "type": "felt"
+            },
+            {
+                "name": "b_len",
+                "type": "felt"
+            },
+            {
+                "name": "b",
+                "type": "ComplexStruct*"
+            }
+        ],
+        "name": "complex_array",
+        "outputs": [
+            {
+                "name": "points_len",
+                "type": "felt"
+            },
+            {
+                "name": "points",
+                "type": "Point*"
+            },
+            {
+                "name": "complex_struct_len",
+                "type": "felt"
+            },
+            {
+                "name": "complex_struct",
+                "type": "ComplexStruct*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_signature",
+        "outputs": [
+            {
+                "name": "res_len",
+                "type": "felt"
+            },
+            {
+                "name": "res",
+                "type": "felt*"
+            }
+        ],
+        "type": "function"
+    }
+]
