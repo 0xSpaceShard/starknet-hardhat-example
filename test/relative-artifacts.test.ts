@@ -14,11 +14,5 @@ describe("Starknet", function () {
 
         const { res: balanceBefore } = await contract.call("get_balance");
         expect(balanceBefore).to.deep.equal(0n);
-
-        await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
-        console.log("Increased by 10 + 20");
-
-        const { res: balanceAfter } = await contract.call("get_balance");
-        expect(balanceAfter).to.deep.equal(30n);
     });
 });
