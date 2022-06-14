@@ -170,7 +170,7 @@ describe("Starknet", function () {
   });
 
   it("should deploy to expected address when using salt", async function() {
-    const EXPECTED_ADDRESS = "0x05736c162a7cd243e6e9b417f0c5f8c77006f386e13562986b40e9e51528a6d7";
+    const EXPECTED_ADDRESS = "0x1690254639282d5dfedd67067305caa487e4b9e5755019853bd738dfda3775c";
     console.log("Started deployment");
     const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 }, { salt: "0xa0" });
