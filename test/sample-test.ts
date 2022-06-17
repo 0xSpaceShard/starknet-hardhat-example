@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
-import { expectFeeEstimationStructure } from "./util";
+import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
 
 /**
  * Receives a hex address, converts it to bigint, converts it back to hex.
@@ -35,10 +35,19 @@ describe("Starknet", function () {
   let contractFactory: StarknetContractFactory;
   let eventsContractFactory: StarknetContractFactory;
 
+  let account: Account;
+
+  const MAX_FEE = BigInt(1e18); // should be enough for all cases
+
   before(async function() {
     // assumes contract.cairo and events.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
     eventsContractFactory = await starknet.getContractFactory("events");
+    account = await starknet.getAccountFromAddress(
+      ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+      ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+      "OpenZeppelin"
+    );
   });
 
   it("should work for a fresh deployment", async function() {
@@ -46,6 +55,7 @@ describe("Starknet", function () {
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
     console.log("Deployment transaction hash:", contract.deployTxHash);
     expect(contract.deployTxHash.startsWith("0x")).to.be.true
+
     console.log("Deployed at", contract.address);
     expect(contract.address.startsWith("0x")).to.be.true
     preservedAddress = contract.address;
@@ -54,7 +64,7 @@ describe("Starknet", function () {
     const { res: balanceBefore } = await contract.call("get_balance");
     expect(balanceBefore).to.deep.equal(0n);
 
-    const txHash = await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
+    const txHash = await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 }, { maxFee: MAX_FEE });
     expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
     console.log("Increased by 10 + 20");
@@ -153,7 +163,7 @@ describe("Starknet", function () {
     const { res: balanceBeforeEven } = await contract.call("get_balance");
 
     // should pass
-    const txHash = await contract.invoke("increase_balance_with_even", { amount: 2n });
+    const txHash = await account.invoke(contract, "increase_balance_with_even", { amount: 2n }, { maxFee: MAX_FEE });
     expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
 
@@ -161,7 +171,7 @@ describe("Starknet", function () {
     expect(balanceAfterEven).to.deep.equal(balanceBeforeEven + 2n);
 
     try {
-      await contract.invoke("increase_balance_with_even", { amount: 3 });
+      await account.invoke(contract, "increase_balance_with_even", { amount: 3 }, { maxFee: MAX_FEE });
       expect.fail("Should have failed on invoking with an odd number.");
     } catch (err: any) {
       expect(err.message).to.deep.contain("Transaction rejected. Error message:");
@@ -188,7 +198,7 @@ describe("Starknet", function () {
     const amount2 = -3;
     const expectedBalance= currentBalance+BigInt(amount1)+BigInt(amount2);
 
-    const txHash = await contract.invoke("increase_balance", {amount1: amount1, amount2: amount2});
+    const txHash = await account.invoke(contract, "increase_balance", { amount1, amount2 }, { maxFee: MAX_FEE });
     expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
     
@@ -218,8 +228,8 @@ describe("Starknet", function () {
 
   it("should retrieve transaction details", async function() {
     const contract = await eventsContractFactory.deploy();
-    
-    const txHash = await contract.invoke("increase_balance", { amount: 10 });
+
+    const txHash = await account.invoke(contract, "increase_balance", { amount: 10 }, { maxFee: MAX_FEE });
 
     const tx = await starknet.getTransaction(txHash);
     console.log(tx);
