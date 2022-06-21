@@ -28,7 +28,7 @@ describe("Starknet", function () {
 
     account = <ArgentAccount> await starknet.getAccountFromAddress(
       ensureEnvVar("ARGENT_ACCOUNT_ADDRESS"),
-      ensureEnvVar("ARGENT_ACCOUT_PRIVATE_KEY"),
+      ensureEnvVar("ARGENT_ACCOUNT_PRIVATE_KEY"),
       "Argent"
     );
 
