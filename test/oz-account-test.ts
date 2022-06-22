@@ -5,7 +5,7 @@ import { StarknetContract, StarknetContractFactory, Account } from "hardhat/type
 import { TIMEOUT } from "./constants";
 import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
 
-describe("Starknet", function () {
+describe("OpenZeppelin account", function () {
   this.timeout(TIMEOUT);
 
   let mainContractFactory: StarknetContractFactory;

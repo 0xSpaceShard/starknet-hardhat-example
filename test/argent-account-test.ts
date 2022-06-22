@@ -5,7 +5,7 @@ import { StarknetContract, StarknetContractFactory, ArgentAccount } from "hardha
 import { TIMEOUT } from "./constants";
 import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
 
-describe("Starknet", function () {
+describe("Argent account", function () {
   this.timeout(TIMEOUT);
 
   let mainContractFactory: StarknetContractFactory;
