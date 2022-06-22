@@ -1,24 +1,19 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+
 import { TIMEOUT } from "./constants";
 
-describe("Starknet", function () {
+describe("Starknet with optional arguments in integrated devnet", function() {
     this.timeout(TIMEOUT);
 
-    it("should work for a fresh deployment", async function () {
+    it("should work for args passed in config", async function() {
         console.log("Started deployment");
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
         const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
         console.log("Deployed at", contract.address);
+        const latestBlock = await starknet.getBlock();
 
-        const { res: balanceBefore } = await contract.call("get_balance");
-        expect(balanceBefore).to.deep.equal(0n);
-
-        await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
-        console.log("Increased by 10 + 20");
-
-        const { res: balanceAfter } = await contract.call("get_balance");
-        expect(balanceAfter).to.deep.equal(30n);
+        expect(parseInt(latestBlock.gas_price, 16)).to.be.equal(2000000000);
     });
 });
