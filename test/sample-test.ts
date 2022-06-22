@@ -48,6 +48,7 @@ describe("Starknet", function () {
       ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
       "OpenZeppelin"
     );
+    console.log(`Using account at ${account.address} with public key ${account.publicKey}`);
 
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
@@ -228,16 +229,16 @@ describe("Starknet", function () {
 
     const tx = await starknet.getTransaction(txHash);
     console.log(tx);
+    expect(tx.transaction.transaction_hash).to.deep.equal(txHash);
     expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
-    expect(tx.transaction.calldata).to.deep.equal(["0xa"]);
-    expectAddressEquality(tx.transaction.contract_address,contract.address);
+    expect(BigInt(tx.transaction.max_fee)).to.deep.equal(MAX_FEE);
+    expectAddressEquality(tx.transaction.contract_address, account.address);
 
     const receipt = await starknet.getTransactionReceipt(txHash);
     console.log(receipt);
+    expect(receipt.transaction_hash).to.deep.equal(txHash);
     expect(receipt.status).to.be.oneOf(OK_TX_STATUSES);
-    expectAddressEquality(receipt.events[0].from_address,contract.address);
-    expect(receipt.events[0].data).to.deep.equal(["0x0", "0xa"]);
-
+    expectAddressEquality(receipt.events[0].from_address, contract.address);
   });
 
   it("should estimate fee", async function() {
@@ -260,7 +261,7 @@ describe("Starknet", function () {
 
     // Get latest block data
     const latestBlock = await starknet.getBlock();
-    expect(latestBlock.block_number).to.be.greaterThan(blockByHash.block_number);
+    expect(latestBlock.block_number).to.be.greaterThanOrEqual(blockByHash.block_number);
   });
 
 });
