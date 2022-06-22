@@ -48,36 +48,32 @@ describe("Starknet", function () {
       ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
       "OpenZeppelin"
     );
-  });
 
-  it("should work for a fresh deployment", async function() {
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
     console.log("Deployment transaction hash:", contract.deployTxHash);
     expect(contract.deployTxHash.startsWith("0x")).to.be.true
+    preservedDeployTxHash = contract.deployTxHash;
 
     console.log("Deployed at", contract.address);
     expect(contract.address.startsWith("0x")).to.be.true
     preservedAddress = contract.address;
-    preservedDeployTxHash = contract.deployTxHash;
 
     const { res: balanceBefore } = await contract.call("get_balance");
     expect(balanceBefore).to.deep.equal(0n);
+  });
+  
+  it("should invoke and call on a loaded contract", async function() {
+    const contract = contractFactory.getContractAt(preservedAddress);
+    const { res: balanceBefore } = await contract.call("get_balance");
 
     const txHash = await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 }, { maxFee: MAX_FEE });
     expect(txHash.startsWith("0x")).to.be.true
-    console.log("Tx hash: ", txHash);
+    console.log("Invoke tx hash: ", txHash);
     console.log("Increased by 10 + 20");
 
     const { res: balanceAfter } = await contract.call("get_balance");
-    expect(balanceAfter).to.deep.equal(30n);
-  });
-
-  
-  it("should work for a previously deployed contract", async function() {
-    const contract = contractFactory.getContractAt(preservedAddress);
-    const { res: balance } = await contract.call("get_balance");
-    expect(balance).to.deep.equal(30n);
+    expect(balanceAfter).to.deep.equal(balanceBefore + 30n);
   });
 
   it("should work with tuples", async function() {
@@ -190,7 +186,6 @@ describe("Starknet", function () {
   });
 
   it("should work with negative inputs", async function() {
-    
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: currentBalance } = await contract.call("get_balance");
 
