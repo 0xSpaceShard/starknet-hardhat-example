@@ -1,10 +1,11 @@
 import { expect } from "chai";
 import { starknet } from "hardhat"
+import { TIMEOUT } from "./constants";
 
 describe("Devnet restart", function() {
-    this.timeout(900_000);
+    this.timeout(TIMEOUT);
 
-    it("should pass", async () => {
+    it("should fetch predeployed accounts successfully", async () => {
         const response = await starknet.devnet.getPredeployedAccounts();
         expect(response).to.be.an('array')
         expect(response[0].address).to.be.a('string')
