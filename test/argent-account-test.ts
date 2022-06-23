@@ -38,8 +38,8 @@ describe("Argent account", function () {
   });
 
   it("should load an already deployed account with the correct private key", async function() {
-    const newAccount = await starknet.deployAccount("OpenZeppelin");
-    const loadedAccount = await starknet.getAccountFromAddress(newAccount.address, newAccount.privateKey, "OpenZeppelin");
+    const newAccount = await starknet.deployAccount("Argent");
+    const loadedAccount = await starknet.getAccountFromAddress(newAccount.address, newAccount.privateKey, "Argent");
 
     expect(loadedAccount.address).to.deep.equal(newAccount.address);
     expect(loadedAccount.privateKey === newAccount.privateKey).to.be.true;
@@ -48,7 +48,7 @@ describe("Argent account", function () {
 
   it("should fail when loading an already deployed account with a wrong private key", async function() {
     try{
-      await starknet.getAccountFromAddress(account.address, "0x0123", "OpenZeppelin");
+      await starknet.getAccountFromAddress(account.address, "0x0123", "Argent");
       expect.fail("Should have failed on passing an incorrect private key.");
     } catch(err: any) {
       expect(err.message).to.equal("The provided private key is not compatible with the public key stored in the contract.");
@@ -56,7 +56,7 @@ describe("Argent account", function () {
   });
 
   it("should deploy account with optional parameters", async function() {
-    const account = await starknet.deployAccount("OpenZeppelin", {
+    const account = await starknet.deployAccount("Argent", {
       salt: "0x42",
       privateKey: "0x123",
       token: "0x987"
