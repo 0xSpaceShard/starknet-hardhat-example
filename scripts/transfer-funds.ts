@@ -2,6 +2,7 @@ import hardhat from "hardhat";
 import { ensureEnvVar } from "../test/util";
 import { StarknetContract } from "hardhat/types";
 import { TIMEOUT } from "../test/constants";
+import { expect } from "chai";
 
 function checkImplementation(candidate: string) {
   if (candidate === "Argent" || candidate === "OpenZeppelin") {
@@ -24,48 +25,34 @@ describe("Argent account", function () {
       "../token-contract-artifacts/ERC20"
     );
     const tokenAddress = ensureEnvVar("TOKEN_ADDRESS");
-    console.log("Token address", tokenAddress);
     const token = tokenFactory.getContractAt(tokenAddress);
 
-    const senderAddress = ensureEnvVar("SENDER_ADDRESS");
-    console.log("Sender address", senderAddress);
-    const senderPrivateKey = ensureEnvVar("SENDER_PRIVATE_KEY");
-    console.log("Sender private key", senderPrivateKey);
-    const senderImplementation = checkImplementation(
-      ensureEnvVar("SENDER_IMPLEMENTATION")
-    );
-    console.log("Sender implementation", senderImplementation);
-
     const sender = await hardhat.starknet.getAccountFromAddress(
-      senderAddress,
-      senderPrivateKey,
-      senderImplementation
-    );
-
-    const recipientAddress = ensureEnvVar("RECIPIENT_ADDRESS");
-    console.log("Recipient address", recipientAddress);
-
-    console.log(
-      "Balances before (sender, recipient):",
-      await getBalance(token, sender.address),
-      await getBalance(token, recipientAddress)
+      ensureEnvVar("SENDER_ADDRESS"),
+      ensureEnvVar("SENDER_PRIVATE_KEY"),
+      checkImplementation(ensureEnvVar("SENDER_IMPLEMENTATION"))
     );
 
     const transferAmount = BigInt(ensureEnvVar("TRANSFER_AMOUNT"));
-    console.log(`Transfering fund amount: ${transferAmount}`);
+    const recipientAddress = ensureEnvVar("RECIPIENT_ADDRESS");
+    console.log(`Sending ${transferAmount} wei from ${sender.address} to ${recipientAddress}`);
+
+    const recipientBalanceBefore = await getBalance(token, recipientAddress);
 
     const transferArgs = {
       recipient: recipientAddress,
       amount: { high: 0, low: transferAmount }, // works for transferAmount < 2**128
     };
+    const estimatedFee = await sender.estimateFee(token, "transfer", transferArgs);
     await sender.invoke(token, "transfer", transferArgs, {
-      maxFee: 1e18,
+      maxFee: estimatedFee.amount * 2n,
     });
 
-    console.log(
-      "Balances after (sender, recipient):",
-      await getBalance(token, sender.address),
-      await getBalance(token, recipientAddress)
-    );
+    const recipientBalanceAfter = await getBalance(token, recipientAddress);
+    const expectedBalanceAfter = {
+      high: recipientBalanceBefore.high,
+      low: recipientBalanceBefore.low + transferAmount,
+    };
+    expect(recipientBalanceAfter).to.deep.equal(expectedBalanceAfter);
   });
 });

@@ -34,34 +34,5 @@ describe("Argent account", function () {
         maxFee: 1e18,
       }
     );
-
-
-    // const tokenFactory = await hardhat.starknet.getContractFactory(
-    //   "../token-contract-artifacts/ERC20"
-    // );
-    // const token = tokenFactory.getContractAt(ensureEnvVar("TOKEN_ADDRESS"));
-  
-    // console.log(
-    //   "Balances before (sender, recipient):",
-    //   await getBalance(token, fundedAccount.address),
-    //   await getBalance(token, account.address)
-    // );
-  
-    // const transferAmount = BigInt(ensureEnvVar("TRANSFER_AMOUNT"));
-    // console.log(`Transfering fund amount:${transferAmount}`);
-  
-    // const transferArgs = {
-    //   recipient: account.address,
-    //   amount: { high: 0, low: transferAmount }, // works for transferAmount < 2**128
-    // };
-    // await fundedAccount.invoke(token, "transfer", transferArgs, {
-    //   maxFee: 1e18
-    // });
-  
-    // console.log(
-    //   "Balances after (sender, recipient):",
-    //   await getBalance(token, fundedAccount.address),
-    //   await getBalance(token, account.address)
-    // );
   });
 });
