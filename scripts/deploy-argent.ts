@@ -9,7 +9,7 @@ describe("Argent account", function () {
     const account = <ArgentAccount>await hardhat.starknet.deployAccount(
       "Argent",
       {
-        salt: "0x42",
+        salt: ensureEnvVar("ARGENT_ACCOUNT_SALT"),
         privateKey: ensureEnvVar("ARGENT_ACCOUNT_PRIVATE_KEY"),
       }
     );
