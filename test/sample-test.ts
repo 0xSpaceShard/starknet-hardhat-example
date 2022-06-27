@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
-import { expectFeeEstimationStructure } from "./util";
+import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
 
 /**
  * Receives a hex address, converts it to bigint, converts it back to hex.
@@ -35,39 +35,46 @@ describe("Starknet", function () {
   let contractFactory: StarknetContractFactory;
   let eventsContractFactory: StarknetContractFactory;
 
+  let account: Account;
+
+  const MAX_FEE = BigInt(1e18); // should be enough for all cases
+
   before(async function() {
     // assumes contract.cairo and events.cairo has been compiled
     contractFactory = await starknet.getContractFactory("contract");
     eventsContractFactory = await starknet.getContractFactory("events");
-  });
+    account = await starknet.getAccountFromAddress(
+      ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+      ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+      "OpenZeppelin"
+    );
+    console.log(`Using account at ${account.address} with public key ${account.publicKey}`);
 
-  it("should work for a fresh deployment", async function() {
     console.log("Started deployment");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
     console.log("Deployment transaction hash:", contract.deployTxHash);
     expect(contract.deployTxHash.startsWith("0x")).to.be.true
+    preservedDeployTxHash = contract.deployTxHash;
+
     console.log("Deployed at", contract.address);
     expect(contract.address.startsWith("0x")).to.be.true
     preservedAddress = contract.address;
-    preservedDeployTxHash = contract.deployTxHash;
 
     const { res: balanceBefore } = await contract.call("get_balance");
     expect(balanceBefore).to.deep.equal(0n);
+  });
+  
+  it("should invoke and call on a loaded contract", async function() {
+    const contract = contractFactory.getContractAt(preservedAddress);
+    const { res: balanceBefore } = await contract.call("get_balance");
 
-    const txHash = await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
+    const txHash = await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 }, { maxFee: MAX_FEE });
     expect(txHash.startsWith("0x")).to.be.true
-    console.log("Tx hash: ", txHash);
+    console.log("Invoke tx hash: ", txHash);
     console.log("Increased by 10 + 20");
 
     const { res: balanceAfter } = await contract.call("get_balance");
-    expect(balanceAfter).to.deep.equal(30n);
-  });
-
-  
-  it("should work for a previously deployed contract", async function() {
-    const contract = contractFactory.getContractAt(preservedAddress);
-    const { res: balance } = await contract.call("get_balance");
-    expect(balance).to.deep.equal(30n);
+    expect(balanceAfter).to.deep.equal(balanceBefore + 30n);
   });
 
   it("should work with tuples", async function() {
@@ -153,7 +160,7 @@ describe("Starknet", function () {
     const { res: balanceBeforeEven } = await contract.call("get_balance");
 
     // should pass
-    const txHash = await contract.invoke("increase_balance_with_even", { amount: 2n });
+    const txHash = await account.invoke(contract, "increase_balance_with_even", { amount: 2n }, { maxFee: MAX_FEE });
     expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
 
@@ -161,7 +168,7 @@ describe("Starknet", function () {
     expect(balanceAfterEven).to.deep.equal(balanceBeforeEven + 2n);
 
     try {
-      await contract.invoke("increase_balance_with_even", { amount: 3 });
+      await account.invoke(contract, "increase_balance_with_even", { amount: 3 }, { maxFee: MAX_FEE });
       expect.fail("Should have failed on invoking with an odd number.");
     } catch (err: any) {
       expect(err.message).to.deep.contain("Transaction rejected. Error message:");
@@ -170,7 +177,7 @@ describe("Starknet", function () {
   });
 
   it("should deploy to expected address when using salt", async function() {
-    const EXPECTED_ADDRESS = "0x1877d9ab8314cc8559dad694fa943b6e89606413642433f03166d799649f662";
+    const EXPECTED_ADDRESS = "0x50847ac7438185407a7d567a672a0bd3705d25b2627070ce35267a829d8876c";
     console.log("Started deployment");
     const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
     const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 }, { salt: "0xa0" });
@@ -180,7 +187,6 @@ describe("Starknet", function () {
   });
 
   it("should work with negative inputs", async function() {
-    
     const contract = contractFactory.getContractAt(preservedAddress);
     const { res: currentBalance } = await contract.call("get_balance");
 
@@ -188,7 +194,7 @@ describe("Starknet", function () {
     const amount2 = -3;
     const expectedBalance= currentBalance+BigInt(amount1)+BigInt(amount2);
 
-    const txHash = await contract.invoke("increase_balance", {amount1: amount1, amount2: amount2});
+    const txHash = await account.invoke(contract, "increase_balance", { amount1, amount2 }, { maxFee: MAX_FEE });
     expect(txHash.startsWith("0x")).to.be.true
     console.log("Tx hash: ", txHash);
     
@@ -218,21 +224,21 @@ describe("Starknet", function () {
 
   it("should retrieve transaction details", async function() {
     const contract = await eventsContractFactory.deploy();
-    
-    const txHash = await contract.invoke("increase_balance", { amount: 10 });
+
+    const txHash = await account.invoke(contract, "increase_balance", { amount: 10 }, { maxFee: MAX_FEE });
 
     const tx = await starknet.getTransaction(txHash);
     console.log(tx);
+    expect(tx.transaction.transaction_hash).to.deep.equal(txHash);
     expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
-    expect(tx.transaction.calldata).to.deep.equal(["0xa"]);
-    expectAddressEquality(tx.transaction.contract_address,contract.address);
+    expect(BigInt(tx.transaction.max_fee)).to.deep.equal(MAX_FEE);
+    expectAddressEquality(tx.transaction.contract_address, account.address);
 
     const receipt = await starknet.getTransactionReceipt(txHash);
     console.log(receipt);
+    expect(receipt.transaction_hash).to.deep.equal(txHash);
     expect(receipt.status).to.be.oneOf(OK_TX_STATUSES);
-    expectAddressEquality(receipt.events[0].from_address,contract.address);
-    expect(receipt.events[0].data).to.deep.equal(["0x0", "0xa"]);
-
+    expectAddressEquality(receipt.events[0].from_address, contract.address);
   });
 
   it("should estimate fee", async function() {
@@ -255,7 +261,7 @@ describe("Starknet", function () {
 
     // Get latest block data
     const latestBlock = await starknet.getBlock();
-    expect(latestBlock.block_number).to.be.greaterThan(blockByHash.block_number);
+    expect(latestBlock.block_number).to.be.greaterThanOrEqual(blockByHash.block_number);
   });
 
 });
