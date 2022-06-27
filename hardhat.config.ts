@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from "hardhat/types";
 import "@shardlabs/starknet-hardhat-plugin";
 import "@nomiclabs/hardhat-ethers";
-require("dotenv").config()
+require("dotenv").config();
 
 /**
  * @type import('hardhat/config').HardhatUserConfig

@@ -1,8 +1,10 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
+import { TIMEOUT } from "./constants";
 import { ensureEnvVar } from "./util";
 
 describe("Class declaration", function () {
+  this.timeout(TIMEOUT);
   it("should declare and deploy a class", async function () {
     const contractFactory = await starknet.getContractFactory("contract");
     const classHash = await contractFactory.declare();

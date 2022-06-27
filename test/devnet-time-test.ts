@@ -1,7 +1,9 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
+import { TIMEOUT } from "./constants";
 
 describe("Devnet Block Time", function () {
+    this.timeout(TIMEOUT);
 
     it("Should update time for following block", async function () {
         // Increase time for each block
