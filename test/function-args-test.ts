@@ -119,93 +119,113 @@ describe("Starknet", function () {
   });
 
   it("should work if providing exact amount of members in type alias", async function () {
-    const { res } = await contract.call("dymmy_alias", {
+    const payload = {
       alias: {
-        a: 1,
+        a: 1n,
         point: {
-          x: 2,
-          y: 2,
+          x: 2n,
+          y: 2n,
         },
       },
-    });
+    };
+    const { res } = await contract.call("dymmy_alias", payload);
 
-    expect(res.a).to.equal(1n);
-    expect(res.point).to.eql({ x: 2n, y: 2n });
+    expect(res).to.deep.equal(payload.alias);
   });
 
   it("should work if providing exact amount of members in named tuple", async function () {
-    const { res } = await contract.call("dymmy_named_tuple", {
+    const payload = {
       named_tuple: {
-        a: 1,
+        a: 1n,
         b: {
-          tuple: [2, 3],
-          extra: 4,
+          tuple: [2n, 3n],
+          extra: 4n,
         },
       },
-    });
+    };
+    const { res } = await contract.call("dymmy_named_tuple", payload);
 
-    expect(res.a).to.equal(1n);
-    expect(res.b.tuple).to.eql([2n, 3n]);
-    expect(res.b.extra).to.equal(4n);
+    expect(res).to.deep.equal(payload.named_tuple);
   });
 
   it("should work if providing exact amount of members in nested tuple", async function () {
-    const { res } = await contract.call("nested_tuple", {
-      nested_tuple: [{ x: 1, y: 2 }, [3, 4]],
-    });
+    const payload = {
+      nested_tuple: [{ x: 1n, y: 2n }, [3n, 4n]],
+    };
+    const { res } = await contract.call("nested_tuple", payload);
 
-    expect(res.length).to.equal(2);
-    expect(res[0]).to.eql({ x: 1n, y: 2n });
-    expect(res[1]).to.eql([3n, 4n]);
+    expect(res).to.deep.equal(payload.nested_tuple);
   });
 
   it("should work if providing exact amount of members in nested named tuple", async function () {
-    const { res } = await contract.call("nested_named_tuple", {
-      nested_named_tuple: { x: 1, y: [2, [3, 4]] },
-    });
+    const payload = {
+      nested_named_tuple: { x: 1n, y: [2n, [3n, 4n]] },
+    };
+    const { res } = await contract.call("nested_named_tuple", payload);
 
-    expect(res.x).to.equal(1n);
-    expect(res.y.length).to.equal(2);
-    expect(res.y[0]).to.equal(2n);
-    expect(res.y[1]).to.eql([3n, 4n]);
+    expect(res).to.deep.equal(payload.nested_named_tuple);
   });
 
   it("should work if providing exact amount of members in nested type alias", async function () {
-    const { res } = await contract.call("nested_type_alias", {
+    const payload = {
       nested_type_alias: {
-        a: 1,
+        a: 1n,
         b: {
-          c: 2,
-          d: [3, [4, 5, 6]],
+          c: 2n,
+          d: [3n, [4n, 5n, 6n]],
         },
       },
-    });
+    };
+    const { res } = await contract.call("nested_type_alias", payload);
 
-    expect(res.a).to.equal(1n);
-    expect(res.b.c).to.equal(2n);
-    expect(res.b.d.length).to.equal(2);
-    expect(res.b.d[0]).to.equal(3n);
-    expect(res.b.d[1]).to.eql([4n, 5n, 6n]);
+    expect(res).to.deep.equal(payload.nested_type_alias);
   });
 
   it("should work if providing exact amount of members in nested tuple type alias", async function () {
-    const { res } = await contract.call("nested_tuple_type_alias", {
+    const payload = {
       nested_tuple_type_alias: [
-        [{ x: 1, y: 2 }, 3],
-        4,
-        [5, [6, { x: 7, y: 8 }]],
+        [{ x: 1n, y: 2n }, 3n],
+        4n,
+        [5n, [6n, { x: 7n, y: 8n }]],
       ],
-    });
+    };
 
-    expect(res.length).to.equal(3);
-    expect(res[0].length).to.equal(2);
-    expect(res[0][0]).to.eql({ x: 1n, y: 2n });
-    expect(res[0][1]).to.equal(3n);
-    expect(res[1]).to.equal(4n);
-    expect(res[2].length).to.equal(2);
-    expect(res[2][0]).to.equal(5n);
-    expect(res[2][1].length).to.equal(2);
-    expect(res[2][1][0]).to.equal(6n);
-    expect(res[2][1][1]).to.eql({ x: 7n, y: 8n });
+    const { res } = await contract.call("nested_tuple_type_alias", payload);
+
+    expect(res).to.deep.equal(payload.nested_tuple_type_alias);
+  });
+
+  it("should fail if provided number of members is less than the expected", async function () {
+    try {
+      await contract.call("nested_tuple_type_alias", {
+        nested_tuple_type_alias: [
+          [{ x: 1n, y: 2n }, 3n],
+          4n,
+          [5n, [{ x: 7n, y: 8n }]],
+        ],
+      });
+      expect.fail("Should have failed on passing too few members.");
+    } catch (err: any) {
+      expect(err.message).to.eql(
+        '"nested_tuple_type_alias[2][1]": Expected 2 members, got 1.'
+      );
+    }
+  });
+
+  it("should fail if provided number of members is more than the expected", async function () {
+    try {
+      await contract.call("nested_tuple_type_alias", {
+        nested_tuple_type_alias: [
+          [{ x: 1n, y: 2n }, 3n],
+          4n,
+          [5n, [6n, { x: 7n, y: 8n }], 9n],
+        ],
+      });
+      expect.fail("Should have failed on passing too few members.");
+    } catch (err: any) {
+      expect(err.message).to.equal(
+        '"nested_tuple_type_alias[2]": Expected 2 members, got 3.'
+      );
+    }
   });
 });
