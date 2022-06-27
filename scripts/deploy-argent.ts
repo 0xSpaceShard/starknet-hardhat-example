@@ -1,5 +1,5 @@
 import hardhat from "hardhat";
-import { ArgentAccount, StarknetContract } from "hardhat/types/runtime";
+import { ArgentAccount } from "hardhat/types/runtime";
 import { TIMEOUT } from "../test/constants";
 import { ensureEnvVar, expectAddressEquality } from "../test/util";
 
@@ -23,16 +23,6 @@ describe("Argent account", function () {
       ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
       "OpenZeppelin"
     );
-    await fundedAccount.invoke(
-      account.starknetContract,
-      "initialize",
-      {
-        signer: account.publicKey,
-        guardian: account.guardianPublicKey || "0",
-      },
-      {
-        maxFee: 1e18,
-      }
-    );
+    await account.initialize({ fundedAccount, maxFee: 1e18 });
   });
 });
