@@ -24,9 +24,20 @@ describe("Class declaration", function () {
     );
 
     const initialBalance = 10n;
-    const deploymentHash = await account.invoke(deployer, "deploy_contract", {
-      initial_balance: initialBalance,
-    });
+    const constructorArgs = { initial_balance: initialBalance };
+    const estimatedFee = await account.estimateFee(
+      deployer,
+      "deploy_contract",
+      constructorArgs
+    );
+    const deploymentHash = await account.invoke(
+      deployer,
+      "deploy_contract",
+      constructorArgs,
+      {
+        maxFee: estimatedFee.amount * 2n,
+      }
+    );
 
     const receipt = await starknet.getTransactionReceipt(deploymentHash);
     const deploymentEvent = receipt.events[0];
