@@ -1,9 +1,11 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
+import { TIMEOUT } from "./constants";
 
 describe("Devnet Block Time", function () {
+    this.timeout(TIMEOUT);
 
-    it.only("Should update time for following block", async function () {
+    it("Should update time for following block", async function () {
         // Increase time for each block
         const resIncrease = await starknet.devnet.increaseTime(1000);
         expect(resIncrease.timestamp_increased_by).to.be.equal(1000);

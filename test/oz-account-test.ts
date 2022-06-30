@@ -3,9 +3,9 @@ import { BigNumber } from "ethers";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { expectFeeEstimationStructure } from "./util";
+import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
 
-describe("Starknet", function () {
+describe("OpenZeppelin account", function () {
   this.timeout(TIMEOUT);
 
   let mainContractFactory: StarknetContractFactory;
@@ -14,44 +14,42 @@ describe("Starknet", function () {
   let utilContract: StarknetContract;
 
   let account: Account;
-  let accountAddress: string;
-  let privateKey: string;
-  let publicKey: string;
 
-  before(async function() {
-    mainContractFactory = await starknet.getContractFactory("contract");
-    utilContractFactory = await starknet.getContractFactory("contracts/util.cairo");
-
+  before(async function() {    
     console.log("Started deployment");
-    mainContract = await mainContractFactory.deploy({ initial_balance: 0 });
-    utilContract = await utilContractFactory.deploy();
-    console.log("Main deployed at", mainContract.address);
-    console.log("Util deployed at", utilContract.address);
 
+    mainContractFactory = await starknet.getContractFactory("contract");
+    mainContract = await mainContractFactory.deploy({ initial_balance: 0 }, { salt: "0x42" });
+    console.log("Main deployed at", mainContract.address);
+
+    utilContractFactory = await starknet.getContractFactory("contracts/util.cairo");
+    utilContract = await utilContractFactory.deploy({}, { salt: "0x42" });
+    console.log("Util deployed at", utilContract.address);
 
     // can also be declared as
     // account = (await starknet.deployAccount("OpenZeppelin")) as OpenZeppelinAccount
     // if imported from hardhat/types/runtime"
-    account = await starknet.deployAccount("OpenZeppelin");
-    accountAddress = account.address;
-    privateKey = account.privateKey;
-    publicKey = account.publicKey;
-    console.log("Deployed account at address:", account.address);
-    console.log("Private and public key:", privateKey, publicKey);
+
+    account = await starknet.getAccountFromAddress(
+        ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+        ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+        "OpenZeppelin"
+    );
+    console.log(`Account address: ${account.address}, public key: ${account.publicKey})`);
   });
 
   it("should load an already deployed account with the correct private key", async function() {
+    const newAccount = await starknet.deployAccount("OpenZeppelin");
+    const loadedAccount = await starknet.getAccountFromAddress(newAccount.address, newAccount.privateKey, "OpenZeppelin");
 
-    const loadedAccount = await starknet.getAccountFromAddress(accountAddress, privateKey, "OpenZeppelin");
-
-    expect(loadedAccount.address).to.deep.equal(accountAddress);
-    expect(loadedAccount.privateKey).to.deep.equal(privateKey);
-    expect(loadedAccount.publicKey).to.deep.equal(publicKey);
+    expect(loadedAccount.address).to.deep.equal(newAccount.address);
+    expect(loadedAccount.privateKey === newAccount.privateKey).to.be.true;
+    expect(loadedAccount.publicKey).to.deep.equal(newAccount.publicKey);
   });
 
   it("should fail when loading an already deployed account with a wrong private key", async function() {
     try{
-      await starknet.getAccountFromAddress(accountAddress, "0x0123", "OpenZeppelin");
+      await starknet.getAccountFromAddress(account.address, "0x0123", "OpenZeppelin");
       expect.fail("Should have failed on passing an incorrect private key.");
     } catch(err: any) {
       expect(err.message).to.equal("The provided private key is not compatible with the public key stored in the contract.");
@@ -65,16 +63,6 @@ describe("Starknet", function () {
       token: "0x987"
     });
     expect(account.privateKey).to.equal("0x123");
-  });
-
-  it("should invoke a function on another contract", async function() {
-    const { res: currBalance } = await account.call(mainContract, "get_balance");
-    const amount1 = 10n;
-    const amount2 = 20n;
-    await account.invoke(mainContract, "increase_balance", { amount1, amount2 });
-
-    const { res: newBalance } = await account.call(mainContract, "get_balance");
-    expect(newBalance).to.deep.equal(currBalance + amount1 + amount2);
   });
 
   it("should work with arrays through an account", async function() {
@@ -93,7 +81,7 @@ describe("Starknet", function () {
     expect(sum).to.deep.equal([4n, 6n]);
   });
 
-  it("should return fee estimate", async function() {
+  it("should estimate, invoke and call", async function() {
     const { res: initialBalance } = await account.call(mainContract, "get_balance");
     const estimatedFee = await account.estimateFee(
       mainContract,
@@ -103,28 +91,27 @@ describe("Starknet", function () {
 
     expectFeeEstimationStructure(estimatedFee);
 
-    // TODO uncomment when supported on both alpha and devnet
-    // try {
-    //   await account.invoke(
-    //     mainContract,
-    //     "increase_balance",
-    //     { amount1: 10, amount2: 20 },
-    //     { maxFee: estimatedFee.amount / 10n }
-    //   );
-    //   expect.fail("Should have failed earlier");
-    // } catch (err: any) {
-    //   expect(err.message).to.contain("Actual fee exceeded max fee");
-    // }
+    try {
+      await account.invoke(
+        mainContract,
+        "increase_balance",
+        { amount1: 10, amount2: 20 },
+        { maxFee: estimatedFee.amount / 2n }
+      );
+      expect.fail("Should have failed earlier");
+    } catch (err: any) {
+      expect(err.message).to.contain("Actual fee exceeded max fee");
+    }
 
-    // await account.invoke(
-    //   mainContract,
-    //   "increase_balance",
-    //   { amount1: 10, amount2: 20 },
-    //   { maxFee: estimatedFee.amount * 10n }
-    // );
+    await account.invoke(
+      mainContract,
+      "increase_balance",
+      { amount1: 10, amount2: 20 },
+      { maxFee: estimatedFee.amount * 2n }
+    );
 
     const { res: finalBalance } = await account.call(mainContract, "get_balance");
-    expect(finalBalance).to.equal(initialBalance);
+    expect(finalBalance).to.equal(initialBalance + 30n);
   });
 
   // Multicall / Multiinvoke testing
@@ -143,18 +130,15 @@ describe("Starknet", function () {
         toContract: mainContract,
         functionName: "increase_balance",
         calldata: {amount1, amount2}
-      },
-      {
-        toContract: mainContract,
-        functionName: "increase_balance",
-        calldata: {amount1, amount2}
       }
     ];
 
-    const txHashArray = await account.multiInvoke(invokeArray);
-    console.log(txHashArray);
+    const estimatedFee = await account.multiEstimateFee(invokeArray);
+    expectFeeEstimationStructure(estimatedFee);
+
+    await account.multiInvoke(invokeArray, { maxFee: estimatedFee.amount * 2n });
     const { res: newBalance } = await account.call(mainContract, "get_balance");
-    expect(newBalance).to.deep.equal(currBalance + 90n);
+    expect(newBalance).to.deep.equal(currBalance + 60n);
   });
 
   it("should handle multiple calls through an account", async function() {
@@ -199,7 +183,6 @@ describe("Starknet", function () {
 
     const results = await account.multiCall(callArray);
 
-
     expect(results).to.deep.equal([
       { res: [4n,6n] },
       { res: 1n },
@@ -208,25 +191,5 @@ describe("Starknet", function () {
       { res: currBalance },
       { res: 1n }
     ]);
-  });
-
-  it("should handle multiple fee estimations through an account", async function() {
-    const amount1 = 10n;
-    const amount2 = 20n;
-    const invokeArray = [
-      {
-        toContract: mainContract,
-        functionName: "increase_balance",
-        calldata: { amount1, amount2 }
-      },
-      {
-        toContract: mainContract,
-        functionName: "increase_balance",
-        calldata: { amount1, amount2 }
-      }
-    ];
-
-    const fee = await account.multiEstimateFee(invokeArray);
-    expectFeeEstimationStructure(fee);
   });
 });
