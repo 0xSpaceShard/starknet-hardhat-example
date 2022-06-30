@@ -3,28 +3,12 @@ import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
-import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
-
-/**
- * Receives a hex address, converts it to bigint, converts it back to hex.
- * This is done to strip leading zeros.
- * @param address a hex string representation of an address
- * @returns an adapted hex string representation of the address
- */
- function adaptAddress(address: string) {
-  return "0x" + BigInt(address).toString(16);
-}
-
-const OK_TX_STATUSES = ["PENDING", "ACCEPTED_ON_L2", "ACCEPTED_ON_L1"]
-
-/**
- * Expects address equality after adapting them.
- * @param actual 
- * @param expected 
- */
-function expectAddressEquality(actual: string, expected: string) {
-  expect(adaptAddress(actual)).to.equal(adaptAddress(expected));
-}
+import {
+  ensureEnvVar,
+  expectFeeEstimationStructure,
+  OK_TX_STATUSES,
+  expectAddressEquality,
+} from "./util";
 
 describe("Starknet", function () {
   this.timeout(TIMEOUT);

@@ -16,6 +16,11 @@ end
 func increase_balance_called(current_balance : felt, amount : felt):
 end
 
+#An event emitted to test event.
+@event
+func event_test(arg1 : felt, arg2 : felt, arg3 : felt, arg4 : felt):
+end
+
 # Increases the balance of the user by the given amount.
 @external
 func increase_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -34,6 +39,7 @@ func increase_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_ch
 
     # Emit the event.
     increase_balance_called.emit(current_balance=res, amount=amount)
+    event_test.emit(arg1=4, arg2=10, arg3=56, arg4=12)
 
     return ()
 end
