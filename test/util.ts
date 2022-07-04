@@ -22,7 +22,7 @@ export function ensureEnvVar(varName: string): string {
  * @param address a hex string representation of an address
  * @returns an adapted hex string representation of the address
  */
-export function adaptAddress(address: string) {
+function adaptAddress(address: string) {
   return "0x" + BigInt(address).toString(16);
 }
 
