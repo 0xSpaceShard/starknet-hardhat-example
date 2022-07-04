@@ -20,10 +20,15 @@ describe("Starknet", function () {
     const receipt = await starknet.getTransactionReceipt(txHash);
     const events = await contract.decodeEvents(receipt.events);
 
-    console.log(events);
     const payload = [
-      { current_balance: 0n, amount: 10n },
-      { arg1: 4n, arg2: 10n, arg3: 56n, arg4: 12n },
+      {
+        name: "increase_balance_called",
+        data: { current_balance: 0n, amount: 10n },
+      },
+      {
+        name: "event_test",
+        data: { arg1: 4n, arg2: 10n, arg3: 56n, arg4: 12n },
+      },
     ];
 
     expect(events).to.deep.equal(payload);
