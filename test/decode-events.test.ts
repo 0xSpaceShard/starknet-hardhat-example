@@ -40,11 +40,11 @@ describe("Starknet", function () {
 
     expect(events).to.deep.equal([
       {
-        name: "simple_event_test",
+        name: "simple_event",
         data: { arg1: 59n, arg2: 42n, arg3: 666n },
       },
       {
-        name: "complex_event_test",
+        name: "complex_event",
         data: {
           simple: 4n,
           struc: {
