@@ -30,11 +30,11 @@ end
 
 # Events emitted to test event.
 @event
-func complex_event_test(simple : felt, struc : TestEvent, alias : AliasEvent, array_len : felt, array : felt*):
+func complex_event(simple : felt, struc : TestEvent, alias : AliasEvent, array_len : felt, array : felt*):
 end
 
 @event
-func simple_event_test(arg1 : felt, arg2 : felt, arg3 : felt):
+func simple_event(arg1 : felt, arg2 : felt, arg3 : felt):
 end
 
 # Increases the balance of the user by the given amount.
@@ -66,8 +66,8 @@ func send_events{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     let test = TestEvent(a=10, b=45, c=89)
     let uint = Uint256(40,5)
     local pt : AliasEvent = (x=40, y=5)
-    simple_event_test.emit(arg1=59, arg2=42, arg3=666)
-    complex_event_test.emit(simple=4, struc=test, alias=pt, array_len=array_len, array=array)
+    simple_event.emit(arg1=59, arg2=42, arg3=666)
+    complex_event.emit(simple=4, struc=test, alias=pt, array_len=array_len, array=array)
     return ()
 end
 
