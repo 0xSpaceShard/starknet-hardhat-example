@@ -23,6 +23,10 @@ npm ci
 npx hardhat starknet-compile contracts/contract.cairo
 ```
 
+### Set up environment variables
+
+Some scripts require environment variables (search for usage of `ensureEnvVar` in the repo). You can define these variables in an `.env` file in the project root.
+
 #### Run a test that interacts with the compiled contract
 
 ```
