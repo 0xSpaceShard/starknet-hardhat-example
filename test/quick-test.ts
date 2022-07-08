@@ -7,8 +7,6 @@ import { ensureEnvVar } from "./util";
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
 
-    const MAX_FEE = BigInt(1e18); // should be enough for all cases
-
     it("should work for a fresh deployment", async function () {
         const accountAddress = ensureEnvVar("OZ_ACCOUNT_ADDRESS");
         const accountPrivateKey = ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY");
@@ -32,7 +30,7 @@ describe("Starknet", function () {
         const fee = await account.estimateFee(contract, "increase_balance", args);
         console.log("Estimated fee:", fee);
 
-        await account.invoke(contract, "increase_balance", args, { maxFee: MAX_FEE });
+        await account.invoke(contract, "increase_balance", args, { maxFee: fee.amount * 2n });
         console.log("Increased balance");
 
         const { res: balanceAfter } = await account.call(contract, "get_balance");
