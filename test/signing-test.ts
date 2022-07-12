@@ -51,7 +51,7 @@ describe("Starknet", function () {
     });
     console.log("Deployed authContract at", authContract.address);
 
-    const messageHash = starkwareCrypto.pedersen([amount,0]);
+    const messageHash = starkwareCrypto.pedersen([amount as any ,0 as any]);
     const signedMessage = starkwareCrypto.sign(keyPair, messageHash);
     const signature = [// previously calculated for amount and publicKey used in this case
       BigInt("0x" + signedMessage.r.toString(16)),
