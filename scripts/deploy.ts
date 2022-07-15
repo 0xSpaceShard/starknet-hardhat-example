@@ -3,7 +3,7 @@ import { ensureEnvVar } from "../test/util";
 
 async function main() {
 
-    const account = await starknet.getAccountFromAddress(
+    const account = await hardhat.starknet.getAccountFromAddress(
         ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
         ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
         "OpenZeppelin"
