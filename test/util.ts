@@ -7,6 +7,8 @@ export function expectFeeEstimationStructure(fee: any) {
   expect(fee).to.haveOwnProperty("amount");
   expect(typeof fee.amount).to.equal("bigint");
   expect(fee.unit).to.equal("wei");
+  expect(typeof fee.gas_price).to.equal("bigint");
+  expect(typeof fee.gas_usage).to.equal("bigint");
 }
 
 export function ensureEnvVar(varName: string): string {
