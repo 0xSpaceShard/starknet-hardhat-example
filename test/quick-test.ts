@@ -17,7 +17,9 @@ describe("Starknet", function () {
         );
         console.log(`Account address: ${account.address}, public key: ${account.publicKey})`);
 
-        const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
+        const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
+            "contract"
+        );
 
         console.log("Started deployment");
         const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
@@ -25,7 +27,7 @@ describe("Starknet", function () {
 
         const { res: balanceBefore } = await account.call(contract, "get_balance");
         expect(balanceBefore).to.deep.equal(0n);
-        
+
         const args = { amount1: 10, amount2: 20 };
         const fee = await account.estimateFee(contract, "increase_balance", args);
         console.log("Estimated fee:", fee);

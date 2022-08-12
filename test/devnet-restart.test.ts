@@ -3,7 +3,7 @@ import { starknet } from "hardhat";
 
 import { TIMEOUT } from "./constants";
 
-describe("Devnet restart", function() {
+describe("Devnet restart", function () {
     this.timeout(TIMEOUT);
 
     it("should pass", async () => {
@@ -27,10 +27,10 @@ describe("Devnet restart", function() {
         } catch (error: any) {
             expect(error.message).to.contain("No contract at the provided address");
         }
-    })
+    });
 
     it("should enable to redeploy to the same address", async () => {
-        const salt = "0xbabe"
+        const salt = "0xbabe";
 
         const contractFactory = await starknet.getContractFactory("contract");
         let contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
@@ -40,7 +40,7 @@ describe("Devnet restart", function() {
 
         contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
         expect(contract.address).to.equal(initialAddress);
-    })
+    });
 
     it("should enable to use the same instance", async () => {
         const salt = "0xb0a";
@@ -65,5 +65,5 @@ describe("Devnet restart", function() {
 
         const { res: balanceAfterInvoke } = await contract.call("get_balance");
         expect(balanceAfterInvoke).to.deep.equal(30n);
-    })
+    });
 });

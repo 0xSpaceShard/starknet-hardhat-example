@@ -5,12 +5,14 @@ import axios from "axios";
 
 import { TIMEOUT } from "./constants";
 
-describe("Starknet with integrated devnet", function() {
+describe("Starknet with integrated devnet", function () {
     this.timeout(TIMEOUT);
 
-    it("should work for a fresh deployment", async function() {
+    it("should work for a fresh deployment", async function () {
         console.log("Started deployment");
-        const contractFactory: StarknetContractFactory = await starknet.getContractFactory("contract");
+        const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
+            "contract"
+        );
         const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
         console.log("Deployed at", contract.address);
 
@@ -24,9 +26,9 @@ describe("Starknet with integrated devnet", function() {
         expect(balanceAfter).to.deep.equal(30n);
     });
 
-    it("should have devnet endpoint alive", async() => {
+    it("should have devnet endpoint alive", async () => {
         const response = await axios.get("http://127.0.0.1:5050/feeder_gateway/is_alive");
 
         expect(response.status).to.equal(200);
-    })
+    });
 });

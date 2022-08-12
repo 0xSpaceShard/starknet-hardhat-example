@@ -15,7 +15,7 @@ describe("Starknet", function () {
     });
 
     it("should get contract artifacts on recompilation", async function () {
-        expect(contractFactory.getAbiPath()).to.contain('contract_abi.json');
+        expect(contractFactory.getAbiPath()).to.contain("contract_abi.json");
         expect(testCacheContractFactory).not.to.be.undefined;
     });
 
