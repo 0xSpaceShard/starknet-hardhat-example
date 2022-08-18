@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat --network localhost test",
-    "lint": "eslint test",
-    "format": "prettier -wl test"
+    "lint": "eslint $(git ls-files '*.ts') --fix",
+    "format": "prettier -wl $(git ls-files '*.ts')"
   },
   "author": "",
   "license": "ISC",
