@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat --network localhost test",
-    "lint": "eslint test",
-    "format": "prettier -wl test"
+    "lint": "eslint $(git ls-files '*.ts')",
+    "format": "prettier-eslint --list-different --write $(git ls-files '*.ts')"
   },
   "author": "",
   "license": "ISC",
@@ -23,7 +23,7 @@
     "dotenv": "^16.0.1",
     "eslint": "^8.5.0",
     "ethers": "^5.4.6",
-    "prettier": "^2.5.1",
+    "prettier-eslint-cli": "^7.0.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
   },
