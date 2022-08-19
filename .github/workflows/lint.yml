@@ -32,4 +32,4 @@ jobs:
 
             - name: Run linters
               continue-on-error: false
-              run: npm run format && npm run lint
+              run: npm run lint

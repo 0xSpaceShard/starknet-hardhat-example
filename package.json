@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npx hardhat --network localhost test",
     "lint": "eslint $(git ls-files '*.ts')",
-    "format": "prettier-eslint --list-different $(git ls-files '*.ts')"
+    "format": "prettier-eslint --list-different --write $(git ls-files '*.ts')"
   },
   "author": "",
   "license": "ISC",
