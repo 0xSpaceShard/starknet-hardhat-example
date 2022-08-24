@@ -15,14 +15,8 @@ describe("Delegate proxy", function () {
             implementation_hash_: implementationClassHash
         });
         console.log("Deployed proxy to", proxy.address);
-        // eslint-disable-next-line no-warning-comments
-        // TODO remove ts-ignore once abi and abiPath are made public
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        proxy.abi = implementationFactory.abi;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        proxy.abiPath = implementationFactory.abiPath;
+
+        proxy.setImplementation(implementationFactory);
 
         const { res: initialProxyBalance } = await proxy.call("get_balance");
         expect(initialProxyBalance).to.equal(0n); // proxy is using its own storage
