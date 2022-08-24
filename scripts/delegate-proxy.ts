@@ -16,7 +16,7 @@ describe("Delegate proxy", function () {
         });
         console.log("Deployed proxy to", proxy.address);
 
-        proxy.setAbi(implementationFactory.abi, implementationFactory.abiPath);
+        proxy.setImplementation(implementationFactory);
 
         const { res: initialProxyBalance } = await proxy.call("get_balance");
         expect(initialProxyBalance).to.equal(0n); // proxy is using its own storage
