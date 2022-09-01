@@ -43,10 +43,8 @@ describe("Argent account", function () {
             recipient: recipientAddress,
             amount: { high: 0, low: transferAmount } // works for transferAmount < 2**128
         };
-        const estimatedFee = await sender.estimateFee(token, "transfer", transferArgs);
-        await sender.invoke(token, "transfer", transferArgs, {
-            maxFee: estimatedFee.amount * 2n
-        });
+
+        await sender.invoke(token, "transfer", transferArgs);
 
         const recipientBalanceAfter = await getBalance(token, recipientAddress);
         const expectedBalanceAfter = {
