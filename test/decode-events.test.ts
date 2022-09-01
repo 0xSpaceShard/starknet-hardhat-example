@@ -18,7 +18,7 @@ describe("Starknet", function () {
     it("should decode events from increase balance successfully", async function () {
         const txHash = await contract.invoke("increase_balance", { amount: 10 });
         const receipt = await starknet.getTransactionReceipt(txHash);
-        const events = await contract.decodeEvents(receipt.events);
+        const events = contract.decodeEvents(receipt.events);
 
         expect(events).to.deep.equal([
             {
@@ -33,7 +33,7 @@ describe("Starknet", function () {
             array: [42, 78, 54, 8]
         });
         const receipt = await starknet.getTransactionReceipt(txHash);
-        const events = await contract.decodeEvents(receipt.events);
+        const events = contract.decodeEvents(receipt.events);
 
         expect(events).to.deep.equal([
             {
