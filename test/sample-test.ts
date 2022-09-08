@@ -52,18 +52,31 @@ describe("Starknet", function () {
         const contract = contractFactory.getContractAt(preservedAddress);
         const { res: balanceBefore } = await contract.call("get_balance");
 
-        const txHash = await account.invoke(
-            contract,
-            "increase_balance",
-            { amount1: 10, amount2: 20 },
-            { maxFee: MAX_FEE }
-        );
+        const txHash = await account.invoke(contract, "increase_balance", {
+            amount1: 10,
+            amount2: 20
+        });
         expect(txHash.startsWith("0x")).to.be.true;
         console.log("Invoke tx hash: ", txHash);
         console.log("Increased by 10 + 20");
 
         const { res: balanceAfter } = await contract.call("get_balance");
         expect(balanceAfter).to.deep.equal(balanceBefore + 30n);
+    });
+
+    it("should fail on invoke", async function () {
+        const contract = contractFactory.getContractAt(preservedAddress);
+        try {
+            await account.invoke(
+                contract,
+                "increase_balance",
+                { amount1: 10, amount2: 20 },
+                { maxFee: MAX_FEE, overhead: 2 }
+            );
+            expect.fail("Should have failed on invoking using options with maxFee and overhead.");
+        } catch (err: any) {
+            expect(err.message).to.deep.contain("Both maxFee and overhead cannot be specified");
+        }
     });
 
     it("should work with tuples", async function () {
@@ -149,12 +162,7 @@ describe("Starknet", function () {
         const { res: balanceBeforeEven } = await contract.call("get_balance");
 
         // should pass
-        const txHash = await account.invoke(
-            contract,
-            "increase_balance_with_even",
-            { amount: 2n },
-            { maxFee: MAX_FEE }
-        );
+        const txHash = await account.invoke(contract, "increase_balance_with_even", { amount: 2n });
         expect(txHash.startsWith("0x")).to.be.true;
         console.log("Tx hash: ", txHash);
 
@@ -199,12 +207,7 @@ describe("Starknet", function () {
         const amount2 = -3;
         const expectedBalance = currentBalance + BigInt(amount1) + BigInt(amount2);
 
-        const txHash = await account.invoke(
-            contract,
-            "increase_balance",
-            { amount1, amount2 },
-            { maxFee: MAX_FEE }
-        );
+        const txHash = await account.invoke(contract, "increase_balance", { amount1, amount2 });
         expect(txHash.startsWith("0x")).to.be.true;
         console.log("Tx hash: ", txHash);
 

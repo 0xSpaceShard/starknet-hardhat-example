@@ -39,12 +39,10 @@ describe("Argent account", function () {
 
         const recipientBalanceBefore = await getBalance(token, recipientAddress);
 
-        const transferArgs = {
+        await sender.invoke(token, "transfer", {
             recipient: recipientAddress,
             amount: { high: 0, low: transferAmount } // works for transferAmount < 2**128
-        };
-
-        await sender.invoke(token, "transfer", transferArgs);
+        });
 
         const recipientBalanceAfter = await getBalance(token, recipientAddress);
         const expectedBalanceAfter = {
