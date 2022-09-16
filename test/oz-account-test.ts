@@ -72,13 +72,13 @@ describe("OpenZeppelin account", function () {
     });
 
     it("should work with arrays through an account", async function () {
-        const { res } = await account.call(mainContract, "sum_array", { a: [1, 2, 3] });
+        const { res } = await mainContract.call("sum_array", { a: [1, 2, 3] });
         expect(res).to.equal(6n);
     });
 
     it("should work with BigNumbers and tuples through an account", async function () {
         // passing Points (1, 2) and (3, 4) in a tuple
-        const { res: sum } = await account.call(mainContract, "sum_points_to_tuple", {
+        const { res: sum } = await mainContract.call("sum_points_to_tuple", {
             points: [
                 { x: BigNumber.from(1), y: BigNumber.from(2) },
                 { x: 3, y: 4 }
@@ -88,7 +88,7 @@ describe("OpenZeppelin account", function () {
     });
 
     it("should estimate, invoke and call", async function () {
-        const { res: initialBalance } = await account.call(mainContract, "get_balance");
+        const { res: initialBalance } = await mainContract.call("get_balance");
         const estimatedFee = await account.estimateFee(mainContract, "increase_balance", {
             amount1: 10,
             amount2: 20
@@ -115,13 +115,13 @@ describe("OpenZeppelin account", function () {
             { maxFee: estimatedFee.amount * 2n }
         );
 
-        const { res: finalBalance } = await account.call(mainContract, "get_balance");
+        const { res: finalBalance } = await mainContract.call("get_balance");
         expect(finalBalance).to.equal(initialBalance + 30n);
     });
 
     // Multicall / Multiinvoke testing
     it("should handle multiple invokes through an account", async function () {
-        const { res: currBalance } = await account.call(mainContract, "get_balance");
+        const { res: currBalance } = await mainContract.call("get_balance");
         const amount1 = 10n;
         const amount2 = 20n;
 
@@ -142,12 +142,12 @@ describe("OpenZeppelin account", function () {
         expectFeeEstimationStructure(estimatedFee);
 
         await account.multiInvoke(invokeArray, { maxFee: estimatedFee.amount * 2n });
-        const { res: newBalance } = await account.call(mainContract, "get_balance");
+        const { res: newBalance } = await mainContract.call("get_balance");
         expect(newBalance).to.deep.equal(currBalance + 60n);
     });
 
     it("should handle multiple calls through an account", async function () {
-        const { res: currBalance } = await account.call(mainContract, "get_balance");
+        const { res: currBalance } = await mainContract.call("get_balance");
 
         const callArray = [
             {

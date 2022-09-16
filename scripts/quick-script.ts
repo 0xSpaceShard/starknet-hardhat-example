@@ -12,7 +12,7 @@ async function main() {
     const contract = await contractFactory.deploy({ initial_balance: 0 });
 
     console.log("Deployed to:", contract.address);
-    const { res: balanceBefore } = await account.call(contract, "get_balance");
+    const { res: balanceBefore } = await contract.call("get_balance");
     console.log("Balance before invoke: ", balanceBefore);
 
     const fee = await account.estimateFee(contract, "increase_balance", {
@@ -27,7 +27,7 @@ async function main() {
             maxFee: fee.amount * 2n
         }
     );
-    const { res: balanceAfter } = await account.call(contract, "get_balance");
+    const { res: balanceAfter } = await contract.call("get_balance");
     console.log("Balance after invoke:", balanceAfter);
 }
 

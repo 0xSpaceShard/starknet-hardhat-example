@@ -25,7 +25,7 @@ describe("Starknet", function () {
         const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
         console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
 
-        const { res: balanceBefore } = await account.call(contract, "get_balance");
+        const { res: balanceBefore } = await contract.call("get_balance");
         expect(balanceBefore).to.deep.equal(0n);
 
         const args = { amount1: 10, amount2: 20 };
@@ -35,7 +35,7 @@ describe("Starknet", function () {
         await account.invoke(contract, "increase_balance", args, { maxFee: fee.amount * 2n });
         console.log("Increased balance");
 
-        const { res: balanceAfter } = await account.call(contract, "get_balance");
+        const { res: balanceAfter } = await contract.call("get_balance");
         expect(balanceAfter).to.deep.equal(30n);
     });
 });
