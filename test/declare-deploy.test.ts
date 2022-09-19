@@ -6,8 +6,14 @@ import { ensureEnvVar } from "./util";
 describe("Class declaration", function () {
     this.timeout(TIMEOUT);
     it("should declare and deploy a class", async function () {
+        const account = await starknet.getAccountFromAddress(
+            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+            "OpenZeppelin"
+        );
+
         const contractFactory = await starknet.getContractFactory("contract");
-        const classHash = await contractFactory.declare();
+        const classHash = await account.declare(contractFactory);
 
         const deployerFactory = await starknet.getContractFactory("deployer");
         const deployer = await deployerFactory.deploy(
@@ -15,12 +21,6 @@ describe("Class declaration", function () {
                 class_hash: classHash
             },
             { salt: "0x42" }
-        );
-
-        const account = await starknet.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
         );
 
         const initialBalance = 10n;
