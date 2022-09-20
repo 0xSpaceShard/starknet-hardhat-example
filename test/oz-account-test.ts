@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { BigNumber } from "ethers";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
@@ -69,22 +68,6 @@ describe("OpenZeppelin account", function () {
             token: "0x987"
         });
         expect(account.privateKey).to.equal("0x123");
-    });
-
-    it("should work with arrays through an account", async function () {
-        const { res } = await mainContract.call("sum_array", { a: [1, 2, 3] });
-        expect(res).to.equal(6n);
-    });
-
-    it("should work with BigNumbers and tuples through an account", async function () {
-        // passing Points (1, 2) and (3, 4) in a tuple
-        const { res: sum } = await mainContract.call("sum_points_to_tuple", {
-            points: [
-                { x: BigNumber.from(1), y: BigNumber.from(2) },
-                { x: 3, y: 4 }
-            ]
-        });
-        expect(sum).to.deep.equal([4n, 6n]);
     });
 
     it("should estimate, invoke and call", async function () {
