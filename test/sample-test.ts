@@ -177,7 +177,7 @@ describe("Starknet", function () {
 
     it("should deploy to expected address when using salt", async function () {
         const EXPECTED_ADDRESS =
-            "0x7dff75b7ed62cb07d1b275d75e8915cf5d992993bbb58c57d5f551c8e789c0f";
+            "0x1f926f1e71fcca8293baa28f30867f11f74a922d8917fbdcacb2bd54f3a6a89";
         console.log("Started deployment");
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
             "contract"
@@ -276,7 +276,10 @@ describe("Starknet", function () {
 
     it("should estimate fee", async function () {
         const contract = contractFactory.getContractAt(preservedAddress);
-        const fee = await contract.estimateFee("increase_balance", { amount1: 10, amount2: 20 });
+        const fee = await account.estimateFee(contract, "increase_balance", {
+            amount1: 10,
+            amount2: 20
+        });
         expectFeeEstimationStructure(fee);
     });
 

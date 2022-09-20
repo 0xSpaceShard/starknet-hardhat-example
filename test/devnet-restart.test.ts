@@ -37,7 +37,9 @@ describe("Devnet restart", function () {
             await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 });
             expect.fail("Should throw");
         } catch (error: any) {
-            expect(error.message).to.contain("No contract at the provided address");
+            expect(error.message).to.match(
+                /Requested contract address 0x[a-fA-F0-9]+ is not deployed/
+            );
         }
     });
 
