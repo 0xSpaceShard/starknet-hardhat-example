@@ -1,9 +1,21 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
+import { Account } from "hardhat/types";
 import { TIMEOUT } from "../test/constants";
+import { ensureEnvVar } from "../test/util";
 
 describe("Library call", function () {
     this.timeout(TIMEOUT);
+
+    let account: Account;
+
+    before(async function () {
+        account = await starknet.getAccountFromAddress(
+            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+            "OpenZeppelin"
+        );
+    });
 
     it("should modify implementation contract", async function () {
         const implementationFactory = await starknet.getContractFactory("contract");
@@ -11,7 +23,7 @@ describe("Library call", function () {
             initial_balance: 0
         });
 
-        await implementation.invoke("increase_balance", {
+        await account.invoke(implementation, "increase_balance", {
             amount1: 10,
             amount2: 20
         });
@@ -25,7 +37,7 @@ describe("Library call", function () {
         });
         expect(initialProxyBalance).to.equal(30n); // proxy NOT using its own storage
 
-        await proxy.invoke("call_increase_balance", {
+        await account.invoke(proxy, "call_increase_balance", {
             contract_address: implementation.address,
             amount1: 10,
             amount2: 20
@@ -42,7 +54,7 @@ describe("Library call", function () {
 
     it("should modify calling contract", async function () {
         const implementationFactory = await starknet.getContractFactory("contract");
-        const implementationClassHash = await implementationFactory.declare();
+        const implementationClassHash = await account.declare(implementationFactory);
 
         // uses delegate proxy defined in contracts/delegate_proxy.cairo
         const proxyFactory = await starknet.getContractFactory("contract_proxy");
@@ -54,7 +66,7 @@ describe("Library call", function () {
         });
         expect(initialProxyBalance).to.equal(0n); // proxy is using its own storage
 
-        await proxy.invoke("increase_my_balance", {
+        await account.invoke(proxy, "increase_my_balance", {
             class_hash: implementationClassHash,
             amount1: 10,
             amount2: 20

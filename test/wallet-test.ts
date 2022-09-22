@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Wallet } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
+import { expectFeeEstimationStructure } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -11,8 +12,8 @@ describe("Starknet", function () {
     let wallet: Wallet;
 
     before(async function () {
-        // assumes contract.cairo has been compiled
         contractFactory = await starknet.getContractFactory("contract");
+        // deployed with `hardhat starknet-deploy-account`
         wallet = starknet.getWallet("OpenZeppelin");
 
         console.log("Started deployment");
@@ -33,12 +34,21 @@ describe("Starknet", function () {
         }
     });
 
-    it("should succeed when calling with a configured wallet", async function () {
+    it("should call with a wallet", async function () {
         const { res: balanceBefore } = await contract.call("get_balance", {}, { wallet });
         expect(balanceBefore).to.deep.equal(0n);
     });
 
-    it("should succeed when invoking with a configured wallet", async function () {
+    it("should estimate fee with a wallet", async function () {
+        const fee = await contract.estimateFee(
+            "increase_balance",
+            { amount1: 10, amount2: 20 },
+            { wallet }
+        );
+        expectFeeEstimationStructure(fee);
+    });
+
+    it("should invoke with a wallet", async function () {
         await contract.invoke("increase_balance", { amount1: 10, amount2: 20 }, { wallet });
         console.log("Increased by 10 + 20");
         const { res: balanceAfter } = await contract.call("get_balance", {}, { wallet });

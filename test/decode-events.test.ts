@@ -1,22 +1,29 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { StarknetContractFactory, StarknetContract } from "hardhat/types/runtime";
+import { StarknetContractFactory, StarknetContract, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
+import { ensureEnvVar } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
 
     let eventsContractFactory: StarknetContractFactory;
     let contract: StarknetContract;
+    let account: Account;
 
     before(async function () {
         // assumes events.cairo has been compiled
         eventsContractFactory = await starknet.getContractFactory("events");
         contract = await eventsContractFactory.deploy();
+        account = await starknet.getAccountFromAddress(
+            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+            "OpenZeppelin"
+        );
     });
 
     it("should decode events from increase balance successfully", async function () {
-        const txHash = await contract.invoke("increase_balance", { amount: 10 });
+        const txHash = await account.invoke(contract, "increase_balance", { amount: 10 });
         const receipt = await starknet.getTransactionReceipt(txHash);
         const events = await contract.decodeEvents(receipt.events);
 
@@ -29,7 +36,7 @@ describe("Starknet", function () {
     });
 
     it("should decode events from send events successfully", async function () {
-        const txHash = await contract.invoke("send_events", {
+        const txHash = await account.invoke(contract, "send_events", {
             array: [42, 78, 54, 8]
         });
         const receipt = await starknet.getTransactionReceipt(txHash);
