@@ -132,6 +132,7 @@ describe("OpenZeppelin account", function () {
     it("should fail to declare class if maxFee insufficient", async function () {
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
+            expect.fail("Should have failed on the previous line");
         } catch (error: any) {
             expect(error.message).to.contain("Actual fee exceeded max fee");
         }
