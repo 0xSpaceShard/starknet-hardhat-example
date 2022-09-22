@@ -129,4 +129,16 @@ describe("Argent account", function () {
         const { res: newBalance } = await mainContract.call("get_balance");
         expect(newBalance).to.deep.equal(currBalance + 60n);
     });
+
+    it("should fail to declare class if maxFee insufficient", async function () {
+        try {
+            await account.declare(mainContractFactory, { maxFee: 1 });
+        } catch (error: any) {
+            expect(error.message).to.contain("Actual fee exceeded max fee");
+        }
+    });
+
+    it("should declare class if maxFee sufficient", async function () {
+        await account.declare(mainContractFactory, { maxFee: 1e18 });
+    });
 });
