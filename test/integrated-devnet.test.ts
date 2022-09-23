@@ -4,11 +4,18 @@ import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime
 import axios from "axios";
 
 import { TIMEOUT } from "./constants";
+import { ensureEnvVar } from "./util";
 
 describe("Starknet with integrated devnet", function () {
     this.timeout(TIMEOUT);
 
     it("should work for a fresh deployment", async function () {
+        const account = await starknet.getAccountFromAddress(
+            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+            "OpenZeppelin"
+        );
+
         console.log("Started deployment");
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
             "contract"
@@ -19,7 +26,7 @@ describe("Starknet with integrated devnet", function () {
         const { res: balanceBefore } = await contract.call("get_balance");
         expect(balanceBefore).to.deep.equal(0n);
 
-        await contract.invoke("increase_balance", { amount1: 10, amount2: 20 });
+        await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 });
         console.log("Increased by 10 + 20");
 
         const { res: balanceAfter } = await contract.call("get_balance");

@@ -2,9 +2,14 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 import { starknet, network, ethers } from "hardhat";
-import { StarknetContractFactory, StarknetContract, HttpNetworkConfig } from "hardhat/types";
+import {
+    Account,
+    StarknetContractFactory,
+    StarknetContract,
+    HttpNetworkConfig
+} from "hardhat/types";
 import { TIMEOUT } from "./constants";
-import { expectAddressEquality } from "./util";
+import { ensureEnvVar, expectAddressEquality } from "./util";
 
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
@@ -33,6 +38,7 @@ describe("Postman", function () {
     let mockStarknetMessaging: Contract;
     let l1l2Example: Contract;
     let signer: SignerWithAddress;
+    let account: Account;
 
     before(async function () {
         L2contractFactory = await starknet.getContractFactory("l1l2");
@@ -48,6 +54,12 @@ describe("Postman", function () {
         L1L2Example = await ethers.getContractFactory("L1L2Example", signer);
         l1l2Example = await L1L2Example.deploy(mockStarknetMessaging.address);
         await l1l2Example.deployed();
+
+        account = await starknet.getAccountFromAddress(
+            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
+            "OpenZeppelin"
+        );
     });
 
     it("should deploy the messaging contract", async () => {
@@ -78,11 +90,11 @@ describe("Postman", function () {
          * Increase the L2 contract balance to 100 and withdraw 10 from it.
          */
 
-        await l2contract.invoke("increase_balance", {
+        await account.invoke(l2contract, "increase_balance", {
             user,
             amount: 100
         });
-        await l2contract.invoke("withdraw", {
+        await account.invoke(l2contract, "withdraw", {
             user,
             amount: 10,
             L1_CONTRACT_ADDRESS: BigInt(l1l2Example.address)

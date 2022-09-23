@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { BigNumber } from "ethers";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, ArgentAccount } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
@@ -72,24 +71,8 @@ describe("Argent account", function () {
         expect(account.privateKey).to.equal("0x123");
     });
 
-    it("should work with arrays through an account", async function () {
-        const { res } = await account.call(mainContract, "sum_array", { a: [1, 2, 3] });
-        expect(res).to.equal(6n);
-    });
-
-    it("should work with BigNumbers and tuples through an account", async function () {
-        // passing Points (1, 2) and (3, 4) in a tuple
-        const { res: sum } = await account.call(mainContract, "sum_points_to_tuple", {
-            points: [
-                { x: BigNumber.from(1), y: BigNumber.from(2) },
-                { x: 3, y: 4 }
-            ]
-        });
-        expect(sum).to.deep.equal([4n, 6n]);
-    });
-
     it("should estimate, invoke and call", async function () {
-        const { res: initialBalance } = await account.call(mainContract, "get_balance");
+        const { res: initialBalance } = await mainContract.call("get_balance");
         const estimatedFee = await account.estimateFee(mainContract, "increase_balance", {
             amount1: 10,
             amount2: 20
@@ -116,13 +99,13 @@ describe("Argent account", function () {
             { maxFee: estimatedFee.amount * 2n }
         );
 
-        const { res: finalBalance } = await account.call(mainContract, "get_balance");
+        const { res: finalBalance } = await mainContract.call("get_balance");
         expect(finalBalance).to.equal(initialBalance + 30n);
     });
 
     // Multicall / Multiinvoke testing
     it("should handle multiple invokes through an account", async function () {
-        const { res: currBalance } = await account.call(mainContract, "get_balance");
+        const { res: currBalance } = await mainContract.call("get_balance");
         const amount1 = 10n;
         const amount2 = 20n;
 
@@ -143,59 +126,19 @@ describe("Argent account", function () {
         expectFeeEstimationStructure(estimatedFee);
 
         await account.multiInvoke(invokeArray, { maxFee: estimatedFee.amount * 2n });
-        const { res: newBalance } = await account.call(mainContract, "get_balance");
+        const { res: newBalance } = await mainContract.call("get_balance");
         expect(newBalance).to.deep.equal(currBalance + 60n);
     });
 
-    it("should handle multiple calls through an account", async function () {
-        const { res: currBalance } = await account.call(mainContract, "get_balance");
+    it("should fail to declare class if maxFee insufficient", async function () {
+        try {
+            await account.declare(mainContractFactory, { maxFee: 1 });
+        } catch (error: any) {
+            expect(error.message).to.contain("Actual fee exceeded max fee");
+        }
+    });
 
-        const callArray = [
-            {
-                toContract: mainContract,
-                functionName: "sum_points_to_tuple",
-                calldata: {
-                    points: [
-                        { x: 1, y: 2 },
-                        { x: 3, y: 4 }
-                    ]
-                }
-            },
-            {
-                toContract: utilContract,
-                functionName: "almost_equal",
-                calldata: { a: 1, b: 1 }
-            },
-            {
-                toContract: utilContract,
-                functionName: "almost_equal",
-                calldata: { a: 1, b: 5 }
-            },
-            {
-                toContract: mainContract,
-                functionName: "sum_array",
-                calldata: { a: [1, 2, 3] }
-            },
-            {
-                toContract: mainContract,
-                functionName: "get_balance"
-            },
-            {
-                toContract: utilContract,
-                functionName: "almost_equal",
-                calldata: { a: 1, b: 1 }
-            }
-        ];
-
-        const results = await account.multiCall(callArray);
-
-        expect(results).to.deep.equal([
-            { res: [4n, 6n] },
-            { res: 1n },
-            { res: 0n },
-            { res: 6n },
-            { res: currBalance },
-            { res: 1n }
-        ]);
+    it("should declare class if maxFee sufficient", async function () {
+        await account.declare(mainContractFactory, { maxFee: 1e18 });
     });
 });

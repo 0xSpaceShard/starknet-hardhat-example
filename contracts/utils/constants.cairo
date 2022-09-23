@@ -1,8 +1,8 @@
 %lang starknet
 
-#
-# Booleans
-#
+//
+// Booleans
+//
 
-const TRUE = 1
-const FALSE = 0
+const TRUE = 1;
+const FALSE = 0;

@@ -3,8 +3,15 @@ import { starknet } from "hardhat";
 import * as starkwareCrypto from "@toruslabs/starkware-crypto";
 import { TIMEOUT } from "./constants";
 
+const WARNING =
+    "Providing a custom signature on contract.invoke is not supported since Starknet 0.10 (plugin 0.6.6)";
+
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
+
+    before(function () {
+        console.warn(WARNING);
+    });
 
     it("should handle signing transactions with previously calculated hashes", async function () {
         // assumes auth_contract.cairo has been compiled

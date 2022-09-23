@@ -2,6 +2,6 @@
 %builtins range_check
 
 @view
-func foo(a) -> (res):
-    return (res=42)
-end
+func foo(a) -> (res: felt) {
+    return (res=42);
+}
