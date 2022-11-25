@@ -18,7 +18,8 @@ describe("Delegate proxy", function () {
 
         // uses delegate proxy defined in contracts/delegate_proxy.cairo
         const proxyFactory = await starknet.getContractFactory("delegate_proxy");
-        const proxy = await proxyFactory.deploy({
+        await account.declare(proxyFactory);
+        const proxy = await account.deploy(proxyFactory, {
             implementation_hash_: implementationClassHash
         });
         console.log("Deployed proxy to", proxy.address);

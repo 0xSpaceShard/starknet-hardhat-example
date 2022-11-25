@@ -21,8 +21,12 @@ describe("Starknet", function () {
             "contract"
         );
 
-        console.log("Started deployment");
-        const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
+        console.log("Starting declaration");
+        await account.declare(contractFactory);
+        console.log("Declared. Starting deployment.");
+        const contract: StarknetContract = await account.deploy(contractFactory, {
+            initial_balance: 0
+        });
         console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
 
         const { res: balanceBefore } = await contract.call("get_balance");
