@@ -34,7 +34,7 @@ describe("Starknet with integrated devnet", function () {
     });
 
     it("should have devnet endpoint alive", async () => {
-        const response = await axios.get("http://127.0.0.1:5050/is_alive");
+        const response = await axios.get(`${starknet.networkUrl}/is_alive`);
 
         expect(response.status).to.equal(200);
     });
