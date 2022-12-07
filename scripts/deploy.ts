@@ -1,8 +1,13 @@
-import hardhat from "hardhat";
+import hardhat, { ArgentAccount } from "hardhat";
+import { ensureEnvVar } from "../test/util";
 
 async function main() {
     const contractFactory = await hardhat.starknet.getContractFactory("contract");
-    const contract = await contractFactory.deploy({ initial_balance: 0 });
+    const account = await ArgentAccount.getAccountFromAddress(
+        ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+        ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
+    );
+    const contract = await account.deploy(contractFactory, { initial_balance: 0 });
     console.log("Deployed to:", contract.address);
 }
 

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { OpenZeppelinAccount, starknet } from "hardhat";
 import { TIMEOUT } from "../test/constants";
 import { ensureEnvVar } from "../test/util";
 
@@ -7,10 +7,9 @@ describe("Delegate proxy", function () {
     this.timeout(TIMEOUT);
 
     it("should forward to the implementation contract", async function () {
-        const account = await starknet.getAccountFromAddress(
+        const account = await OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
         );
 
         const implementationFactory = await starknet.getContractFactory("contract");
