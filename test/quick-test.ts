@@ -19,10 +19,9 @@ describe("Starknet", function () {
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
             "contract"
         );
+        const classHash = await account.declare(contractFactory);
+        console.log("Declared. Class hash:", classHash);
 
-        console.log("Starting declaration");
-        await account.declare(contractFactory);
-        console.log("Declared. Starting deployment.");
         const contract: StarknetContract = await account.deploy(contractFactory, {
             initial_balance: 0
         });
