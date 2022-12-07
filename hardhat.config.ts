@@ -34,7 +34,25 @@ const config: HardhatUserConfig = {
             url: "http://127.0.0.1:5050",
             // venv: "active",
             // dockerizedVersion: "<DEVNET_VERSION>",
-            args: ["--seed", "42"]
+            args: [
+                // Uncomment the lines below to activate Devnet features in your integrated-devnet instance
+                // Read about Devnet options here: https://shard-labs.github.io/starknet-devnet/docs/guide/run
+                //
+                // *Account predeployment*
+                // "--seed", <VALUE>,
+                // "--accounts", <VALUE>,
+                // "--initial-balance", <VALUE>
+                //
+                // *Forking*
+                // "--fork-network", <VALUE>,
+                // "--fork-block", <VALUE>
+                //
+                // *Chain ID*
+                // "--chain-id", <VALUE>
+                //
+                // *Gas price*
+                // "--gas-price", <VALUE>
+            ]
         },
         hardhat: {}
     }
