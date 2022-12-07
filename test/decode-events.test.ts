@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { OpenZeppelinAccount, starknet } from "hardhat";
 import { StarknetContractFactory, StarknetContract, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { ensureEnvVar } from "./util";
@@ -15,10 +15,9 @@ describe("Starknet", function () {
         // assumes events.cairo has been compiled
         eventsContractFactory = await starknet.getContractFactory("events");
         contract = await eventsContractFactory.deploy();
-        account = await starknet.getAccountFromAddress(
+        account = await OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
         );
     });
 

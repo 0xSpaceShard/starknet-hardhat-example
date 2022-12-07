@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { OpenZeppelinAccount, starknet } from "hardhat";
 import { Account } from "hardhat/types";
 
 import { TIMEOUT } from "./constants";
@@ -11,10 +11,9 @@ describe("Devnet restart", function () {
     let account: Account;
 
     before(async function () {
-        account = await starknet.getAccountFromAddress(
+        account = await OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
         );
     });
 

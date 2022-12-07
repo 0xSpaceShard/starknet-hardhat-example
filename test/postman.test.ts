@@ -1,7 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
-import { starknet, network, ethers } from "hardhat";
+import { starknet, network, ethers, OpenZeppelinAccount } from "hardhat";
 import {
     Account,
     StarknetContractFactory,
@@ -41,8 +41,14 @@ describe("Postman", function () {
     let account: Account;
 
     before(async function () {
+        account = await OpenZeppelinAccount.getAccountFromAddress(
+            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
+        );
+
         L2contractFactory = await starknet.getContractFactory("l1l2");
-        l2contract = await L2contractFactory.deploy();
+        await account.declare(L2contractFactory);
+        l2contract = await account.deploy(L2contractFactory);
 
         const signers = await ethers.getSigners();
         signer = signers[0];
@@ -54,12 +60,6 @@ describe("Postman", function () {
         L1L2Example = await ethers.getContractFactory("L1L2Example", signer);
         l1l2Example = await L1L2Example.deploy(mockStarknetMessaging.address);
         await l1l2Example.deployed();
-
-        account = await starknet.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
-        );
     });
 
     it("should deploy the messaging contract", async () => {

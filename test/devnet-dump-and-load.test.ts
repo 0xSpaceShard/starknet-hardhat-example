@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { OpenZeppelinAccount, starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
 import { ensureEnvVar } from "./util";
 
@@ -9,10 +9,9 @@ describe("Devnet Dump and Load", function () {
     const dumpPath = "dump.pkl";
 
     it("Should persist devnet instance after dump and restart", async function () {
-        const account = await starknet.getAccountFromAddress(
+        const account = await OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
         );
 
         const contractFactory = await starknet.getContractFactory("contract");

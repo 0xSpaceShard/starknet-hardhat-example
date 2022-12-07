@@ -1,16 +1,15 @@
-import axios from "axios";
 import { expect } from "chai";
 import hardhat, { starknet, ArgentAccount, OpenZeppelinAccount } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
+import { ensureEnvVar, expectFeeEstimationStructure, mint } from "./util";
 
 const ARGENT_ACCOUNT_ADDRESS = ensureEnvVar("ARGENT_ACCOUNT_ADDRESS");
 
 /**
- * Returns an instance of ArgentAccount (expected to be deployed).
+ * Returns an instance of Account tested in this file. Expected to be deployed.
  */
-async function getArgentAccount() {
+async function getDeployedAccount() {
     return await ArgentAccount.getAccountFromAddress(
         ARGENT_ACCOUNT_ADDRESS,
         ensureEnvVar("ARGENT_ACCOUNT_PRIVATE_KEY")
@@ -41,35 +40,31 @@ describe("Argent account", function () {
 
     // this test needs to be run in order for other tests to be able to get the account instance
     it("should create, fund, deploy and use account", async function () {
-        const argentAccount = await ArgentAccount.createAccount({
-            salt: ensureEnvVar("ARGENT_ACCOUNT_SALT"),
+        const account = await ArgentAccount.createAccount({
+            salt: "0x42",
             privateKey: ensureEnvVar("ARGENT_ACCOUNT_PRIVATE_KEY")
         });
 
-        await axios.post(`${starknet.networkConfig.url}/mint`, {
-            amount: 1e18,
-            address: argentAccount.address,
-            lite: true
-        });
+        await mint(account.address, 1e18);
         console.log("Funded account");
 
-        const deploymentTxHash = await argentAccount.deployAccount({ maxFee: 1e18 });
+        const deploymentTxHash = await account.deployAccount({ maxFee: 1e18 });
         console.log("Deployed account in tx", deploymentTxHash);
 
         // use contract by doing: declare + deploy + invoke + call
         const contractFactory = await hardhat.starknet.getContractFactory("contract");
-        const declareTxHash = await argentAccount.declare(contractFactory, { maxFee: 1e18 });
+        const declareTxHash = await account.declare(contractFactory, { maxFee: 1e18 });
         console.log("Declared contract in tx", declareTxHash);
 
         const initialBalance = 10n;
-        const contract = await argentAccount.deploy(
+        const contract = await account.deploy(
             contractFactory,
             { initial_balance: initialBalance },
             { maxFee: 1e18 }
         );
         console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
 
-        await argentAccount.invoke(contract, "increase_balance", {
+        await account.invoke(contract, "increase_balance", {
             amount1: 10n,
             amount2: 20n
         });
@@ -91,7 +86,7 @@ describe("Argent account", function () {
     });
 
     it("should handle guardian", async function () {
-        const account = await getArgentAccount();
+        const account = await getDeployedAccount();
         const { res: initialBalance } = await mainContract.call("get_balance");
 
         const newGuardianPrivateKey = "0x123";
@@ -110,7 +105,7 @@ describe("Argent account", function () {
     });
 
     it("should estimate, invoke and call", async function () {
-        const account = await getArgentAccount();
+        const account = await getDeployedAccount();
         const { res: initialBalance } = await mainContract.call("get_balance");
         const estimatedFee = await account.estimateFee(mainContract, "increase_balance", {
             amount1: 10,
@@ -144,7 +139,7 @@ describe("Argent account", function () {
 
     // Multicall / Multiinvoke testing
     it("should handle multiple invokes through an account", async function () {
-        const account = await getArgentAccount();
+        const account = await getDeployedAccount();
         const { res: currBalance } = await mainContract.call("get_balance");
         const amount1 = 10n;
         const amount2 = 20n;
@@ -171,7 +166,7 @@ describe("Argent account", function () {
     });
 
     it("should fail to declare class if maxFee insufficient", async function () {
-        const account = await getArgentAccount();
+        const account = await getDeployedAccount();
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
         } catch (error: any) {
@@ -180,7 +175,7 @@ describe("Argent account", function () {
     });
 
     it("should declare class if maxFee sufficient", async function () {
-        const account = await getArgentAccount();
+        const account = await getDeployedAccount();
         await account.declare(mainContractFactory, { maxFee: 1e18 });
     });
 });

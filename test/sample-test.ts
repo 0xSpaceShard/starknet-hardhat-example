@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { OpenZeppelinAccount, starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
@@ -27,10 +27,9 @@ describe("Starknet", function () {
         // assumes contract.cairo and events.cairo has been compiled
         contractFactory = await starknet.getContractFactory("contract");
         eventsContractFactory = await starknet.getContractFactory("events");
-        account = await starknet.getAccountFromAddress(
+        account = await OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
         );
         console.log(`Using account at ${account.address} with public key ${account.publicKey}`);
 

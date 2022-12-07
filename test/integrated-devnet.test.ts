@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { OpenZeppelinAccount, starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import axios from "axios";
 
@@ -10,10 +10,9 @@ describe("Starknet with integrated devnet", function () {
     this.timeout(TIMEOUT);
 
     it("should work for a fresh deployment", async function () {
-        const account = await starknet.getAccountFromAddress(
+        const account = await OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
+            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
         );
 
         console.log("Started deployment");
