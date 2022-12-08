@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import hardhat, { OpenZeppelinAccount, starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
-import { TIMEOUT, OZ_ACCOUNT_ADDRESS } from "./constants";
-import { ensureEnvVar, expectFeeEstimationStructure, getOZAccount, mint } from "./util";
+import { TIMEOUT } from "./constants";
+import { ensureEnvVar, expectFeeEstimationStructure, getOZAccount, mint, OZ_ACCOUNT_ADDRESS } from "./util";
 
 describe("OpenZeppelin account", function () {
     this.timeout(TIMEOUT);

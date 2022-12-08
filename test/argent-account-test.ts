@@ -1,13 +1,14 @@
 import { expect } from "chai";
 import hardhat, { starknet, ArgentAccount } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
-import { ARGENT_ACCOUNT_ADDRESS, TIMEOUT } from "./constants";
+import { TIMEOUT } from "./constants";
 import {
     ensureEnvVar,
     expectFeeEstimationStructure,
     getArgentAccount,
     getOZAccount,
-    mint
+    mint,
+    ARGENT_ACCOUNT_ADDRESS
 } from "./util";
 
 describe("Argent account", function () {
