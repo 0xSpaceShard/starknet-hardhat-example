@@ -15,11 +15,17 @@ describe("Starknet", function () {
 
     before(async function () {
         account = await getOZAccount();
+
         contractFactory = await starknet.getContractFactory("contract");
+        await account.declare(contractFactory);
+
         contractWithEmptyConstructorFactory = await starknet.getContractFactory(
             "empty_constructor"
         );
+        await account.declare(contractWithEmptyConstructorFactory);
+
         contractWithoutConstructorFactory = await starknet.getContractFactory("simple_storage");
+        await account.declare(contractWithoutConstructorFactory);
     });
 
     it("should fail if constructor arguments required but not provided", async function () {
