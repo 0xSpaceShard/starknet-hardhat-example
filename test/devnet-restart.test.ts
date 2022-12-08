@@ -14,6 +14,7 @@ describe("Devnet restart", function () {
     before(async function () {
         account = await getOZAccount();
         contractFactory = await starknet.getContractFactory("contract");
+        // doesn't make sense to declare here since the state will be restarted in tests
     });
 
     it("should pass", async () => {

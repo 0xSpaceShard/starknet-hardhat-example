@@ -2,8 +2,8 @@ import hardhat from "hardhat";
 import { getOZAccount } from "../test/util";
 
 async function main() {
-    const contractFactory = await hardhat.starknet.getContractFactory("contract");
     const account = await getOZAccount();
+    const contractFactory = await hardhat.starknet.getContractFactory("contract");
     await account.declare(contractFactory);
     const contract = await account.deploy(contractFactory, { initial_balance: 0 });
     console.log("Deployed to:", contract.address);
