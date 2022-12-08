@@ -183,18 +183,19 @@ describe("Starknet", function () {
         }
     });
 
-    it("should deploy to expected address when using salt", async function () {
-        const EXPECTED_ADDRESS =
-            "0x29071cb8b666d5a86a380245650ffc20ea19baca8b436cd21a36af0ad5091e8";
-        console.log("Started deployment");
-        const contract = await account.deploy(
-            contractFactory,
-            { initial_balance: 0 },
-            { salt: "0xa0" }
-        );
+    it("should deploy to the same address if using salt", async function () {
+        const salt = "0xa0";
+        const contract = await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
         console.log("Deployed at", contract.address);
 
-        expectAddressEquality(contract.address, EXPECTED_ADDRESS);
+        try {
+            await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
+        } catch (err: any) {
+            expect(err.message).to.include("CONTRACT_ADDRESS_UNAVAILABLE");
+            expect(err.message).to.include(
+                `Requested contract address ${contract.address} is unavailable for deployment`
+            );
+        }
     });
 
     it("should work with negative inputs", async function () {
