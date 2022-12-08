@@ -1,16 +1,13 @@
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
+import { starknet } from "hardhat";
 import { TIMEOUT } from "../test/constants";
-import { ensureEnvVar } from "../test/util";
+import { getOZAccount } from "../test/util";
 
 describe("Delegate proxy", function () {
     this.timeout(TIMEOUT);
 
     it("should forward to the implementation contract", async function () {
-        const account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        const account = await getOZAccount();
 
         const implementationFactory = await starknet.getContractFactory("contract");
         const implementationClassHash = await account.declare(implementationFactory);

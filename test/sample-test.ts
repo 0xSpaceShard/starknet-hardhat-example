@@ -1,13 +1,13 @@
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
-import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
+import { starknet } from "hardhat";
+import { StarknetContractFactory, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
 import {
-    ensureEnvVar,
     expectFeeEstimationStructure,
     OK_TX_STATUSES,
-    expectAddressEquality
+    expectAddressEquality,
+    getOZAccount
 } from "./util";
 
 describe("Starknet", function () {
@@ -24,17 +24,18 @@ describe("Starknet", function () {
     const MAX_FEE = BigInt(1e18); // should be enough for all cases
 
     before(async function () {
-        // assumes contract.cairo and events.cairo has been compiled
-        contractFactory = await starknet.getContractFactory("contract");
-        eventsContractFactory = await starknet.getContractFactory("events");
-        account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        account = await getOZAccount();
         console.log(`Using account at ${account.address} with public key ${account.publicKey}`);
 
+        contractFactory = await starknet.getContractFactory("contract");
+        await account.declare(contractFactory);
+
+        eventsContractFactory = await starknet.getContractFactory("events");
+        await account.declare(eventsContractFactory);
+        console.log("Declared classes");
+
         console.log("Started deployment");
-        const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
+        const contract = await account.deploy(contractFactory, { initial_balance: 0 });
         console.log("Deployment transaction hash:", contract.deployTxHash);
         expect(contract.deployTxHash.startsWith("0x")).to.be.true;
         preservedDeployTxHash = contract.deployTxHash;
@@ -186,10 +187,8 @@ describe("Starknet", function () {
         const EXPECTED_ADDRESS =
             "0x29071cb8b666d5a86a380245650ffc20ea19baca8b436cd21a36af0ad5091e8";
         console.log("Started deployment");
-        const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
-            "contract"
-        );
-        const contract: StarknetContract = await contractFactory.deploy(
+        const contract = await account.deploy(
+            contractFactory,
             { initial_balance: 0 },
             { salt: "0xa0" }
         );
@@ -253,8 +252,7 @@ describe("Starknet", function () {
     });
 
     it("should retrieve transaction details", async function () {
-        const contract = await eventsContractFactory.deploy();
-
+        const contract = await account.deploy(eventsContractFactory);
         const txHash = await account.invoke(
             contract,
             "increase_balance",

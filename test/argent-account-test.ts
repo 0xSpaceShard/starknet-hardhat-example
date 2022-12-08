@@ -1,20 +1,14 @@
 import { expect } from "chai";
-import hardhat, { starknet, ArgentAccount, OpenZeppelinAccount } from "hardhat";
+import hardhat, { starknet, ArgentAccount } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
-import { TIMEOUT } from "./constants";
-import { ensureEnvVar, expectFeeEstimationStructure, mint } from "./util";
-
-const ARGENT_ACCOUNT_ADDRESS = ensureEnvVar("ARGENT_ACCOUNT_ADDRESS");
-
-/**
- * Returns an instance of Account tested in this file. Expected to be deployed.
- */
-async function getDeployedAccount() {
-    return await ArgentAccount.getAccountFromAddress(
-        ARGENT_ACCOUNT_ADDRESS,
-        ensureEnvVar("ARGENT_ACCOUNT_PRIVATE_KEY")
-    );
-}
+import { ARGENT_ACCOUNT_ADDRESS, TIMEOUT } from "./constants";
+import {
+    ensureEnvVar,
+    expectFeeEstimationStructure,
+    getArgentAccount,
+    getOZAccount,
+    mint
+} from "./util";
 
 describe("Argent account", function () {
     this.timeout(TIMEOUT);
@@ -23,14 +17,11 @@ describe("Argent account", function () {
     let mainContract: StarknetContract;
 
     before(async function () {
-        const account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        const deployerAccount = await getOZAccount();
 
         mainContractFactory = await starknet.getContractFactory("contract");
-        await account.declare(mainContractFactory);
-        mainContract = await account.deploy(
+        await deployerAccount.declare(mainContractFactory);
+        mainContract = await deployerAccount.deploy(
             mainContractFactory,
             { initial_balance: 0 },
             { salt: "0x42" }
@@ -86,7 +77,7 @@ describe("Argent account", function () {
     });
 
     it("should handle guardian", async function () {
-        const account = await getDeployedAccount();
+        const account = await getArgentAccount();
         const { res: initialBalance } = await mainContract.call("get_balance");
 
         const newGuardianPrivateKey = "0x123";
@@ -105,7 +96,7 @@ describe("Argent account", function () {
     });
 
     it("should estimate, invoke and call", async function () {
-        const account = await getDeployedAccount();
+        const account = await getArgentAccount();
         const { res: initialBalance } = await mainContract.call("get_balance");
         const estimatedFee = await account.estimateFee(mainContract, "increase_balance", {
             amount1: 10,
@@ -139,7 +130,7 @@ describe("Argent account", function () {
 
     // Multicall / Multiinvoke testing
     it("should handle multiple invokes through an account", async function () {
-        const account = await getDeployedAccount();
+        const account = await getArgentAccount();
         const { res: currBalance } = await mainContract.call("get_balance");
         const amount1 = 10n;
         const amount2 = 20n;
@@ -166,7 +157,7 @@ describe("Argent account", function () {
     });
 
     it("should fail to declare class if maxFee insufficient", async function () {
-        const account = await getDeployedAccount();
+        const account = await getArgentAccount();
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
         } catch (error: any) {
@@ -175,7 +166,7 @@ describe("Argent account", function () {
     });
 
     it("should declare class if maxFee sufficient", async function () {
-        const account = await getDeployedAccount();
+        const account = await getArgentAccount();
         await account.declare(mainContractFactory, { maxFee: 1e18 });
     });
 });

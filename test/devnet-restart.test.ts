@@ -1,20 +1,19 @@
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
-import { Account } from "hardhat/types";
+import { starknet } from "hardhat";
+import { Account, StarknetContractFactory } from "hardhat/types";
 
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar } from "./util";
+import { getOZAccount } from "./util";
 
 describe("Devnet restart", function () {
     this.timeout(TIMEOUT);
 
     let account: Account;
+    let contractFactory: StarknetContractFactory;
 
     before(async function () {
-        account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        account = await getOZAccount();
+        contractFactory = await starknet.getContractFactory("contract");
     });
 
     it("should pass", async () => {
@@ -23,8 +22,8 @@ describe("Devnet restart", function () {
     });
 
     it("should restart deployed contracts", async () => {
-        const contractFactory = await starknet.getContractFactory("contract");
-        const contract = await contractFactory.deploy({ initial_balance: 0 });
+        await account.declare(contractFactory);
+        const contract = await account.deploy(contractFactory, { initial_balance: 0 });
 
         await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 });
         const { res: balanceAfter } = await contract.call("get_balance");
@@ -45,21 +44,22 @@ describe("Devnet restart", function () {
     it("should enable to redeploy to the same address", async () => {
         const salt = "0xbabe";
 
-        const contractFactory = await starknet.getContractFactory("contract");
-        let contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
+        await account.declare(contractFactory);
+        let contract = await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
         const initialAddress = contract.address;
 
         await starknet.devnet.restart();
 
-        contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
+        await account.declare(contractFactory);
+        contract = await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
         expect(contract.address).to.equal(initialAddress);
     });
 
     it("should enable to use the same instance", async () => {
         const salt = "0xb0a";
 
-        const contractFactory = await starknet.getContractFactory("contract");
-        const contract = await contractFactory.deploy({ initial_balance: 0 }, { salt });
+        await account.declare(contractFactory);
+        const contract = await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
         const initialAddress = contract.address;
 
         await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 });
@@ -68,8 +68,8 @@ describe("Devnet restart", function () {
 
         await starknet.devnet.restart();
 
-        // redeploy
-        await contractFactory.deploy({ initial_balance: 0 }, { salt });
+        await account.declare(contractFactory);
+        await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
         const { res: balanceAfterRestart } = await contract.call("get_balance");
         expect(balanceAfterRestart).to.deep.equal(0n);
 

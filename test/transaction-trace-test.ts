@@ -1,16 +1,14 @@
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
-import { ensureEnvVar } from "./util";
+import { starknet } from "hardhat";
+import { getOZAccount } from "./util";
 
 describe("Transaction trace", function () {
     it("should test transaction trace", async function () {
-        const account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        const account = await getOZAccount();
 
         const contractFactory = await starknet.getContractFactory("contract");
-        const contract = await contractFactory.deploy({
+        await account.declare(contractFactory);
+        const contract = await account.deploy(contractFactory, {
             initial_balance: 0
         });
 

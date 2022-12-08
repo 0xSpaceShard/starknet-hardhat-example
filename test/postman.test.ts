@@ -1,7 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
-import { starknet, network, ethers, OpenZeppelinAccount } from "hardhat";
+import { starknet, network, ethers } from "hardhat";
 import {
     Account,
     StarknetContractFactory,
@@ -9,7 +9,7 @@ import {
     HttpNetworkConfig
 } from "hardhat/types";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar, expectAddressEquality } from "./util";
+import { expectAddressEquality, getOZAccount } from "./util";
 
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
@@ -41,10 +41,7 @@ describe("Postman", function () {
     let account: Account;
 
     before(async function () {
-        account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        account = await getOZAccount();
 
         L2contractFactory = await starknet.getContractFactory("l1l2");
         await account.declare(L2contractFactory);

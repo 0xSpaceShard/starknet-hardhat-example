@@ -1,7 +1,8 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { StarknetContractFactory } from "hardhat/types/runtime";
+import { Account, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
+import { getOZAccount } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -10,8 +11,10 @@ describe("Starknet", function () {
     let contractWithoutConstructorFactory: StarknetContractFactory;
     let contractWithEmptyConstructorFactory: StarknetContractFactory;
 
+    let account: Account;
+
     before(async function () {
-        // assumes contracts have been compiled
+        account = await getOZAccount();
         contractFactory = await starknet.getContractFactory("contract");
         contractWithEmptyConstructorFactory = await starknet.getContractFactory(
             "empty_constructor"
@@ -21,7 +24,7 @@ describe("Starknet", function () {
 
     it("should fail if constructor arguments required but not provided", async function () {
         try {
-            await contractFactory.deploy();
+            await account.deploy(contractFactory);
             expect.fail("Should have failed on not passing constructor calldata.");
         } catch (err: any) {
             expect(err.message).to.equal("constructor: Expected 1 argument, got 0.");
@@ -30,7 +33,7 @@ describe("Starknet", function () {
 
     it("should fail if constructor requires no arguments but some are provided", async function () {
         try {
-            await contractWithEmptyConstructorFactory.deploy({ dummy_var: 10n });
+            await account.deploy(contractWithEmptyConstructorFactory, { dummy_var: 10n });
             expect.fail("Should have failed on providing constructor arguments.");
         } catch (err: any) {
             expect(err.message).to.equal("constructor: Expected 0 arguments, got 1.");
@@ -38,18 +41,18 @@ describe("Starknet", function () {
     });
 
     it("should work if constructor requires no arguments and none are provided", async function () {
-        const contract = await contractWithEmptyConstructorFactory.deploy();
+        const contract = await account.deploy(contractWithEmptyConstructorFactory);
         console.log("Deployed to", contract.address);
     });
 
     it("should work if constructor not present and no arguments provided", async function () {
-        const contract = await contractWithoutConstructorFactory.deploy();
+        const contract = await account.deploy(contractWithoutConstructorFactory);
         console.log("Deployed to", contract.address);
     });
 
     it("should fail if constructor not present but arguments are provided", async function () {
         try {
-            await contractWithoutConstructorFactory.deploy({ dummy_var: 10n });
+            await account.deploy(contractWithoutConstructorFactory, { dummy_var: 10n });
             expect.fail("Should have failed on providing constructor arguments.");
         } catch (err: any) {
             expect(err.message).to.equal("No constructor arguments required but 1 provided");

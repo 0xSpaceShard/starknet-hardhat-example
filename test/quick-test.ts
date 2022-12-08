@@ -1,19 +1,14 @@
 import { expect } from "chai";
-import { starknet, OpenZeppelinAccount } from "hardhat";
+import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar } from "./util";
+import { getOZAccount } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
 
     it("should work for a fresh deployment", async function () {
-        const accountAddress = ensureEnvVar("OZ_ACCOUNT_ADDRESS");
-        const accountPrivateKey = ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY");
-        const account = await OpenZeppelinAccount.getAccountFromAddress(
-            accountAddress,
-            accountPrivateKey
-        );
+        const account = await getOZAccount();
         console.log(`Account address: ${account.address}, public key: ${account.publicKey})`);
 
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(

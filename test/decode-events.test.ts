@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
+import { starknet } from "hardhat";
 import { StarknetContractFactory, StarknetContract, Account } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar } from "./util";
+import { getOZAccount } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -13,12 +13,10 @@ describe("Starknet", function () {
 
     before(async function () {
         // assumes events.cairo has been compiled
+        account = await getOZAccount();
         eventsContractFactory = await starknet.getContractFactory("events");
-        contract = await eventsContractFactory.deploy();
-        account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        await account.declare(eventsContractFactory);
+        contract = await account.deploy(eventsContractFactory);
     });
 
     it("should decode events from increase balance successfully", async function () {

@@ -1,11 +1,8 @@
-import hardhat, { OpenZeppelinAccount } from "hardhat";
-import { ensureEnvVar } from "../test/util";
+import hardhat from "hardhat";
+import { getOZAccount } from "../test/util";
 
 async function main() {
-    const account = await OpenZeppelinAccount.getAccountFromAddress(
-        ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-        ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-    );
+    const account = await getOZAccount();
 
     const contractFactory = await hardhat.starknet.getContractFactory("contract");
     await account.declare(contractFactory);

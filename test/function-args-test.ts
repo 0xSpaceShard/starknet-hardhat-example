@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+import { getOZAccount } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -9,9 +10,10 @@ describe("Starknet", function () {
     let contract: StarknetContract;
 
     before(async function () {
-        // assumes contract.cairo has been compiled
+        const account = await getOZAccount();
         contractFactory = await starknet.getContractFactory("contract");
-        contract = await contractFactory.deploy({ initial_balance: 0 });
+        await account.declare(contractFactory);
+        contract = await account.deploy(contractFactory, { initial_balance: 0 });
     });
 
     it("should work if provided number of arguments is the same as the expected", async function () {

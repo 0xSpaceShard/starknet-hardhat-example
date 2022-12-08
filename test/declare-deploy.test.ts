@@ -1,24 +1,21 @@
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
+import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar } from "./util";
+import { getOZAccount } from "./util";
 
 describe("Class declaration", function () {
     this.timeout(TIMEOUT);
     it("should declare and deploy a class", async function () {
-        const account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        const account = await getOZAccount();
 
         const contractFactory = await starknet.getContractFactory("contract");
         const classHash = await account.declare(contractFactory);
 
         const deployerFactory = await starknet.getContractFactory("deployer");
-        const deployer = await deployerFactory.deploy(
-            {
-                class_hash: classHash
-            },
+        await account.declare(deployerFactory);
+        const deployer = await account.deploy(
+            deployerFactory,
+            { class_hash: classHash },
             { salt: "0x42" }
         );
 

@@ -1,20 +1,8 @@
 import { expect } from "chai";
 import hardhat, { OpenZeppelinAccount, starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
-import { TIMEOUT } from "./constants";
-import { ensureEnvVar, expectFeeEstimationStructure, mint } from "./util";
-
-const OZ_ACCOUNT_ADDRESS = ensureEnvVar("OZ_ACCOUNT_ADDRESS");
-
-/**
- * Returns an instance of account tested in this file. Expected to be deployed)
- */
-async function getDeployedAccount() {
-    return await OpenZeppelinAccount.getAccountFromAddress(
-        OZ_ACCOUNT_ADDRESS,
-        ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-    );
-}
+import { TIMEOUT, OZ_ACCOUNT_ADDRESS } from "./constants";
+import { ensureEnvVar, expectFeeEstimationStructure, getOZAccount, mint } from "./util";
 
 describe("OpenZeppelin account", function () {
     this.timeout(TIMEOUT);
@@ -23,11 +11,11 @@ describe("OpenZeppelin account", function () {
     let mainContract: StarknetContract;
 
     before(async function () {
-        const accountForDeploying = await getDeployedAccount();
+        const deployerAccount = await getOZAccount();
 
         mainContractFactory = await starknet.getContractFactory("contract");
-        await accountForDeploying.declare(mainContractFactory);
-        mainContract = await accountForDeploying.deploy(
+        await deployerAccount.declare(mainContractFactory);
+        mainContract = await deployerAccount.deploy(
             mainContractFactory,
             { initial_balance: 0 },
             { salt: "0x42" }
@@ -82,7 +70,7 @@ describe("OpenZeppelin account", function () {
     });
 
     it("should estimate, invoke and call", async function () {
-        const account = await getDeployedAccount();
+        const account = await getOZAccount();
         const { res: initialBalance } = await mainContract.call("get_balance");
         const estimatedFee = await account.estimateFee(mainContract, "increase_balance", {
             amount1: 10,
@@ -116,7 +104,7 @@ describe("OpenZeppelin account", function () {
 
     // Multicall / Multiinvoke testing
     it("should handle multiple invokes through an account", async function () {
-        const account = await getDeployedAccount();
+        const account = await getOZAccount();
         const { res: currBalance } = await mainContract.call("get_balance");
         const amount1 = 10n;
         const amount2 = 20n;
@@ -143,7 +131,7 @@ describe("OpenZeppelin account", function () {
     });
 
     it("should fail to declare class if maxFee insufficient", async function () {
-        const account = await getDeployedAccount();
+        const account = await getOZAccount();
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
             expect.fail("Should have failed on the previous line");
@@ -153,7 +141,7 @@ describe("OpenZeppelin account", function () {
     });
 
     it("should declare class if maxFee sufficient", async function () {
-        const account = await getDeployedAccount();
+        const account = await getOZAccount();
         await account.declare(mainContractFactory, { maxFee: 1e18 });
     });
 });

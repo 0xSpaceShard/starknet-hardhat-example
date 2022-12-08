@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
+import { starknet } from "hardhat";
 import { Account } from "hardhat/types";
 import { TIMEOUT } from "../test/constants";
-import { ensureEnvVar } from "../test/util";
+import { getOZAccount } from "../test/util";
 
 describe("Library call", function () {
     this.timeout(TIMEOUT);
@@ -10,10 +10,7 @@ describe("Library call", function () {
     let account: Account;
 
     before(async function () {
-        account = await OpenZeppelinAccount.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
-        );
+        account = await getOZAccount();
     });
 
     it("should modify implementation contract", async function () {
