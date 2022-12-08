@@ -10,7 +10,7 @@ dotenv.config();
 const config: HardhatUserConfig = {
     solidity: "0.6.12",
     starknet: {
-        dockerizedVersion: "0.10.2", // alternatively choose one of the two venv options below
+        dockerizedVersion: "0.10.3", // alternatively choose one of the two venv options below
         // uses (my-venv) defined by `python -m venv path/to/my-venv`
         // venv: "path/to/my-venv",
 
@@ -39,15 +39,15 @@ const config: HardhatUserConfig = {
                 // Read about Devnet options here: https://shard-labs.github.io/starknet-devnet/docs/guide/run
                 //
                 // *Account predeployment*
-                "--seed",
-                "42",
-                "--accounts",
-                "1",
+                // "--seed",
+                // "42",
+                // "--accounts",
+                // "1",
                 // "--initial-balance", <VALUE>
                 //
                 // *Forking*
-                "--fork-network",
-                "alpha-goerli2"
+                // "--fork-network",
+                // "alpha-goerli2"
                 // "--fork-block", <VALUE>
                 //
                 // *Chain ID*
