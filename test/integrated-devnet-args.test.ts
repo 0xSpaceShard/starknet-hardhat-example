@@ -13,6 +13,7 @@ describe("Starknet with optional arguments in integrated devnet", function () {
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
             "contract"
         );
+        await account.declare(contractFactory);
         const contract: StarknetContract = await account.deploy(contractFactory, {
             initial_balance: 0
         });

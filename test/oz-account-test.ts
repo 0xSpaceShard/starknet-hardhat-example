@@ -2,7 +2,13 @@ import { expect } from "chai";
 import hardhat, { OpenZeppelinAccount, starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar, expectFeeEstimationStructure, getOZAccount, mint, OZ_ACCOUNT_ADDRESS } from "./util";
+import {
+    expectFeeEstimationStructure,
+    getOZAccount,
+    mint,
+    OZ_ACCOUNT_ADDRESS,
+    OZ_ACCOUNT_PRIVATE_KEY
+} from "./util";
 
 describe("OpenZeppelin account", function () {
     this.timeout(TIMEOUT);
@@ -27,7 +33,7 @@ describe("OpenZeppelin account", function () {
     it("should create, fund, deploy and use account", async function () {
         const account = await OpenZeppelinAccount.createAccount({
             salt: "0x42",
-            privateKey: ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY")
+            privateKey: OZ_ACCOUNT_PRIVATE_KEY
         });
 
         await mint(account.address, 1e18);
