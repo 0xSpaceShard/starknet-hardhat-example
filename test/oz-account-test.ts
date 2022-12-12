@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import hardhat, { OpenZeppelinAccount, starknet } from "hardhat";
+import hardhat, { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import {
@@ -31,7 +31,7 @@ describe("OpenZeppelin account", function () {
 
     // this test needs to be run in order for other tests to be able to get the account instance
     it("should create, fund, deploy and use account", async function () {
-        const account = await OpenZeppelinAccount.createAccount({
+        const account = await starknet.OpenZeppelinAccount.createAccount({
             salt: "0x42",
             privateKey: OZ_ACCOUNT_PRIVATE_KEY
         });
@@ -66,7 +66,7 @@ describe("OpenZeppelin account", function () {
 
     it("should fail when loading an already deployed account with a wrong private key", async function () {
         try {
-            await OpenZeppelinAccount.getAccountFromAddress(OZ_ACCOUNT_ADDRESS, "0x0123");
+            await starknet.OpenZeppelinAccount.getAccountFromAddress(OZ_ACCOUNT_ADDRESS, "0x0123");
             expect.fail("Should have failed on passing an incorrect private key.");
         } catch (err: any) {
             expect(err.message).to.equal(

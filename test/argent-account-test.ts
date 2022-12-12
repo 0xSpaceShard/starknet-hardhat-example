@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import hardhat, { starknet, ArgentAccount } from "hardhat";
+import hardhat, { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { expectFeeEstimationStructure, getOZAccount, mint } from "./util";
@@ -17,7 +17,7 @@ describe("Argent account", function () {
      * Returns an instance of ArgenAccount. Expected to be deployed.
      */
     const getArgentAccount = async () => {
-        return await ArgentAccount.getAccountFromAddress(
+        return await starknet.ArgentAccount.getAccountFromAddress(
             argentAccountAddress,
             argentAccountPrivateKey
         );
@@ -38,7 +38,7 @@ describe("Argent account", function () {
 
     // this test needs to be run in order for other tests to be able to get the account instance
     it("should create, fund, deploy and use account", async function () {
-        const account = await ArgentAccount.createAccount({
+        const account = await starknet.ArgentAccount.createAccount({
             salt: "0x42",
             privateKey: argentAccountPrivateKey
         });
@@ -75,7 +75,7 @@ describe("Argent account", function () {
     it("should fail when loading an already deployed account with a wrong private key", async function () {
         try {
             const wrongKey = "0x0123";
-            await ArgentAccount.getAccountFromAddress(argentAccountAddress, wrongKey);
+            await starknet.ArgentAccount.getAccountFromAddress(argentAccountAddress, wrongKey);
             expect.fail("Should have failed on passing an incorrect private key.");
         } catch (err: any) {
             expect(err.message).to.equal(

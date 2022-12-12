@@ -1,6 +1,6 @@
 import axios from "axios";
 import { expect } from "chai";
-import { OpenZeppelinAccount, starknet } from "hardhat";
+import { starknet } from "hardhat";
 
 export const OK_TX_STATUSES = ["PENDING", "ACCEPTED_ON_L2", "ACCEPTED_ON_L1"];
 
@@ -60,7 +60,7 @@ export async function mint(address: string, amount: number, lite = true) {
  * Returns an instance of OZAccount. Expected to be deployed)
  */
 export async function getOZAccount() {
-    return await OpenZeppelinAccount.getAccountFromAddress(
+    return await starknet.OpenZeppelinAccount.getAccountFromAddress(
         OZ_ACCOUNT_ADDRESS,
         OZ_ACCOUNT_PRIVATE_KEY
     );

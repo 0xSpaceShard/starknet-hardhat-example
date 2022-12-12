@@ -1,4 +1,4 @@
-import hardhat, { OpenZeppelinAccount } from "hardhat";
+import hardhat, { starknet } from "hardhat";
 import { ensureEnvVar } from "../test/util";
 import { StarknetContract } from "hardhat/types";
 import { TIMEOUT } from "../test/constants";
@@ -20,7 +20,7 @@ describe("Argent account", function () {
         const tokenAddress = ensureEnvVar("TOKEN_ADDRESS");
         const token = tokenFactory.getContractAt(tokenAddress);
 
-        const sender = await OpenZeppelinAccount.getAccountFromAddress(
+        const sender = await starknet.OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("SENDER_ADDRESS"),
             ensureEnvVar("SENDER_PRIVATE_KEY")
         );
