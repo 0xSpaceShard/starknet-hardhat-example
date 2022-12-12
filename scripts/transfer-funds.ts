@@ -1,15 +1,8 @@
-import hardhat from "hardhat";
+import hardhat, { starknet } from "hardhat";
 import { ensureEnvVar } from "../test/util";
 import { StarknetContract } from "hardhat/types";
 import { TIMEOUT } from "../test/constants";
 import { expect } from "chai";
-
-function checkImplementation(candidate: string) {
-    if (candidate === "Argent" || candidate === "OpenZeppelin") {
-        return candidate;
-    }
-    throw new Error(`Invalid account implementation: ${candidate}`);
-}
 
 async function getBalance(token: StarknetContract, accountAddress: string) {
     const { balance } = await token.call("balanceOf", {
@@ -27,10 +20,9 @@ describe("Argent account", function () {
         const tokenAddress = ensureEnvVar("TOKEN_ADDRESS");
         const token = tokenFactory.getContractAt(tokenAddress);
 
-        const sender = await hardhat.starknet.getAccountFromAddress(
+        const sender = await starknet.OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("SENDER_ADDRESS"),
-            ensureEnvVar("SENDER_PRIVATE_KEY"),
-            checkImplementation(ensureEnvVar("SENDER_IMPLEMENTATION"))
+            ensureEnvVar("SENDER_PRIVATE_KEY")
         );
 
         const transferAmount = BigInt(ensureEnvVar("TRANSFER_AMOUNT"));

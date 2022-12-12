@@ -1,24 +1,21 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "../test/constants";
-import { ensureEnvVar } from "../test/util";
+import { getOZAccount } from "../test/util";
 
 describe("Delegate proxy", function () {
     this.timeout(TIMEOUT);
 
     it("should forward to the implementation contract", async function () {
-        const account = await starknet.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
-        );
+        const account = await getOZAccount();
 
         const implementationFactory = await starknet.getContractFactory("contract");
         const implementationClassHash = await account.declare(implementationFactory);
 
         // uses delegate proxy defined in contracts/delegate_proxy.cairo
         const proxyFactory = await starknet.getContractFactory("delegate_proxy");
-        const proxy = await proxyFactory.deploy({
+        await account.declare(proxyFactory);
+        const proxy = await account.deploy(proxyFactory, {
             implementation_hash_: implementationClassHash
         });
         console.log("Deployed proxy to", proxy.address);

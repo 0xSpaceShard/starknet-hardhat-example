@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Wallet } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { expectFeeEstimationStructure } from "./util";
+import { expectFeeEstimationStructure, getOZAccount } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -17,7 +17,9 @@ describe("Starknet", function () {
         wallet = starknet.getWallet("OpenZeppelin");
 
         console.log("Started deployment");
-        contract = await contractFactory.deploy({ initial_balance: 0 });
+        const account = await getOZAccount();
+        await account.declare(contractFactory);
+        contract = await account.deploy(contractFactory, { initial_balance: 0 });
         console.log("Deployed at", contract.address);
     });
 

@@ -2,27 +2,24 @@ import { expect } from "chai";
 import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar } from "./util";
+import { getOZAccount } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
 
     it("should work for a fresh deployment", async function () {
-        const accountAddress = ensureEnvVar("OZ_ACCOUNT_ADDRESS");
-        const accountPrivateKey = ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY");
-        const account = await starknet.getAccountFromAddress(
-            accountAddress,
-            accountPrivateKey,
-            "OpenZeppelin"
-        );
+        const account = await getOZAccount();
         console.log(`Account address: ${account.address}, public key: ${account.publicKey})`);
 
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
             "contract"
         );
+        const classHash = await account.declare(contractFactory);
+        console.log("Declared. Class hash:", classHash);
 
-        console.log("Started deployment");
-        const contract: StarknetContract = await contractFactory.deploy({ initial_balance: 0 });
+        const contract: StarknetContract = await account.deploy(contractFactory, {
+            initial_balance: 0
+        });
         console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
 
         const { res: balanceBefore } = await contract.call("get_balance");

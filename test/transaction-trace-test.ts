@@ -1,17 +1,14 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { ensureEnvVar } from "./util";
+import { getOZAccount } from "./util";
 
 describe("Transaction trace", function () {
     it("should test transaction trace", async function () {
-        const account = await starknet.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
-        );
+        const account = await getOZAccount();
 
         const contractFactory = await starknet.getContractFactory("contract");
-        const contract = await contractFactory.deploy({
+        await account.declare(contractFactory);
+        const contract = await account.deploy(contractFactory, {
             initial_balance: 0
         });
 
@@ -41,6 +38,5 @@ describe("Transaction trace", function () {
             expect(tx_trace.function_invocation).to.have.property(property);
             expect(tx_trace.validate_invocation).to.have.property(property);
         }
-
     });
 });

@@ -1,58 +1,72 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
-import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
+import hardhat, { starknet } from "hardhat";
+import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar, expectFeeEstimationStructure } from "./util";
+import {
+    expectFeeEstimationStructure,
+    getOZAccount,
+    mint,
+    OZ_ACCOUNT_ADDRESS,
+    OZ_ACCOUNT_PRIVATE_KEY
+} from "./util";
 
 describe("OpenZeppelin account", function () {
     this.timeout(TIMEOUT);
 
     let mainContractFactory: StarknetContractFactory;
     let mainContract: StarknetContract;
-    let utilContractFactory: StarknetContractFactory;
-    let utilContract: StarknetContract;
-
-    let account: Account;
 
     before(async function () {
-        console.log("Started deployment");
+        const deployerAccount = await getOZAccount();
 
         mainContractFactory = await starknet.getContractFactory("contract");
-        mainContract = await mainContractFactory.deploy({ initial_balance: 0 }, { salt: "0x42" });
-        console.log("Main deployed at", mainContract.address);
-
-        utilContractFactory = await starknet.getContractFactory("contracts/util.cairo");
-        utilContract = await utilContractFactory.deploy({}, { salt: "0x42" });
-        console.log("Util deployed at", utilContract.address);
-
-        // can also be declared as
-        // account = (await starknet.deployAccount("OpenZeppelin")) as OpenZeppelinAccount
-        // if imported from hardhat/types/runtime"
-
-        account = await starknet.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
+        await deployerAccount.declare(mainContractFactory);
+        mainContract = await deployerAccount.deploy(
+            mainContractFactory,
+            { initial_balance: 0 },
+            { salt: "0x42" }
         );
-        console.log(`Account address: ${account.address}, public key: ${account.publicKey})`);
+        console.log("Main deployed at", mainContract.address);
     });
 
-    it("should load an already deployed account with the correct private key", async function () {
-        const newAccount = await starknet.deployAccount("OpenZeppelin");
-        const loadedAccount = await starknet.getAccountFromAddress(
-            newAccount.address,
-            newAccount.privateKey,
-            "OpenZeppelin"
-        );
+    // this test needs to be run in order for other tests to be able to get the account instance
+    it("should create, fund, deploy and use account", async function () {
+        const account = await starknet.OpenZeppelinAccount.createAccount({
+            salt: "0x42",
+            privateKey: OZ_ACCOUNT_PRIVATE_KEY
+        });
 
-        expect(loadedAccount.address).to.deep.equal(newAccount.address);
-        expect(loadedAccount.privateKey === newAccount.privateKey).to.be.true;
-        expect(loadedAccount.publicKey).to.deep.equal(newAccount.publicKey);
+        await mint(account.address, 1e18);
+        console.log("Funded account");
+
+        const deploymentTxHash = await account.deployAccount({ maxFee: 1e18 });
+        console.log("Deployed account in tx", deploymentTxHash);
+
+        // use contract by doing: declare + deploy + invoke + call
+        const contractFactory = await hardhat.starknet.getContractFactory("contract");
+        const declareTxHash = await account.declare(contractFactory, { maxFee: 1e18 });
+        console.log("Declared contract in tx", declareTxHash);
+
+        const initialBalance = 10n;
+        const contract = await account.deploy(
+            contractFactory,
+            { initial_balance: initialBalance },
+            { maxFee: 1e18 }
+        );
+        console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
+
+        await account.invoke(contract, "increase_balance", {
+            amount1: 10n,
+            amount2: 20n
+        });
+
+        const { res: balance } = await contract.call("get_balance");
+        expect(balance).to.equal(initialBalance + 30n);
     });
 
     it("should fail when loading an already deployed account with a wrong private key", async function () {
         try {
-            await starknet.getAccountFromAddress(account.address, "0x0123", "OpenZeppelin");
+            await starknet.OpenZeppelinAccount.getAccountFromAddress(OZ_ACCOUNT_ADDRESS, "0x0123");
             expect.fail("Should have failed on passing an incorrect private key.");
         } catch (err: any) {
             expect(err.message).to.equal(
@@ -61,16 +75,8 @@ describe("OpenZeppelin account", function () {
         }
     });
 
-    it("should deploy account with optional parameters", async function () {
-        const account = await starknet.deployAccount("OpenZeppelin", {
-            salt: "0x42",
-            privateKey: "0x123",
-            token: "0x987"
-        });
-        expect(account.privateKey).to.equal("0x123");
-    });
-
     it("should estimate, invoke and call", async function () {
+        const account = await getOZAccount();
         const { res: initialBalance } = await mainContract.call("get_balance");
         const estimatedFee = await account.estimateFee(mainContract, "increase_balance", {
             amount1: 10,
@@ -104,6 +110,7 @@ describe("OpenZeppelin account", function () {
 
     // Multicall / Multiinvoke testing
     it("should handle multiple invokes through an account", async function () {
+        const account = await getOZAccount();
         const { res: currBalance } = await mainContract.call("get_balance");
         const amount1 = 10n;
         const amount2 = 20n;
@@ -130,6 +137,7 @@ describe("OpenZeppelin account", function () {
     });
 
     it("should fail to declare class if maxFee insufficient", async function () {
+        const account = await getOZAccount();
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
             expect.fail("Should have failed on the previous line");
@@ -139,6 +147,7 @@ describe("OpenZeppelin account", function () {
     });
 
     it("should declare class if maxFee sufficient", async function () {
+        const account = await getOZAccount();
         await account.declare(mainContractFactory, { maxFee: 1e18 });
     });
 });

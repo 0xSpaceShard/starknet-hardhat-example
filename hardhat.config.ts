@@ -10,7 +10,7 @@ dotenv.config();
 const config: HardhatUserConfig = {
     solidity: "0.6.12",
     starknet: {
-        dockerizedVersion: "0.10.1", // alternatively choose one of the two venv options below
+        dockerizedVersion: "0.10.3", // alternatively choose one of the two venv options below
         // uses (my-venv) defined by `python -m venv path/to/my-venv`
         // venv: "path/to/my-venv",
 
@@ -31,9 +31,31 @@ const config: HardhatUserConfig = {
             url: "http://127.0.0.1:5050"
         },
         integratedDevnet: {
-            url: "http://127.0.0.1:5050"
+            url: "http://127.0.0.1:5050",
             // venv: "active",
             // dockerizedVersion: "<DEVNET_VERSION>",
+            args: [
+                // Uncomment the lines below to activate Devnet features in your integrated-devnet instance
+                // Read about Devnet options here: https://shard-labs.github.io/starknet-devnet/docs/guide/run
+                //
+                // *Account predeployment*
+                // "--seed",
+                // "42",
+                // "--accounts",
+                // "1",
+                // "--initial-balance", <VALUE>
+                //
+                // *Forking*
+                // "--fork-network",
+                // "alpha-goerli2"
+                // "--fork-block", <VALUE>
+                //
+                // *Chain ID*
+                // "--chain-id", <VALUE>
+                //
+                // *Gas price*
+                // "--gas-price", <VALUE>
+            ]
         },
         hardhat: {}
     }

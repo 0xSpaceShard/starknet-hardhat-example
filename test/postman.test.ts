@@ -9,7 +9,7 @@ import {
     HttpNetworkConfig
 } from "hardhat/types";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar, expectAddressEquality } from "./util";
+import { expectAddressEquality, getOZAccount } from "./util";
 
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
@@ -41,8 +41,11 @@ describe("Postman", function () {
     let account: Account;
 
     before(async function () {
+        account = await getOZAccount();
+
         L2contractFactory = await starknet.getContractFactory("l1l2");
-        l2contract = await L2contractFactory.deploy();
+        await account.declare(L2contractFactory);
+        l2contract = await account.deploy(L2contractFactory);
 
         const signers = await ethers.getSigners();
         signer = signers[0];
@@ -54,12 +57,6 @@ describe("Postman", function () {
         L1L2Example = await ethers.getContractFactory("L1L2Example", signer);
         l1l2Example = await L1L2Example.deploy(mockStarknetMessaging.address);
         await l1l2Example.deployed();
-
-        account = await starknet.getAccountFromAddress(
-            ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-            ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-            "OpenZeppelin"
-        );
     });
 
     it("should deploy the messaging contract", async () => {
