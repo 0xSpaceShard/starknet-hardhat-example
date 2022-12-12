@@ -1,14 +1,11 @@
 import axios from "axios";
 import { expect } from "chai";
-import { ArgentAccount, OpenZeppelinAccount, starknet } from "hardhat";
+import { OpenZeppelinAccount, starknet } from "hardhat";
 
 export const OK_TX_STATUSES = ["PENDING", "ACCEPTED_ON_L2", "ACCEPTED_ON_L1"];
 
 export const OZ_ACCOUNT_ADDRESS = ensureEnvVar("OZ_ACCOUNT_ADDRESS");
 export const OZ_ACCOUNT_PRIVATE_KEY = ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY");
-
-export const ARGENT_ACCOUNT_ADDRESS = ensureEnvVar("ARGENT_ACCOUNT_ADDRESS");
-export const ARGENT_ACCOUNT_PRIVATE_KEY = ensureEnvVar("ARGENT_ACCOUNT_PRIVATE_KEY");
 
 export function expectFeeEstimationStructure(fee: any) {
     console.log("Estimated fee:", fee);
@@ -66,15 +63,5 @@ export async function getOZAccount() {
     return await OpenZeppelinAccount.getAccountFromAddress(
         OZ_ACCOUNT_ADDRESS,
         OZ_ACCOUNT_PRIVATE_KEY
-    );
-}
-
-/**
- * Returns an instance of ArgenAccount. Expected to be deployed.
- */
-export async function getArgentAccount() {
-    return await ArgentAccount.getAccountFromAddress(
-        ARGENT_ACCOUNT_ADDRESS,
-        ARGENT_ACCOUNT_PRIVATE_KEY
     );
 }
