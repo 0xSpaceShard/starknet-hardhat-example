@@ -26,4 +26,9 @@ async function keypress() {
     console.log("Deploying...");
     await account.deployAccount({ maxFee: 1e18 });
     console.log("Deployed");
-})().catch(console.error);
+})()
+    .then(() => process.exit(0))
+    .catch((err) => {
+        console.error(err);
+        process.exit(1);
+    });
