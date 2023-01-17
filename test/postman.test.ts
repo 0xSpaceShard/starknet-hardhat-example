@@ -166,4 +166,35 @@ describe("Postman", function () {
 
         expect(userL2Balance).to.deep.equal({ balance: 92n });
     });
+
+    it("Should mock l1 to l2 mock tx and vice versa", async () => {
+        const L1_CONTRACT_ADDRESS = l1l2Example.address;
+
+        const l1ToL2Response = await starknet.devnet.sendMessageToL2(
+            l2contract.address,
+            "deposit",
+            L1_CONTRACT_ADDRESS,
+            [1, 1],
+            0
+        );
+
+        expect(l1ToL2Response).haveOwnProperty("transaction_hash");
+        await account.invoke(l2contract, "increase_balance", {
+            user,
+            amount: 10000000
+        });
+
+        await account.invoke(l2contract, "withdraw", {
+            user,
+            amount: 10,
+            L1_CONTRACT_ADDRESS: BigInt(l1l2Example.address)
+        });
+
+        const l2toL1Response = await starknet.devnet.sendMessageToL1(
+            l2contract.address,
+            L1_CONTRACT_ADDRESS,
+            [0, 1, 10]
+        );
+        expect(l2toL1Response).haveOwnProperty("message_hash");
+    });
 });
