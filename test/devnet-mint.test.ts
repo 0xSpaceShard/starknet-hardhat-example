@@ -5,26 +5,39 @@ import { TIMEOUT } from "./constants";
 
 describe("Devnet mint", function () {
     this.timeout(TIMEOUT);
-    let balance = 0,
-        address = "";
+    let balance = 0;
+    const address = "0x22edb233f3bfb99d2e9a14d283794515d124ef94398e143906d379348693fb7";
     const div = 1e16; // To round off large numbers
     const diff = 25 * div;
 
-    before(async () => {
-        const accounts = await starknet.devnet.getPredeployedAccounts();
-        address = accounts[0].address;
+    it("should have valid response", async () => {
+        const resp = await starknet.devnet.mint(address, 0, true);
+        const { new_balance, unit, tx_hash } = resp;
+        balance = new_balance;
+
+        expect(typeof new_balance).to.equal("number");
+        expect(unit).to.equal("wei");
+        expect(tx_hash).to.equal(null);
     });
 
-    it("should contain balance", async () => {
-        const balanceResponse = await starknet.devnet.mint(address, 0, true);
-        balance = balanceResponse.new_balance;
+    it("should tx_hash in separate transaction (not lite) mode", async () => {
+        const resp = await starknet.devnet.mint(address, 0, true);
+        const { new_balance, unit, tx_hash } = resp;
+        balance = new_balance;
 
-        expect(typeof balance).to.equal("number");
+        expect(typeof new_balance).to.equal("number");
+        expect(unit).to.equal("wei");
+        expect(tx_hash).to.equal(null);
     });
-    it("shuold mint a quarter eth", async () => {
-        const mintedBalanceResponse = await starknet.devnet.mint(address, diff, true);
-        const newBalance = mintedBalanceResponse.new_balance;
 
-        expect(Math.round(newBalance / div - balance / div)).to.deep.equal(diff / div);
+    it("should mint lite mode", async () => {
+        const resp = await starknet.devnet.mint(address, diff, true);
+        expect(Math.round(resp.new_balance / div - balance / div)).to.deep.equal(diff / div);
+        balance = resp.new_balance; // Update balance for next test
+    });
+    it("should mint in separate transaction (not lite)", async () => {
+        const resp = await starknet.devnet.mint(address, diff, false);
+        expect(Math.round(resp.new_balance / div - balance / div)).to.deep.equal(diff / div);
+        balance = resp.new_balance; // Update balance for next test
     });
 });
