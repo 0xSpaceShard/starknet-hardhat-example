@@ -168,8 +168,7 @@ describe("Postman", function () {
     });
 
     it("Should mock l1 to l2 tx and vice versa", async () => {
-        const L1_CONTRACT_ADDRESS = l1l2Example.address;
-
+        const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
         const { transaction_hash } = await starknet.devnet.sendMessageToL2(
             l2contract.address,
             "deposit",
