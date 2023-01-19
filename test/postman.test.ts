@@ -9,7 +9,7 @@ import {
     HttpNetworkConfig
 } from "hardhat/types";
 import { TIMEOUT } from "./constants";
-import { expectAddressEquality, getOZAccount } from "./util";
+import { expectAddressEquality, getOZAccount, OK_TX_STATUSES } from "./util";
 
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
@@ -165,5 +165,37 @@ describe("Postman", function () {
         });
 
         expect(userL2Balance).to.deep.equal({ balance: 92n });
+    });
+
+    it("Should mock l1 to l2 tx and vice versa", async () => {
+        const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
+        const { transaction_hash } = await starknet.devnet.sendMessageToL2(
+            l2contract.address,
+            "deposit",
+            L1_CONTRACT_ADDRESS,
+            [1, 1],
+            0
+        );
+
+        expect(transaction_hash.startsWith("0x")).to.be.true;
+        const tx = await starknet.getTransaction(transaction_hash);
+        expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
+        await account.invoke(l2contract, "increase_balance", {
+            user,
+            amount: 10000000
+        });
+
+        await account.invoke(l2contract, "withdraw", {
+            user,
+            amount: 10,
+            L1_CONTRACT_ADDRESS
+        });
+
+        const { message_hash } = await starknet.devnet.consumeMessageFromL2(
+            l2contract.address,
+            L1_CONTRACT_ADDRESS,
+            [0, 1, 10]
+        );
+        expect(message_hash.startsWith("0x")).to.be.true;
     });
 });
