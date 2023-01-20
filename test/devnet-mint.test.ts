@@ -34,13 +34,13 @@ describe("Devnet mint", function () {
 
     it("should mint lite mode", async () => {
         const resp = await starknet.devnet.mint(address, diff, true);
-        expect(Math.round(resp.new_balance)).to.deep.equal(diff + balance);
+        expect(resp.new_balance).to.deep.equal(diff + balance);
         balance = resp.new_balance; // Update balance for next test
     });
 
     it("should mint in separate transaction (not lite)", async () => {
         const resp = await starknet.devnet.mint(address, diff, false);
-        expect(Math.round(resp.new_balance)).to.deep.equal(diff + balance);
+        expect(resp.new_balance).to.deep.equal(diff + balance);
         balance = resp.new_balance; // Update balance for next test
     });
 });
