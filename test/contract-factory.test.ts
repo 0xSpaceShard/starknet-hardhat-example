@@ -7,7 +7,7 @@ import { OpenZeppelinAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src
 import * as fs from "fs";
 import { StarknetContract } from "@shardlabs/starknet-hardhat-plugin/dist/src/types";
 
-describe("StarknetContractFactory", function () {
+describe("StarknetContractFactory tests", function () {
     this.timeout(TIMEOUT);
     let contractFactory: StarknetContractFactory;
     let account: OpenZeppelinAccount;
