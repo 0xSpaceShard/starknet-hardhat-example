@@ -4,7 +4,6 @@ import { TIMEOUT } from "./constants";
 import { StarknetContractFactory } from "hardhat/types/runtime";
 import { getPredeployedOZAccount } from "./util";
 import { OpenZeppelinAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/account";
-import * as fs from "fs";
 import { StarknetContract } from "@shardlabs/starknet-hardhat-plugin/dist/src/types";
 
 describe("StarknetContractFactory", function () {
@@ -12,15 +11,7 @@ describe("StarknetContractFactory", function () {
     let contractFactory: StarknetContractFactory;
     let account: OpenZeppelinAccount;
     let contract: StarknetContract;
-    let initial_balance = 25n;
-
-    /**
- * invoke(functionName: string, args?: StringMap, options?: InvokeOptions): Promise<InvokeResponse>;
- * call(functionName: string, args?: StringMap, options?: CallOptions): Promise<StringMap>;
- * estimateFee(functionName: string, args?: StringMap, options?: EstimateFeeOptions): Promise<starknet.FeeEstimation>;
- * getAbi(): starknet.Abi;
-  decodeEvents(events: starknet.Event[]): DecodedEvent[];
- */
+    const initial_balance = 25n;
 
     before(async function () {
         account = await getPredeployedOZAccount();
@@ -32,7 +23,7 @@ describe("StarknetContractFactory", function () {
         expect(typeof address).to.be.eq("string");
         expect(address.indexOf("0x")).to.be.eq(0);
     });
-    it("should have valid abi getAbi", async () => {
+    it("should have valid abi: getAbi", async () => {
         const abi = contract.getAbi();
         expect(typeof abi).to.be.eq("object");
         expect(typeof abi.increase_balance).to.be.eq("object");

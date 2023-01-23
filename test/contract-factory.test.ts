@@ -11,13 +11,10 @@ describe("StarknetContractFactory", function () {
     this.timeout(TIMEOUT);
     let contractFactory: StarknetContractFactory;
     let account: OpenZeppelinAccount;
-    // let contract: StarknetContract;
 
     before(async function () {
         account = await getPredeployedOZAccount();
         contractFactory = await starknet.getContractFactory("contract");
-
-        // contract = await account.deploy(contractFactory, { initial_balance: 0 });
     });
     it("should have file at getAbiPath()", async () => {
         const abiPath = contractFactory.getAbiPath();
@@ -39,7 +36,7 @@ describe("StarknetContractFactory", function () {
         expect(fs.existsSync(metadataPath)).to.be.true;
     });
     it("should declare class", async () => {
-        // account.declare calls and return contractFactory.declare
+        // account.declare() calls and returns contractFactory.declare()
         const classHash = await account.declare(contractFactory);
         expect(typeof classHash).to.be.eq("string");
         expect(classHash.indexOf("0x")).to.be.eq(0);
