@@ -14,9 +14,15 @@ describe("Starknet", function () {
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
             "contract"
         );
+        const delcareFee = await account.estimateDeclareFee(contractFactory);
+        console.log("Estimated declare fee: ", delcareFee);
         const classHash = await account.declare(contractFactory);
         console.log("Declared. Class hash:", classHash);
 
+        const deployFee = await account.estimateDeployFee(contractFactory, {
+            initial_balance: 0
+        });
+        console.log("Estimated deploy fee: ", deployFee);
         const contract: StarknetContract = await account.deploy(contractFactory, {
             initial_balance: 0
         });
@@ -27,7 +33,7 @@ describe("Starknet", function () {
 
         const args = { amount1: 10, amount2: 20 };
         const fee = await account.estimateFee(contract, "increase_balance", args);
-        console.log("Estimated fee:", fee);
+        console.log("Estimated invoke fee:", fee);
 
         await account.invoke(contract, "increase_balance", args, { maxFee: fee.amount * 2n });
         console.log("Increased balance");
