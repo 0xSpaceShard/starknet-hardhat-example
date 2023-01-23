@@ -1,3 +1,5 @@
+import { OpenZeppelinAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/account";
+import { PredeployedAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/devnet-utils";
 import axios from "axios";
 import { expect } from "chai";
 import { starknet } from "hardhat";
@@ -67,20 +69,20 @@ export async function getOZAccount() {
 }
 
 /**
- * Returns a predeployed account details.
- * @returns {PredeployedAccount}
+ * Returns details for a pre-deployed account.
+ * @param {number} index Index of account to use
  */
-export async function getPredeployedAccount() {
+export async function getPredeployedAccount(index = 0): Promise<PredeployedAccount> {
     const accounts = await starknet.devnet.getPredeployedAccounts();
-    return accounts[0];
+    return accounts[index];
 }
 
 /**
- * Returns a predeployed instance of OZAccount.
- * @returns {OpenZeppelinAccount}
+ * Returns an OZAccount instance for a pre-deployed account.
+ * @param {number} index Index of account to use
  */
-export async function getPredeployedOZAccount() {
-    const account = await getPredeployedAccount();
+export async function getPredeployedOZAccount(index = 0): Promise<OpenZeppelinAccount> {
+    const account = await getPredeployedAccount(index);
     return await starknet.OpenZeppelinAccount.getAccountFromAddress(
         account.address,
         account.private_key
