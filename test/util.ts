@@ -65,3 +65,24 @@ export async function getOZAccount() {
         OZ_ACCOUNT_PRIVATE_KEY
     );
 }
+
+/**
+ * Returns a predeployed account details.
+ * @returns {PredeployedAccount}
+ */
+export async function getPredeployedAccount() {
+    const accounts = await starknet.devnet.getPredeployedAccounts();
+    return accounts[0];
+}
+
+/**
+ * Returns a predeployed instance of OZAccount.
+ * @returns {OpenZeppelinAccount}
+ */
+export async function getPredeployedOZAccount() {
+    const account = await getPredeployedAccount();
+    return await starknet.OpenZeppelinAccount.getAccountFromAddress(
+        account.address,
+        account.private_key
+    );
+}
