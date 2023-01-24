@@ -14,8 +14,8 @@ describe("Starknet", function () {
         const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
             "contract"
         );
-        const delcareFee = await account.estimateDeclareFee(contractFactory);
-        console.log("Estimated declare fee: ", delcareFee);
+        const declareFee = await account.estimateDeclareFee(contractFactory);
+        console.log("Estimated declare fee: ", declareFee);
         const classHash = await account.declare(contractFactory);
         console.log("Declared. Class hash:", classHash);
 
