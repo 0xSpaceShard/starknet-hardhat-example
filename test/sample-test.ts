@@ -75,7 +75,7 @@ describe("Starknet", function () {
             );
             expect.fail("Should have failed on invoking using options with maxFee and overhead.");
         } catch (err: any) {
-            expect(err.message).to.deep.contain("Both maxFee and overhead cannot be specified");
+            expect(err.message).to.deep.contain("maxFee and overhead cannot be specified together");
         }
     });
 
