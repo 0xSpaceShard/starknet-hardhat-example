@@ -6,7 +6,7 @@ import { getPredeployedOZAccount } from "./util";
 import { OpenZeppelinAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/account";
 import { StarknetContract } from "@shardlabs/starknet-hardhat-plugin/dist/src/types";
 
-describe("StarknetContractFactory", function () {
+describe("StarknetContract tests", function () {
     this.timeout(TIMEOUT);
     let contractFactory: StarknetContractFactory;
     let account: OpenZeppelinAccount;
@@ -16,6 +16,7 @@ describe("StarknetContractFactory", function () {
     before(async function () {
         account = await getPredeployedOZAccount();
         contractFactory = await starknet.getContractFactory("contract");
+        await account.declare(contractFactory);
         contract = await account.deploy(contractFactory, { initial_balance });
     });
     it("should have address", async () => {
