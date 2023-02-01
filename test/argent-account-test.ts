@@ -44,13 +44,10 @@ describe("Argent account", function () {
         });
         argentAccountAddress = account.address;
 
-        const estimatedFee = await account.estimateDeployAccountFee();
-        console.log("Estimated deploy account fee: ", estimatedFee);
-
         await mint(account.address, 1e18);
         console.log("Funded account");
 
-        const deploymentTxHash = await account.deployAccount(); // Implicit maxFee will be used
+        const deploymentTxHash = await account.deployAccount({ maxFee: 1e18 });
         console.log("Deployed account in tx", deploymentTxHash);
 
         // use contract by doing: declare + deploy + invoke + call
@@ -73,6 +70,20 @@ describe("Argent account", function () {
 
         const { res: balance } = await contract.call("get_balance");
         expect(balance).to.equal(initialBalance + 30n);
+    });
+
+    it("should estimate deploy account fee and deploy with implicit maxFee", async function () {
+        const account = await starknet.ArgentAccount.createAccount({
+            salt: "0x43",
+            privateKey: argentAccountPrivateKey
+        });
+
+        const estimatedFee = await account.estimateDeployAccountFee();
+        expectFeeEstimationStructure(estimatedFee);
+        await mint(account.address, 1e18);
+
+        const deploymentTxHash = account.deployAccount();
+        console.log("Deployed account in tx", deploymentTxHash);
     });
 
     it("should fail when loading an already deployed account with a wrong private key", async function () {
