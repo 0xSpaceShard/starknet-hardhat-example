@@ -80,6 +80,7 @@ describe("Argent account", function () {
 
         const estimatedFee = await account.estimateDeployAccountFee();
         expectFeeEstimationStructure(estimatedFee);
+        console.log("Estimated deploy account fee: ", estimatedFee);
         await mint(account.address, 1e18);
 
         const deploymentTxHash = account.deployAccount();
