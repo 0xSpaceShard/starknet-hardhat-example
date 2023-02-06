@@ -81,9 +81,9 @@ describe("Argent account", function () {
         const estimatedFee = await account.estimateDeployAccountFee();
         expectFeeEstimationStructure(estimatedFee);
         console.log("Estimated deploy account fee: ", estimatedFee);
-        await mint(account.address, 1e18);
+        await mint(account.address, Number(estimatedFee.amount));
 
-        const deploymentTxHash = account.deployAccount();
+        const deploymentTxHash = account.deployAccount({ maxFee: estimatedFee.amount });
         console.log("Deployed account in tx", deploymentTxHash);
     });
 
