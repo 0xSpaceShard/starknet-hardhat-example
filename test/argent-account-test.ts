@@ -47,7 +47,7 @@ describe("Argent account", function () {
         await mint(account.address, 1e18);
         console.log("Funded account");
 
-        const deploymentTxHash = await account.deployAccount({ maxFee: 1e18 });
+        const deploymentTxHash = await account.deployAccount(); // Implicit maxFee will be used
         console.log("Deployed account in tx", deploymentTxHash);
 
         // use contract by doing: declare + deploy + invoke + call
@@ -70,6 +70,21 @@ describe("Argent account", function () {
 
         const { res: balance } = await contract.call("get_balance");
         expect(balance).to.equal(initialBalance + 30n);
+    });
+
+    it("should estimate deploy account fee and deploy with estimated fee as maxFee", async function () {
+        const account = await starknet.ArgentAccount.createAccount({
+            salt: "0x43",
+            privateKey: argentAccountPrivateKey
+        });
+
+        const estimatedFee = await account.estimateDeployAccountFee();
+        expectFeeEstimationStructure(estimatedFee);
+        console.log("Estimated deploy account fee: ", estimatedFee);
+        await mint(account.address, Number(estimatedFee.amount));
+
+        const deploymentTxHash = account.deployAccount({ maxFee: estimatedFee.amount });
+        console.log("Deployed account in tx", deploymentTxHash);
     });
 
     it("should fail when loading an already deployed account with a wrong private key", async function () {
