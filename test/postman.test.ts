@@ -9,7 +9,7 @@ import {
     HttpNetworkConfig
 } from "hardhat/types";
 import { TIMEOUT } from "./constants";
-import { expectAddressEquality, getOZAccount, OK_TX_STATUSES } from "./util";
+import { expectAddressEquality, expectFeeEstimationStructure, getOZAccount, OK_TX_STATUSES } from "./util";
 
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
@@ -167,7 +167,7 @@ describe("Postman", function () {
         expect(userL2Balance).to.deep.equal({ balance: 92n });
     });
 
-    it("Should mock l1 to l2 tx and vice versa", async () => {
+    it("should mock l1 to l2 tx and vice versa", async () => {
         const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
         const { transaction_hash } = await starknet.devnet.sendMessageToL2(
             l2contract.address,
@@ -197,5 +197,17 @@ describe("Postman", function () {
             [0, 1, 10]
         );
         expect(message_hash.startsWith("0x")).to.be.true;
+    });
+
+    it("should estimate message fee", async () => {
+        const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
+        const estimatedMessageFee = await starknet.devnet.estimateMessageFee(
+            L1_CONTRACT_ADDRESS,
+            l2contract.address,
+            "deposit",
+            [556, 123]
+        );
+
+        expectFeeEstimationStructure(estimatedMessageFee);
     });
 });
