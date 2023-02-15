@@ -201,9 +201,8 @@ describe("Postman", function () {
 
     it("should estimate message fee", async () => {
         const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
-        const estimatedMessageFee = await starknet.devnet.estimateMessageFee(
+        const estimatedMessageFee = await l2contract.estimateMessageFee(
             L1_CONTRACT_ADDRESS,
-            l2contract.address,
             "deposit",
             [556, 123]
         );
