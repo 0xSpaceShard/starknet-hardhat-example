@@ -202,11 +202,13 @@ describe("Postman", function () {
     it("should estimate message fee", async () => {
         const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
         const estimatedMessageFee = await l2contract.estimateMessageFee(
-            L1_CONTRACT_ADDRESS,
             "deposit",
-            [556, 123]
+            {
+                from_address: L1_CONTRACT_ADDRESS,
+                amount: 123,
+                user
+            }
         );
-
         expectFeeEstimationStructure(estimatedMessageFee);
     });
 });
