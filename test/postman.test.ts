@@ -9,7 +9,12 @@ import {
     HttpNetworkConfig
 } from "hardhat/types";
 import { TIMEOUT } from "./constants";
-import { expectAddressEquality, expectFeeEstimationStructure, getOZAccount, OK_TX_STATUSES } from "./util";
+import {
+    expectAddressEquality,
+    expectFeeEstimationStructure,
+    getOZAccount,
+    OK_TX_STATUSES
+} from "./util";
 
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
@@ -201,31 +206,27 @@ describe("Postman", function () {
 
     it("should estimate message fee", async () => {
         const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
-        const estimatedMessageFee = await l2contract.estimateMessageFee(
-            "deposit",
-            {
-                from_address: L1_CONTRACT_ADDRESS,
-                amount: 123,
-                user
-            }
-        );
+        const estimatedMessageFee = await l2contract.estimateMessageFee("deposit", {
+            from_address: L1_CONTRACT_ADDRESS,
+            amount: 123,
+            user
+        });
         expectFeeEstimationStructure(estimatedMessageFee);
     });
 
     it("should fail to estimate message fee with a non @l1_handler function", async () => {
         try {
-        const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
-        await l2contract.estimateMessageFee(
-            "withdraw",
-            {
+            const L1_CONTRACT_ADDRESS = mockStarknetMessaging.address;
+            await l2contract.estimateMessageFee("withdraw", {
                 from_address: L1_CONTRACT_ADDRESS,
                 amount: 123,
                 user
-            }
-        );
-        expect.fail("Should have failed on the previous line");
+            });
+            expect.fail("Should have failed on the previous line");
         } catch (error: any) {
-            expect(error.message).to.contain(`Cannot estimate message fee on "withdraw" - not an @l1_handler`)
+            expect(error.message).to.contain(
+                "Cannot estimate message fee on \"withdraw\" - not an @l1_handler"
+            );
         }
     });
 });
