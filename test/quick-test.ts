@@ -23,15 +23,9 @@ describe("Starknet", function () {
             initial_balance: 0
         });
         console.log("Estimated deploy fee: ", deployFee);
-        const contract: StarknetContract = await account.deploy(
-            contractFactory,
-            {
-                initial_balance: 0
-            },
-            {
-                nonce: 1
-            }
-        );
+        const contract: StarknetContract = await account.deploy(contractFactory, {
+            initial_balance: 0
+        });
         console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
 
         const { res: balanceBefore } = await contract.call("get_balance");
