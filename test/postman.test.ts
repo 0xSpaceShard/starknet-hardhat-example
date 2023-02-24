@@ -56,7 +56,8 @@ describe("Postman", function () {
         signer = signers[0];
 
         MockStarknetMessaging = await ethers.getContractFactory("MockStarknetMessaging", signer);
-        mockStarknetMessaging = await MockStarknetMessaging.deploy();
+        const messageCancellationDelay = 5 * 60; // seconds
+        mockStarknetMessaging = await MockStarknetMessaging.deploy(messageCancellationDelay);
         await mockStarknetMessaging.deployed();
 
         L1L2Example = await ethers.getContractFactory("L1L2Example", signer);
