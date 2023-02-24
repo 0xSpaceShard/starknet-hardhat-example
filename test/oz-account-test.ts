@@ -24,7 +24,10 @@ describe("OpenZeppelin account", function () {
         mainContract = await deployerAccount.deploy(
             mainContractFactory,
             { initial_balance: 0 },
-            { salt: "0x42" }
+            {
+                salt: "0x42",
+                nonce: 1
+            }
         );
         console.log("Main deployed at", mainContract.address);
     });
