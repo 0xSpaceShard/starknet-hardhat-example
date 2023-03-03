@@ -1,5 +1,5 @@
 import { starknet } from "hardhat";
-import { ensureEnvVar } from "test\util";
+import { ensureEnvVar } from "test/util";
 
 async function keypress() {
     process.stdin.setRawMode(true);
@@ -13,8 +13,8 @@ async function keypress() {
 
 (async () => {
     const account = await starknet.OpenZeppelinAccount.createAccount({
-        salt: ensureEnvVar('SALT'),
-        privateKey: ensureEnvVar('PRIVATE_KEY'),
+        salt: ensureEnvVar("SALT"),
+        privateKey: ensureEnvVar("PRIVATE_KEY")
     });
     console.log(
         `Account created at ${account.address} with private key=${account.privateKey} and public key=${account.publicKey}`
