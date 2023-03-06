@@ -31,7 +31,7 @@ const config: HardhatUserConfig = {
             url: "http://127.0.0.1:5050"
         },
         integration: {
-            url: "http://external.integration.starknet.io"
+            url: "https://external.integration.starknet.io"
         },
         integratedDevnet: {
             url: "http://127.0.0.1:5050",
