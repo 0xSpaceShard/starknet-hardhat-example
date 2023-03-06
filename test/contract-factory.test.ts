@@ -35,11 +35,10 @@ describe("StarknetContractFactory tests", function () {
         const { metadataPath } = contractFactory;
         expect(fs.existsSync(metadataPath)).to.be.true;
     });
-    it("should declare class", async () => {
-        // account.declare() calls and returns contractFactory.declare()
-        const classHash = await account.declare(contractFactory);
-        expect(typeof classHash).to.be.eq("string");
-        expect(classHash.indexOf("0x")).to.be.eq(0);
+    it("should declare with tx hash as return", async () => {
+        const txHash = await account.declare(contractFactory);
+        expect(typeof txHash).to.be.eq("string");
+        expect(txHash.indexOf("0x")).to.be.eq(0);
     });
     it("should getClassHash", async () => {
         const classHash = await contractFactory.getClassHash();
