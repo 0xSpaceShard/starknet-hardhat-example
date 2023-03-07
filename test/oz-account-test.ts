@@ -158,13 +158,13 @@ describe("OpenZeppelin account", function () {
         const account = await getOZAccount();
         const txHash = await account.declare(mainContractFactory, { maxFee: 1 });
         const txReceipt = await starknet.getTransactionReceipt(txHash);
-        expect(txReceipt.status).to.equal('REJECTED');
+        expect(txReceipt.status).to.equal("REJECTED");
     });
 
     it("should return hash for accepted declare tx if maxFee sufficient", async function () {
         const account = await getOZAccount();
         const txHash = await account.declare(mainContractFactory, { maxFee: 1e18 });
         const txReceipt = await starknet.getTransactionReceipt(txHash);
-        expect(txReceipt.status).to.equal('ACCEPTED_ON_L2' || 'ACCEPTED_ON_L1');
+        expect(txReceipt.status).to.equal("ACCEPTED_ON_L2" || "ACCEPTED_ON_L1");
     });
 });
