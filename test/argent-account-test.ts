@@ -182,17 +182,17 @@ describe("Argent account", function () {
         expect(newBalance).to.deep.equal(currBalance + 60n);
     });
 
-    it("should fail to declare class if maxFee insufficient", async function () {
-        const account = await getArgentAccount();
-        try {
-            await account.declare(mainContractFactory, { maxFee: 1 });
-        } catch (error: any) {
-            expect(error.message).to.contain("Actual fee exceeded max fee");
-        }
+    it("should return hash for rejected declare tx if maxFee insufficient", async function () {
+        const account = await getOZAccount();
+        const txHash = await account.declare(mainContractFactory, { maxFee: 1 });
+        const txReceipt = await starknet.getTransactionReceipt(txHash);
+        expect(txReceipt.status).to.equal('REJECTED');
     });
 
-    it("should declare class if maxFee sufficient", async function () {
-        const account = await getArgentAccount();
-        await account.declare(mainContractFactory, { maxFee: 1e18 });
+    it("should return hash for accepted declare tx if maxFee sufficient", async function () {
+        const account = await getOZAccount();
+        const txHash = await account.declare(mainContractFactory, { maxFee: 1e18 });
+        const txReceipt = await starknet.getTransactionReceipt(txHash);
+        expect(txReceipt.status).to.equal('ACCEPTED_ON_L2' || 'ACCEPTED_ON_L1');
     });
 });
