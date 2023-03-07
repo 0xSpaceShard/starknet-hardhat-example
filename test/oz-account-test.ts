@@ -24,7 +24,10 @@ describe("OpenZeppelin account", function () {
         mainContract = await deployerAccount.deploy(
             mainContractFactory,
             { initial_balance: 0 },
-            { salt: "0x42" }
+            {
+                salt: "0x42",
+                nonce: 1
+            }
         );
         console.log("Main deployed at", mainContract.address);
     });
@@ -39,7 +42,7 @@ describe("OpenZeppelin account", function () {
         await mint(account.address, 1e18);
         console.log("Funded account");
 
-        const deploymentTxHash = await account.deployAccount({ maxFee: 1e18 });
+        const deploymentTxHash = await account.deployAccount();
         console.log("Deployed account in tx", deploymentTxHash);
 
         // use contract by doing: declare + deploy + invoke + call
@@ -62,6 +65,21 @@ describe("OpenZeppelin account", function () {
 
         const { res: balance } = await contract.call("get_balance");
         expect(balance).to.equal(initialBalance + 30n);
+    });
+
+    it("should estimate deploy account fee and deploy with implicit maxFee", async function () {
+        const account = await starknet.OpenZeppelinAccount.createAccount({
+            salt: "0x43",
+            privateKey: OZ_ACCOUNT_PRIVATE_KEY
+        });
+
+        const estimatedFee = await account.estimateDeployAccountFee();
+        expectFeeEstimationStructure(estimatedFee);
+        console.log("Estimated deploy account fee: ", estimatedFee);
+        await mint(account.address, 1e18);
+
+        const deploymentTxHash = account.deployAccount(); // Implicit maxFee will be used
+        console.log("Deployed account in tx", deploymentTxHash);
     });
 
     it("should fail when loading an already deployed account with a wrong private key", async function () {
