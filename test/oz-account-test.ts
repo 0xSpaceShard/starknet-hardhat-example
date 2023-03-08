@@ -48,7 +48,7 @@ describe("OpenZeppelin account", function () {
         // use contract by doing: declare + deploy + invoke + call
         const contractFactory = await hardhat.starknet.getContractFactory("contract");
         const txHash = await account.declare(contractFactory, { maxFee: 1e18 });
-        console.log("Tx hash", txHash);
+        console.log("Declared contract in tx", txHash);
 
         const initialBalance = 10n;
         const contract = await account.deploy(
@@ -154,17 +154,18 @@ describe("OpenZeppelin account", function () {
         expect(newBalance).to.deep.equal(currBalance + 60n);
     });
 
-    it("should return hash for rejected declare tx if maxFee insufficient", async function () {
+    it("should fail to declare class if maxFee insufficient", async function () {
         const account = await getOZAccount();
-        const txHash = await account.declare(mainContractFactory, { maxFee: 1 });
-        const txReceipt = await starknet.getTransactionReceipt(txHash);
-        expect(txReceipt.status).to.equal("REJECTED");
+        try {
+            await account.declare(mainContractFactory, { maxFee: 1 });
+            expect.fail("Should have failed on the previous line");
+        } catch (error: any) {
+            expect(error.message).to.contain("Actual fee exceeded max fee");
+        }
     });
 
-    it("should return hash for accepted declare tx if maxFee sufficient", async function () {
+    it("should declare class if maxFee sufficient", async function () {
         const account = await getOZAccount();
-        const txHash = await account.declare(mainContractFactory, { maxFee: 1e18 });
-        const txReceipt = await starknet.getTransactionReceipt(txHash);
-        expect(txReceipt.status).to.equal("ACCEPTED_ON_L2" || "ACCEPTED_ON_L1");
+        await account.declare(mainContractFactory, { maxFee: 1e18 });
     });
 });
