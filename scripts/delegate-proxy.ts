@@ -10,7 +10,8 @@ describe("Delegate proxy", function () {
         const account = await getOZAccount();
 
         const implementationFactory = await starknet.getContractFactory("contract");
-        const implementationClassHash = await account.declare(implementationFactory);
+        await account.declare(implementationFactory);
+        const implementationClassHash = await implementationFactory.getClassHash();
 
         // uses delegate proxy defined in contracts/delegate_proxy.cairo
         const proxyFactory = await starknet.getContractFactory("delegate_proxy");

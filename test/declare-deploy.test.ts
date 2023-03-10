@@ -9,7 +9,8 @@ describe("Class declaration", function () {
         const account = await getOZAccount();
 
         const contractFactory = await starknet.getContractFactory("contract");
-        const classHash = await account.declare(contractFactory);
+        await account.declare(contractFactory);
+        const classHash = await contractFactory.getClassHash();
 
         const deployerFactory = await starknet.getContractFactory("deployer");
         await account.declare(deployerFactory);

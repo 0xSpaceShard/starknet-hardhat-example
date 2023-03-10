@@ -16,8 +16,8 @@ describe("Starknet", function () {
         );
         const declareFee = await account.estimateDeclareFee(contractFactory);
         console.log("Estimated declare fee: ", declareFee);
-        const classHash = await account.declare(contractFactory);
-        console.log("Declared. Class hash:", classHash);
+        const txHash = await account.declare(contractFactory);
+        console.log("Tx hash:", txHash);
 
         const deployFee = await account.estimateDeployFee(contractFactory, {
             initial_balance: 0

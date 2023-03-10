@@ -47,8 +47,8 @@ describe("OpenZeppelin account", function () {
 
         // use contract by doing: declare + deploy + invoke + call
         const contractFactory = await hardhat.starknet.getContractFactory("contract");
-        const declareTxHash = await account.declare(contractFactory, { maxFee: 1e18 });
-        console.log("Declared contract in tx", declareTxHash);
+        const txHash = await account.declare(contractFactory, { maxFee: 1e18 });
+        console.log("Declared contract in tx", txHash);
 
         const initialBalance = 10n;
         const contract = await account.deploy(
