@@ -266,7 +266,7 @@ describe("Starknet", function () {
         expect(tx.transaction.transaction_hash).to.deep.equal(txHash);
         expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
         expect(BigInt(tx.transaction.max_fee)).to.deep.equal(MAX_FEE);
-        expectAddressEquality(tx.transaction.contract_address, account.address);
+        expectAddressEquality(tx.transaction.sender_address, account.address);
 
         const receipt = await starknet.getTransactionReceipt(txHash);
         console.log(receipt);
