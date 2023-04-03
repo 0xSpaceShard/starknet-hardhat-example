@@ -10,13 +10,14 @@ dotenv.config();
 const config: HardhatUserConfig = {
     solidity: "0.6.12",
     starknet: {
-        dockerizedVersion: "0.10.3", // alternatively choose one of the two venv options below
+        dockerizedVersion: "0.11.0.1", // alternatively choose one of the two venv options below
         // uses (my-venv) defined by `python -m venv path/to/my-venv`
         // venv: "path/to/my-venv",
 
         // uses the currently active Python environment (hopefully with available Starknet commands!)
         // venv: "active",
         recompile: false,
+        manifestPath: "path/to/Cargo.toml",
         network: "integrated-devnet",
         wallets: {
             OpenZeppelin: {
