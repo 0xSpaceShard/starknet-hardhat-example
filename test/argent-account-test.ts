@@ -107,14 +107,18 @@ describe("Argent account", function () {
         const { res: initialBalance } = await mainContract.call("get_balance");
 
         const newGuardianPrivateKey = "0x123";
-        await account.setGuardian(newGuardianPrivateKey);
+        await account.setGuardian(newGuardianPrivateKey, {
+            maxFee: 1e18
+        });
         expect(account.guardianPrivateKey).to.equal(newGuardianPrivateKey);
 
         await account.invoke(mainContract, "increase_balance", { amount1: 5n, amount2: 0 });
         const { res: balanceWithGuardian } = await mainContract.call("get_balance");
         expect(balanceWithGuardian).to.equal(initialBalance + 5n);
 
-        await account.setGuardian(undefined);
+        await account.setGuardian(undefined, {
+            maxFee: 1e18
+        });
         expect(account.guardianPrivateKey).to.be.undefined;
         await account.invoke(mainContract, "increase_balance", { amount1: 6n, amount2: 0 });
         const { res: balanceWithoutGuardian } = await mainContract.call("get_balance");
