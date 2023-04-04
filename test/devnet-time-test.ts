@@ -12,6 +12,6 @@ describe("Devnet Block Time", function () {
 
         // Set time for next block
         const resSetTime = await starknet.devnet.setTime(1000);
-        expect(resSetTime.next_block_timestamp).to.be.equal(1000);
+        expect(resSetTime.block_timestamp).to.be.equal(1000);
     });
 });
