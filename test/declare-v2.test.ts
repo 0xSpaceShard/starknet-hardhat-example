@@ -18,9 +18,13 @@ describe("Class declaration", function () {
         });
         console.log("Estimated deploy fee: ", deployFee);
 
-        const contract = await account.deploy(contractFactory, {
-            initial_balance: 10n
-        }, { maxFee: deployFee.amount });
+        const contract = await account.deploy(
+            contractFactory,
+            {
+                initial_balance: 10n
+            },
+            { maxFee: deployFee.amount }
+        );
         const balanceBefore = await contract.call("get_balance");
         expect(balanceBefore.response).to.deep.equal(10n);
 
@@ -32,7 +36,7 @@ describe("Class declaration", function () {
         console.log("Increased balance");
 
         const balanceAfter = await contract.call("get_balance");
-        console.log("balance after", balanceAfter.response)
+        console.log("balance after", balanceAfter.response);
         expect(balanceAfter.response).to.deep.equal(40n);
     });
 });
