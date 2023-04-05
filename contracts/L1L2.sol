@@ -50,7 +50,7 @@ contract L1L2Example {
         uint256 l2ContractAddress,
         uint256 user,
         uint256 amount
-    ) external {
+    ) external payable {
         require(amount < 2**64, "Invalid amount.");
         require(amount <= userBalances[user], "The user's balance is not large enough.");
 
@@ -63,6 +63,6 @@ contract L1L2Example {
         payload[1] = amount;
 
         // Send the message to the StarkNet core contract.
-        starknetCore.sendMessageToL2(l2ContractAddress, DEPOSIT_SELECTOR, payload);
+        starknetCore.sendMessageToL2{value: msg.value}(l2ContractAddress, DEPOSIT_SELECTOR, payload);
     }
 }
