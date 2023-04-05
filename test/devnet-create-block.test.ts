@@ -7,8 +7,6 @@ describe("Devnet create block", function () {
     this.timeout(TIMEOUT);
 
     it("should successively create empty blocks", async () => {
-        const latestBlock = await starknet.getBlock();
-
         const emptyBlock1 = await starknet.devnet.createBlock();
         const emptyBlock1Response = await starknet.getBlock({ blockHash: emptyBlock1.block_hash });
         expect(emptyBlock1Response.transactions).to.be.empty;
