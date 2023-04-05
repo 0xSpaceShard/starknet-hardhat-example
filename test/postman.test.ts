@@ -180,7 +180,8 @@ describe("Postman", function () {
             "deposit",
             L1_CONTRACT_ADDRESS,
             [1, 1],
-            0
+            0,
+            1 // Paid fee on l1
         );
 
         expect(transaction_hash.startsWith("0x")).to.be.true;
