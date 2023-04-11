@@ -11,7 +11,7 @@ describe("Class declaration", function () {
         const contractFactory = await starknet.getContractFactory("cairo1");
         // const declareFee = await account.estimateDeclareFee(contractFactory);
         // console.log("Estimated declare fee: ", declareFee);
-        const declareTxHash = await account.declareV2(contractFactory);
+        const declareTxHash = await account.declare(contractFactory, { maxFee: 1e18 });
         console.log("Declare v2 Tx Hash: ", declareTxHash);
         const deployFee = await account.estimateDeployFee(contractFactory, {
             initial_balance: 10n
