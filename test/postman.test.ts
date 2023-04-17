@@ -137,7 +137,9 @@ describe("Postman", function () {
          * Deposit to the L2 contract, L1 balance should be decreased by 2.
          */
 
-        await l1l2Example.deposit(l2contract.address, user, 2);
+        await l1l2Example.deposit(l2contract.address, user, 2, {
+            value: 1 // Sets paid_fee_on_l1
+        });
 
         userL1Balance = await l1l2Example.userBalances(user);
 
@@ -180,7 +182,8 @@ describe("Postman", function () {
             "deposit",
             L1_CONTRACT_ADDRESS,
             [1, 1],
-            0
+            0,
+            1 // Paid fee on l1
         );
 
         expect(transaction_hash.startsWith("0x")).to.be.true;
