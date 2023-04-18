@@ -1,13 +1,13 @@
 # Basic Sample Hardhat Project - with Starknet Plugin
 
-This project demonstrates a basic Hardhat project, but with [Starknet plugin](https://github.com/Shard-Labs/starknet-hardhat-plugin).
+This project demonstrates a basic Hardhat project, but with [Starknet plugin](https://github.com/0xSpaceShard/starknet-hardhat-plugin).
 
 ## Get started
 
 #### Clone this repo
 
 ```
-git clone git@github.com:Shard-Labs/starknet-hardhat-example.git
+git clone git@github.com:0xSpaceShard/starknet-hardhat-example.git
 cd starknet-hardhat-example
 ```
 
@@ -44,7 +44,7 @@ If you're having issues trying to use this example repo with the Starknet plugin
 ## Branches
 
 - `master` - latest stable examples
-- `plugin` - used for testing by [Starknet Hardhat Plugin](https://github.com/Shard-Labs/starknet-hardhat-plugin)
+- `plugin` - used for testing by [Starknet Hardhat Plugin](https://github.com/0xSpaceShard/starknet-hardhat-plugin)
 
 ### Branch updating (for developers)
 
