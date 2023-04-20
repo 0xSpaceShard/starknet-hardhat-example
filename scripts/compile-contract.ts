@@ -1,7 +1,7 @@
 import hardhat from "hardhat";
 
 async function main() {
-    await hardhat.run("starknet-compile", {
+    await hardhat.run("starknet-compile-deprecated", {
         paths: ["contracts/contract.cairo"]
     });
 }
