@@ -78,7 +78,7 @@ describe("OpenZeppelin account", function () {
         console.log("Estimated deploy account fee: ", estimatedFee);
         await mint(account.address, 1e18);
 
-        const deploymentTxHash = account.deployAccount(); // Implicit maxFee will be used
+        const deploymentTxHash = await account.deployAccount(); // Implicit maxFee will be used
         console.log("Deployed account in tx", deploymentTxHash);
     });
 
