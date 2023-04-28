@@ -8,7 +8,7 @@ describe("Class declaration", function () {
     it("should declare using declare v2 and interact with the class", async function () {
         const account = await getOZAccount();
 
-        const contractFactory = await starknet.getContractFactory("cairo1");
+        const contractFactory = await starknet.getContractFactory("contract1");
         // const declareFee = await account.estimateDeclareFee(contractFactory);
         // console.log("Estimated declare fee: ", declareFee);
         const declareTxHash = await account.declare(contractFactory, { maxFee: 1e18 });
