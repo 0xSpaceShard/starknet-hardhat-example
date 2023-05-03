@@ -17,7 +17,8 @@ const config: HardhatUserConfig = {
         // uses the currently active Python environment (hopefully with available Starknet commands!)
         // venv: "active",
         recompile: false,
-        // manifestPath: "path/to/Cargo.toml",
+        // the directory containing Cairo 1 compiler binaries
+        // cairo1BinDir: "~/starkware-libs/cairo/target/releasea", //path/to/to/compiler/target/release
         network: "integrated-devnet",
         wallets: {
             OpenZeppelin: {
