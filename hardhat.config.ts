@@ -42,7 +42,7 @@ const config: HardhatUserConfig = {
             // dockerizedVersion: "<DEVNET_VERSION>",
             args: [
                 // Uncomment the lines below to activate Devnet features in your integrated-devnet instance
-                // Read about Devnet options here: https://shard-labs.github.io/starknet-devnet/docs/guide/run
+                // Read about Devnet options here: https://0xSpaceShard.github.io/starknet-devnet/docs/guide/run
                 //
                 // *Account predeployment*
                 // "--seed",
