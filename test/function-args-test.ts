@@ -1,16 +1,17 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
-import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
-import { getOZAccount } from "./util";
+import { Account, StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+import { expectFeeEstimationStructure, getOZAccount } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
     let contractFactory: StarknetContractFactory;
     let contract: StarknetContract;
+    let account: Account;
 
     before(async function () {
-        const account = await getOZAccount();
+        account = await getOZAccount();
         contractFactory = await starknet.getContractFactory("contract");
         await account.declare(contractFactory);
         contract = await account.deploy(contractFactory, { initial_balance: 0 });
@@ -218,5 +219,78 @@ describe("Starknet", function () {
                 "\"nested_tuple_type_alias[2]\": Expected 2 members, got 3."
             );
         }
+    });
+
+    const OBJECT_EXPECTATION = "Arguments should be passed in the form of an object.";
+    it("shouldn't invoke with raw input if not selected", async function () {
+        try {
+            await account.invoke(contract, "increase_balance", ["10", "20"]);
+        } catch (err: any) {
+            expect(err.message).to.equal(OBJECT_EXPECTATION);
+        }
+    });
+
+    it("shouldn't estimate fee with raw input if not selected", async function () {
+        try {
+            await account.estimateFee(contract, "increase_balance", ["10", "20"]);
+        } catch (err: any) {
+            expect(err.message).to.equal(OBJECT_EXPECTATION);
+        }
+    });
+
+    it("shouldn't call with raw input if not selected", async function () {
+        try {
+            await contract.call("sum_point_array", [
+                "can put whatever here since it won't be checked"
+            ]);
+        } catch (err: any) {
+            expect(err.message).to.equal(OBJECT_EXPECTATION);
+        }
+    });
+
+    it("should estimate fee with raw input", async function () {
+        const rawInput = ["10", "20"];
+        const estimation = await account.estimateFee(contract, "increase_balance", rawInput, {
+            rawInput: true
+        });
+        expectFeeEstimationStructure(estimation);
+    });
+
+    it("should invoke with raw input", async function () {
+        const rawInput = ["10", "20"];
+        // implicit fee estimation
+        await account.invoke(contract, "increase_balance", rawInput, { rawInput: true });
+    });
+
+    it("should call argumentless function with empty object as raw input", async function () {
+        const expectedResult = await contract.call("get_balance", {}, { rawInput: false });
+        const rawInputResult = await contract.call("get_balance", {}, { rawInput: true });
+        expect(rawInputResult).to.deep.equal(expectedResult);
+    });
+
+    it("should call argumentless function with empty array as raw input", async function () {
+        const expectedResult = await contract.call("get_balance", {}, { rawInput: false });
+        const rawInputResult = await contract.call("get_balance", [], { rawInput: true });
+        expect(rawInputResult).to.deep.equal(expectedResult);
+    });
+
+    it("should call complex function with raw input", async function () {
+        const result = await contract.call(
+            "sum_point_array",
+            [
+                // len
+                "2",
+
+                // point 1
+                "10",
+                "20",
+
+                // point 2
+                "30",
+                "40"
+            ],
+            { rawInput: true }
+        );
+        expect(result).to.deep.equal({ res: { x: 40n, y: 60n } });
     });
 });
