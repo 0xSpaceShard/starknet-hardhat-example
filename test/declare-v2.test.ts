@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
-import { getOZAccount } from "./util";
+import { expectFeeEstimationStructure, getOZAccount } from "./util";
 
 describe("Class declaration", function () {
     this.timeout(TIMEOUT);
@@ -9,9 +9,11 @@ describe("Class declaration", function () {
         const account = await getOZAccount();
 
         const contractFactory = await starknet.getContractFactory("contract1");
-        // const declareFee = await account.estimateDeclareFee(contractFactory);
-        // console.log("Estimated declare fee: ", declareFee);
-        const declareTxHash = await account.declare(contractFactory, { maxFee: 1e18 });
+        // Estimates declare V2 tx fee
+        const declareFee = await account.estimateDeclareFee(contractFactory);
+        expectFeeEstimationStructure(declareFee);
+
+        const declareTxHash = await account.declare(contractFactory);
         console.log("Declare v2 Tx Hash: ", declareTxHash);
         const deployFee = await account.estimateDeployFee(contractFactory, {
             initial_balance: 10n
