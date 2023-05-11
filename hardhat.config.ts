@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
         recompile: false,
 
         // the directory containing Cairo 1 compiler binaries
-        // cairo1BinDir: "path/to/to/compiler/target/release"
+        // cairo1BinDir: "path/to/to/compiler/target/release",
         network: "integrated-devnet",
         wallets: {
             OpenZeppelin: {
