@@ -88,3 +88,19 @@ export async function getPredeployedOZAccount(index = 0): Promise<OpenZeppelinAc
         account.private_key
     );
 }
+
+/**
+ * Retrieves a specified number of predeployed OZ accounts from the Starknet Devnet.
+ * @param count The number of account classes to retrieve.
+ * @returns A Promise that resolves to an array of predeployed accounts.
+ */
+export async function getPredeployedOZAccounts(count: number): Promise<OpenZeppelinAccount[]> {
+    const predeployedAccounts = await starknet.devnet.getPredeployedAccounts();
+    const slicedAccounts = predeployedAccounts.slice(0, count);
+
+    const accountPromises = slicedAccounts.map(async ({ address, private_key }) => {
+        return await starknet.OpenZeppelinAccount.getAccountFromAddress(address, private_key);
+    });
+
+    return await Promise.all(accountPromises);
+}
