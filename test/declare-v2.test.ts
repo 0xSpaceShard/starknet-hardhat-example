@@ -28,7 +28,7 @@ describe("Class declaration", function () {
             { maxFee: deployFee.amount }
         );
         const balanceBefore = await contract.call("get_balance");
-        expect(balanceBefore.response).to.deep.equal(10n);
+        expect(balanceBefore).to.deep.equal(10n);
 
         const args = { amount1: 10n, amount2: 20n };
         const fee = await account.estimateFee(contract, "increase_balance", args);
@@ -38,7 +38,7 @@ describe("Class declaration", function () {
         console.log("Increased balance");
 
         const balanceAfter = await contract.call("get_balance");
-        console.log("balance after", balanceAfter.response);
-        expect(balanceAfter.response).to.deep.equal(40n);
+        console.log("balance after", balanceAfter);
+        expect(balanceAfter).to.deep.equal(40n);
     });
 });
