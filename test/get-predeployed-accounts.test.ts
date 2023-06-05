@@ -21,6 +21,7 @@ describe("Devnet restart", function () {
         expect(accounts1).to.be.an("array");
         expect(accounts1).to.have.lengthOf(count1);
 
+        // Test the ensurePort function with multiple async calls to getAccountFromAddress
         const count2 = 3;
         const accounts2 = await getPredeployedOZAccounts(count2);
         expect(accounts2).to.be.an("array");
