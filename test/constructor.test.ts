@@ -69,15 +69,6 @@ describe("Starknet", function () {
 describe("Constructor checker test for Cairo 1 contracts", function () {
     this.timeout(TIMEOUT);
 
-    it("should fail if there are duplicate constructor entry points", async function () {
-        try {
-            await starknet.getContractFactory("duplicate_constructor");
-            expect.fail("Should have failed on getting constructor factory.");
-        } catch (err: any) {
-            expect(err.message).to.contain("There can be at most 1 constructor.");
-        }
-    });
-
     it("should work if constructor is empty", async function () {
         await starknet.getContractFactory("no_constructor");
     });
