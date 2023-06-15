@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "../constants";
-import { expectFeeEstimationStructure, getOZAccount, } from "../util";
+import { expectFeeEstimationStructure, getOZAccount } from "../util";
 import { uint256 } from "starknet";
 
 describe("Cairo 1 - Events", function () {
@@ -34,7 +34,6 @@ describe("Cairo 1 - Events", function () {
         ]);
     });
 
-
     it("should decode events from send events successfully", async function () {
         const txHash = await account.invoke(contract, "send_events");
         const receipt = await starknet.getTransactionReceipt(txHash);
@@ -48,9 +47,9 @@ describe("Cairo 1 - Events", function () {
             {
                 name: "ComplexEvent",
                 data: {
-                    simple: starknet.shortStringToBigInt('simple'),
+                    simple: starknet.shortStringToBigInt("simple"),
                     event_struct: {
-                        type_felt252: starknet.shortStringToBigInt('abc'),
+                        type_felt252: starknet.shortStringToBigInt("abc"),
                         type_u8: 1n,
                         type_u16: 2n,
                         type_u32: 3n,
@@ -58,10 +57,9 @@ describe("Cairo 1 - Events", function () {
                         type_u128: 5n,
                         type_u256: BigInt(uint256.uint256ToBN({ low: 0n, high: 1n }).toString()),
                         // type_array_u8: [1n, 2n, 3n],
-                        type_tuple: [starknet.shortStringToBigInt('tuple'), 1n]
+                        type_tuple: [starknet.shortStringToBigInt("tuple"), 1n]
                     },
-                    type_tuple: [starknet.shortStringToBigInt('tuple'), 1n, 123456789n],
-
+                    type_tuple: [starknet.shortStringToBigInt("tuple"), 1n, 123456789n]
 
                     // for Array params :
                     //  Error: Compilation failed.
@@ -70,7 +68,4 @@ describe("Cairo 1 - Events", function () {
             }
         ]);
     });
-
-
-
 });
