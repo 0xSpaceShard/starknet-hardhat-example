@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "../constants";
-import { expectFeeEstimationStructure, getOZAccount } from "../util";
+import { getOZAccount } from "../util";
 import { uint256 } from "starknet";
 
 describe("Cairo 1 - Events", function () {
