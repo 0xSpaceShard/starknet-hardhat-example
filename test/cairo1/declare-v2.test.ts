@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { TIMEOUT } from "./constants";
-import { expectFeeEstimationStructure, getOZAccount } from "./util";
+import { TIMEOUT } from "../constants";
+import { expectFeeEstimationStructure, getOZAccount } from "../util";
 
 describe("Class declaration", function () {
     this.timeout(TIMEOUT);
