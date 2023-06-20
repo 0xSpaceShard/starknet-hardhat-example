@@ -32,6 +32,7 @@ mod Contract {
     }
 
     // to force EventStruct type generation in abi
+    // https://github.com/starkware-libs/cairo/issues/3419
     #[external]
     fn useless(event_struct: EventStruct) {}
 
