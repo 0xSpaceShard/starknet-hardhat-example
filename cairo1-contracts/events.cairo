@@ -2,6 +2,10 @@
 mod Contract {
     use serde::Serde;
     use array::ArrayTrait;
+    use starknet::ContractAddress;
+    use starknet::get_contract_address;
+    use starknet::get_caller_address;
+
 
     #[derive(Drop, Serde)]
     struct EventStruct {
@@ -12,7 +16,8 @@ mod Contract {
         type_u64: u64,
         type_u128: u128,
         type_u256: u256,
-        type_tuple: (felt252, u8)
+        type_tuple: (felt252, u8),
+        type_contract_address: ContractAddress
     }
 
     struct Storage {
@@ -24,7 +29,7 @@ mod Contract {
     fn BalanceChanged(prev_balance: felt252, balance: felt252) {}
 
     #[event]
-    fn ComplexEvent(simple: felt252, event_struct: EventStruct, type_tuple: (felt252, u8, usize)) {}
+    fn ComplexEvent(simple: felt252, event_struct: EventStruct, type_tuple: (felt252, u8, usize), caller_address: ContractAddress) {}
 
     #[constructor]
     fn constructor(initial_balance: felt252) {
@@ -45,6 +50,9 @@ mod Contract {
 
     #[external]
     fn send_events() {
+        let caller_address = get_caller_address();
+        let contract_address = get_contract_address();
+        
         BalanceChanged(0, 42);
 
         let event_struct = EventStruct {
@@ -57,10 +65,11 @@ mod Contract {
             type_u256: u256 {
                 low: 0, high: 1
             }, type_tuple: ('tuple', 1_u8),
+            type_contract_address: contract_address,
         };
 
         let type_tuple = ('tuple', 1_u8, 123456789_usize);
 
-        ComplexEvent('simple', event_struct, type_tuple);
+        ComplexEvent('simple', event_struct, type_tuple, caller_address);
     }
 }

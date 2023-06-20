@@ -57,9 +57,11 @@ describe("Cairo 1 - Events", function () {
                         type_u128: 5n,
                         type_u256: BigInt(uint256.uint256ToBN({ low: 0n, high: 1n }).toString()),
                         // type_array_u8: [1n, 2n, 3n],
-                        type_tuple: [starknet.shortStringToBigInt("tuple"), 1n]
+                        type_tuple: [starknet.shortStringToBigInt("tuple"), 1n],
+                        type_contract_address: BigInt(contract.address)
                     },
-                    type_tuple: [starknet.shortStringToBigInt("tuple"), 1n, 123456789n]
+                    type_tuple: [starknet.shortStringToBigInt("tuple"), 1n, 123456789n],
+                    caller_address: BigInt(account.address)
 
                     // for Array params :
                     //  Error: Compilation failed.
