@@ -1,0 +1,22 @@
+[package]
+name = "sample_project_name"
+version = "0.1.0"
+
+[[target.starknet-contract]]
+# Enable Sierra codegen.
+sierra = true
+
+# Enable CASM codegen.
+casm = true
+
+# Emit Python-powered hints in order to run compiled CASM class with legacy Cairo VM.
+casm-add-pythonic-hints = true
+
+# Enable allowed libfuncs validation.
+allowed-libfuncs = true
+
+# Raise errors instead of warnings if disallowed libfuncs are found.
+allowed-libfuncs-deny = false
+
+[dependencies]
+starknet = ">=1.1.0"
