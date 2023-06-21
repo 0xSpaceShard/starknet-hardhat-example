@@ -14,8 +14,9 @@ const config: HardhatUserConfig = {
         // uses (my-venv) defined by `python -m venv path/to/my-venv`
         // venv: "path/to/my-venv",
 
-        // Instead of using the dockerized Scarb, uses the one at the specified path
-        // scarbPath: "scarb",
+        // Instead of using the dockerized Scarb, uses the command you provide here
+        // Can be a path or a resolvable command
+        // scarbCommand: "scarb",
 
         // uses the currently active Python environment (hopefully with available Starknet commands!)
         // venv: "active",

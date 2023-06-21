@@ -1,5 +1,5 @@
 [package]
-name = "sample_project_name"
+name = "sample_package_name"
 version = "0.1.0"
 
 [[target.starknet-contract]]

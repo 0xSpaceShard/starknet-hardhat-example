@@ -9,7 +9,7 @@ describe("Fib Contract", function () {
         const account = await getOZAccount();
 
         const contractFactory = await starknet.getContractFactory(
-            "sample_project_name_FibContract"
+            "sample_package_name_FibContract"
         );
         const txHash = await account.declare(contractFactory, { maxFee: 1e18 });
         console.log("Declaration tx hash", txHash);

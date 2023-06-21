@@ -1,9 +1,9 @@
 // some dummy import to check if it works
-use sample_project_name::multiple_contracts::AnotherContract;
+use sample_package_name::multiple_contracts::AnotherContract;
 
 #[contract]
 mod FibContract {
-    use sample_project_name::fib::fib as fib_impl;
+    use sample_package_name::fib::fib as fib_impl;
     use array::ArrayTrait;
 
     struct Storage {
