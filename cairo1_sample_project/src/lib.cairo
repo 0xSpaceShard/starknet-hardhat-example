@@ -1,3 +1,3 @@
 mod fib;
 mod fib_contract;
-mod double_contract;
+mod multiple_contracts;
