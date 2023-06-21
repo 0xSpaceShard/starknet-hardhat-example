@@ -3,6 +3,7 @@ import { starknet } from "hardhat";
 import { TIMEOUT } from "../constants";
 import { getOZAccount } from "../util";
 import { uint256 } from "starknet";
+import { Account, StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 
 describe("Cairo 1 - Events", function () {
     this.timeout(TIMEOUT);
@@ -55,7 +56,7 @@ describe("Cairo 1 - Events", function () {
                         type_u32: 3n,
                         type_u64: 4n,
                         type_u128: 5n,
-                        type_u256: BigInt(uint256.uint256ToBN({ low: 0n, high: 1n }).toString()),
+                        type_u256: BigInt(uint256.uint256ToBN({ low: 0, high: 1 }).toString()),
                         // type_array_u8: [1n, 2n, 3n],
                         type_tuple: [starknet.shortStringToBigInt("tuple"), 1n],
                         type_contract_address: BigInt(contract.address)
