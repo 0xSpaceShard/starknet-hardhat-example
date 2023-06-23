@@ -3,6 +3,7 @@ import hardhat, { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { expectFeeEstimationStructure, getOZAccount, mint } from "./util";
+import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-plugin-error"
 
 describe("Argent account", function () {
     this.timeout(TIMEOUT);
@@ -95,7 +96,7 @@ describe("Argent account", function () {
             const wrongKey = "0x0123";
             await starknet.ArgentAccount.getAccountFromAddress(argentAccountAddress, wrongKey);
             expect.fail("Should have failed on passing an incorrect private key.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(
                 "The provided private key is not compatible with the public key stored in the contract."
             );
@@ -143,7 +144,7 @@ describe("Argent account", function () {
                 { maxFee: estimatedFee.amount / 2n }
             );
             expect.fail("Should have failed earlier");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.contain("Actual fee exceeded max fee");
         }
 

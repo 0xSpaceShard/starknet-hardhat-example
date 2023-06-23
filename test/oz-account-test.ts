@@ -9,6 +9,8 @@ import {
     OZ_ACCOUNT_ADDRESS,
     OZ_ACCOUNT_PRIVATE_KEY
 } from "./util";
+import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-plugin-error"
+
 
 describe("OpenZeppelin account", function () {
     this.timeout(TIMEOUT);
@@ -86,7 +88,7 @@ describe("OpenZeppelin account", function () {
         try {
             await starknet.OpenZeppelinAccount.getAccountFromAddress(OZ_ACCOUNT_ADDRESS, "0x0123");
             expect.fail("Should have failed on passing an incorrect private key.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(
                 "The provided private key is not compatible with the public key stored in the contract."
             );
@@ -111,7 +113,7 @@ describe("OpenZeppelin account", function () {
                 { maxFee: estimatedFee.amount / 2n }
             );
             expect.fail("Should have failed earlier");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.contain("Actual fee exceeded max fee");
         }
 

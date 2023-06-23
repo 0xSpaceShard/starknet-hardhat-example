@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
+import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-plugin-error"
 
 const AMBIGUOUS_ERR_MSG =
     "More than one file was found because the path provided is ambiguous, please specify a relative path";
@@ -28,7 +29,7 @@ describe("getContractFactory", function () {
         try {
             await starknet.getContractFactory("util");
             expect.fail("Should have failed");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(AMBIGUOUS_ERR_MSG);
         }
 
@@ -40,7 +41,7 @@ describe("getContractFactory", function () {
         try {
             await starknet.getContractFactory("util.cairo");
             expect.fail("Should have failed");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(AMBIGUOUS_ERR_MSG);
         }
 

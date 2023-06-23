@@ -3,6 +3,7 @@ import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
 import { Account, StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { expectFeeEstimationStructure, getOZAccount } from "./util";
+import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-plugin-error"
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -26,7 +27,7 @@ describe("Starknet", function () {
         try {
             await contract.call("sum_array");
             expect.fail("Should have failed on passing too few arguments.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal("sum_array: Expected 1 argument, got 0.");
         }
     });
@@ -35,7 +36,7 @@ describe("Starknet", function () {
         try {
             await contract.call("sum_array", { a: [1, 2, 3, 4], b: 4 });
             expect.fail("Should have failed on passing extra argument.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal("sum_array: Expected 1 argument, got 2.");
         }
     });
@@ -49,7 +50,7 @@ describe("Starknet", function () {
         try {
             await contract.call("sum_array", { a_len: 4, a: [1, 2, 3, 4] });
             expect.fail("Should have failed on passing extra argument.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal("sum_array: Expected 1 argument, got 2.");
         }
     });
@@ -74,7 +75,7 @@ describe("Starknet", function () {
                 ]
             });
             expect.fail("Should have failed on passing more members than expected.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal("\"points\": Expected 2 members, got 3.");
         }
     });
@@ -86,7 +87,7 @@ describe("Starknet", function () {
                 points: [{ x: 1, y: 2 }]
             });
             expect.fail("Should have failed on passing less members than expected.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal("\"points\": Expected 2 members, got 1.");
         }
     });
@@ -98,7 +99,7 @@ describe("Starknet", function () {
                 points: [{ x: 1 }, { x: 3, y: 4, z: 5 }]
             });
             expect.fail("Should have failed on passing less members than expected.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal("\"points[0]\": Expected 2 members, got 1.");
         }
     });
@@ -113,7 +114,7 @@ describe("Starknet", function () {
                 ]
             });
             expect.fail("Should have failed on passing more members than expected");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal("\"points[1]\": Expected 2 members, got 3.");
         }
     });
@@ -197,7 +198,7 @@ describe("Starknet", function () {
                 nested_tuple_type_alias: [[{ x: 1n, y: 2n }, 3n], 4n, [5n, [{ x: 7n, y: 8n }]]]
             });
             expect.fail("Should have failed on passing too few members.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.eql(
                 "\"nested_tuple_type_alias[2][1]\": Expected 2 members, got 1."
             );
@@ -214,7 +215,7 @@ describe("Starknet", function () {
                 ]
             });
             expect.fail("Should have failed on passing too few members.");
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(
                 "\"nested_tuple_type_alias[2]\": Expected 2 members, got 3."
             );
@@ -225,7 +226,7 @@ describe("Starknet", function () {
     it("shouldn't invoke with raw input if not selected", async function () {
         try {
             await account.invoke(contract, "increase_balance", ["10", "20"]);
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(OBJECT_EXPECTATION);
         }
     });
@@ -233,7 +234,7 @@ describe("Starknet", function () {
     it("shouldn't estimate fee with raw input if not selected", async function () {
         try {
             await account.estimateFee(contract, "increase_balance", ["10", "20"]);
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(OBJECT_EXPECTATION);
         }
     });
@@ -243,7 +244,7 @@ describe("Starknet", function () {
             await contract.call("sum_point_array", [
                 "can put whatever here since it won't be checked"
             ]);
-        } catch (err: any) {
+        } catch (err: StarknetPluginError) {
             expect(err.message).to.equal(OBJECT_EXPECTATION);
         }
     });
