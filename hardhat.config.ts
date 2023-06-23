@@ -49,10 +49,8 @@ const config: HardhatUserConfig = {
                 // Read about Devnet options here: https://0xSpaceShard.github.io/starknet-devnet/docs/guide/run
                 //
                 // *Account predeployment*
-                "--seed",
-                "42",
-                // "--fork-network",
-                //  "alpha-goerli",
+                // "--seed",
+                // "42",
                 // "--accounts",
                 // "1",
                 // "--initial-balance", <VALUE>
