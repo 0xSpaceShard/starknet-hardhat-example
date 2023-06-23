@@ -3,7 +3,7 @@ import { starknet } from "hardhat";
 import { Account, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { getOZAccount } from "./util";
-import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-plugin-error"
+import { HardhatPluginError } from "hardhat/plugins";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -33,7 +33,8 @@ describe("Starknet", function () {
         try {
             await account.deploy(contractFactory);
             expect.fail("Should have failed on not passing constructor calldata.");
-        } catch (err: StarknetPluginError) {
+        } catch (err) {
+            expect(err).to.be.instanceOf(HardhatPluginError);
             expect(err.message).to.equal("constructor: Expected 1 argument, got 0.");
         }
     });
@@ -42,7 +43,8 @@ describe("Starknet", function () {
         try {
             await account.deploy(contractWithEmptyConstructorFactory, { dummy_var: 10n });
             expect.fail("Should have failed on providing constructor arguments.");
-        } catch (err: StarknetPluginError) {
+        } catch (err) {
+            expect(err).to.be.instanceOf(HardhatPluginError);
             expect(err.message).to.equal("constructor: Expected 0 arguments, got 1.");
         }
     });
@@ -61,7 +63,8 @@ describe("Starknet", function () {
         try {
             await account.deploy(contractWithoutConstructorFactory, { dummy_var: 10n });
             expect.fail("Should have failed on providing constructor arguments.");
-        } catch (err: StarknetPluginError) {
+        } catch (err) {
+            expect(err).to.be.instanceOf(HardhatPluginError);
             expect(err.message).to.equal("No constructor arguments required but 1 provided");
         }
     });

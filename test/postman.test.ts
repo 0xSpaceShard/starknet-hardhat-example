@@ -16,6 +16,8 @@ import {
     OK_TX_STATUSES
 } from "./util";
 
+import { HardhatPluginError } from "hardhat/plugins";
+
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
  * Shows the communication between an L2 contract defined in l1l2.cairo
@@ -227,8 +229,9 @@ describe("Postman", function () {
                 user
             });
             expect.fail("Should have failed on the previous line");
-        } catch (error: any) {
-            expect(error.message).to.contain(
+        } catch (err) {
+            expect(err).to.be.instanceOf(HardhatPluginError);
+            expect(err.message).to.contain(
                 "Cannot estimate message fee on \"withdraw\" - not an @l1_handler"
             );
         }

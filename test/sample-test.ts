@@ -9,8 +9,7 @@ import {
     expectAddressEquality,
     getOZAccount
 } from "./util";
-import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-plugin-error"
-
+import { HardhatPluginError } from "hardhat/plugins";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -76,7 +75,8 @@ describe("Starknet", function () {
                 { maxFee: MAX_FEE, overhead: 2 }
             );
             expect.fail("Should have failed on invoking using options with maxFee and overhead.");
-        } catch (err: StarknetPluginError) {
+        } catch (err) {
+            expect(err).to.be.instanceOf(HardhatPluginError);
             expect(err.message).to.deep.contain("maxFee and overhead cannot be specified together");
         }
     });
@@ -179,7 +179,8 @@ describe("Starknet", function () {
                 { maxFee: MAX_FEE }
             );
             expect.fail("Should have failed on invoking with an odd number.");
-        } catch (err: StarknetPluginError) {
+        } catch (err) {
+            expect(err).to.be.instanceOf(HardhatPluginError);
             expect(err.message).to.deep.contain("Transaction rejected. Error message:");
             expect(err.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
         }
@@ -192,7 +193,8 @@ describe("Starknet", function () {
 
         try {
             await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
-        } catch (err: StarknetPluginError) {
+        } catch (err) {
+            expect(err).to.be.instanceOf(HardhatPluginError);
             expect(err.message).to.include("CONTRACT_ADDRESS_UNAVAILABLE");
             expect(err.message).to.include(
                 `Requested contract address ${contract.address} is unavailable for deployment`
