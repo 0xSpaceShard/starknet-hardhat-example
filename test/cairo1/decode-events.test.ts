@@ -15,7 +15,7 @@ describe("Cairo 1 - Events", function () {
     before(async function () {
         // assumes events.cairo has been compiled
         account = await getOZAccount();
-        contractFactory = await starknet.getContractFactory("events1");
+        contractFactory = await starknet.getContractFactory("cairo1-contracts/events");
         await account.declare(contractFactory);
         contract = await account.deploy(contractFactory, {
             initial_balance: 0n

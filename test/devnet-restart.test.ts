@@ -3,8 +3,7 @@ import { starknet } from "hardhat";
 import { Account, StarknetContractFactory } from "hardhat/types";
 
 import { TIMEOUT } from "./constants";
-import { getOZAccount } from "./util";
-import { HardhatPluginError } from "hardhat/plugins";
+import { getOZAccount, expectStarknetPluginError } from "./util";
 
 describe("Devnet restart", function () {
     this.timeout(TIMEOUT);
@@ -37,7 +36,7 @@ describe("Devnet restart", function () {
             await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 });
             expect.fail("Should throw");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
+            expectStarknetPluginError(err);
             expect(err.message).to.match(
                 /Requested contract address 0x[a-fA-F0-9]+ is not deployed/
             );

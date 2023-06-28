@@ -2,8 +2,13 @@ import { expect } from "chai";
 import hardhat, { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
-import { expectFeeEstimationStructure, getOZAccount, mint } from "./util";
-import { HardhatPluginError } from "hardhat/plugins";
+import {
+    expectFeeEstimationStructure,
+    getOZAccount,
+    mint,
+    expectStarknetPluginErrorContain,
+    expectStarknetPluginErrorEqual
+} from "./util";
 
 describe("Argent account", function () {
     this.timeout(TIMEOUT);
@@ -97,8 +102,8 @@ describe("Argent account", function () {
             await starknet.ArgentAccount.getAccountFromAddress(argentAccountAddress, wrongKey);
             expect.fail("Should have failed on passing an incorrect private key.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal(
+            expectStarknetPluginErrorEqual(
+                err,
                 "The provided private key is not compatible with the public key stored in the contract."
             );
         }
@@ -146,8 +151,7 @@ describe("Argent account", function () {
             );
             expect.fail("Should have failed earlier");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.contain("Actual fee exceeded max fee");
+            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
         }
 
         await account.invoke(
@@ -194,8 +198,7 @@ describe("Argent account", function () {
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.contain("Actual fee exceeded max fee");
+            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
         }
     });
 

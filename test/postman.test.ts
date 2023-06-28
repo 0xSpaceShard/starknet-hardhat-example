@@ -12,11 +12,10 @@ import { TIMEOUT } from "./constants";
 import {
     expectAddressEquality,
     expectFeeEstimationStructure,
+    expectStarknetPluginErrorContain,
     getOZAccount,
     OK_TX_STATUSES
 } from "./util";
-
-import { HardhatPluginError } from "hardhat/plugins";
 
 /**
  * Follows the example at https://www.cairo-lang.org/docs/hello_starknet/l1l2.html
@@ -230,8 +229,8 @@ describe("Postman", function () {
             });
             expect.fail("Should have failed on the previous line");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.contain(
+            expectStarknetPluginErrorContain(
+                err,
                 "Cannot estimate message fee on \"withdraw\" - not an @l1_handler"
             );
         }

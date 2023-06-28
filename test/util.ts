@@ -3,19 +3,35 @@ import { PredeployedAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/
 import axios from "axios";
 import { expect } from "chai";
 import { starknet } from "hardhat";
+import { FeeEstimation } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-types";
+import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin";
 
 export const OK_TX_STATUSES = ["PENDING", "ACCEPTED_ON_L2", "ACCEPTED_ON_L1"];
 
 export const OZ_ACCOUNT_ADDRESS = ensureEnvVar("OZ_ACCOUNT_ADDRESS");
 export const OZ_ACCOUNT_PRIVATE_KEY = ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY");
 
-export function expectFeeEstimationStructure(fee: any) {
+export function expectFeeEstimationStructure(fee: FeeEstimation) {
     console.log("Estimated fee:", fee);
     expect(fee).to.haveOwnProperty("amount");
     expect(typeof fee.amount).to.equal("bigint");
     expect(fee.unit).to.equal("wei");
     expect(typeof fee.gas_price).to.equal("bigint");
     expect(typeof fee.gas_usage).to.equal("bigint");
+}
+
+export function expectStarknetPluginError(err: Error) {
+    expect(err).to.be.instanceOf(StarknetPluginError);
+}
+
+export function expectStarknetPluginErrorEqual(err: Error, expectedMessage: string) {
+    expect(err).to.be.instanceOf(StarknetPluginError);
+    expect(err.message).to.equal(expectedMessage);
+}
+
+export function expectStarknetPluginErrorContain(err: Error, expectedMessage: string) {
+    expect(err).to.be.instanceOf(StarknetPluginError);
+    expect(err.message).to.equal(expectedMessage);
 }
 
 export function ensureEnvVar(varName: string): string {

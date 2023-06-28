@@ -2,8 +2,7 @@ import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
 import { Account, StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
-import { expectFeeEstimationStructure, getOZAccount } from "./util";
-import { HardhatPluginError } from "hardhat/plugins";
+import { expectFeeEstimationStructure, getOZAccount, expectStarknetPluginErrorEqual } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -28,8 +27,7 @@ describe("Starknet", function () {
             await contract.call("sum_array");
             expect.fail("Should have failed on passing too few arguments.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal("sum_array: Expected 1 argument, got 0.");
+            expectStarknetPluginErrorEqual(err, "sum_array: Expected 1 argument, got 0.");
         }
     });
 
@@ -38,8 +36,7 @@ describe("Starknet", function () {
             await contract.call("sum_array", { a: [1, 2, 3, 4], b: 4 });
             expect.fail("Should have failed on passing extra argument.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal("sum_array: Expected 1 argument, got 2.");
+            expectStarknetPluginErrorEqual(err, "sum_array: Expected 1 argument, got 2.");
         }
     });
 
@@ -53,8 +50,7 @@ describe("Starknet", function () {
             await contract.call("sum_array", { a_len: 4, a: [1, 2, 3, 4] });
             expect.fail("Should have failed on passing extra argument.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal("sum_array: Expected 1 argument, got 2.");
+            expectStarknetPluginErrorEqual(err, "sum_array: Expected 1 argument, got 2.");
         }
     });
 
@@ -79,8 +75,7 @@ describe("Starknet", function () {
             });
             expect.fail("Should have failed on passing more members than expected.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal("\"points\": Expected 2 members, got 3.");
+            expectStarknetPluginErrorEqual(err, "\"points\": Expected 2 members, got 3.");
         }
     });
 
@@ -92,8 +87,7 @@ describe("Starknet", function () {
             });
             expect.fail("Should have failed on passing less members than expected.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal("\"points\": Expected 2 members, got 1.");
+            expectStarknetPluginErrorEqual(err, "\"points\": Expected 2 members, got 1.");
         }
     });
 
@@ -105,8 +99,7 @@ describe("Starknet", function () {
             });
             expect.fail("Should have failed on passing less members than expected.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal("\"points[0]\": Expected 2 members, got 1.");
+            expectStarknetPluginErrorEqual(err, "\"points[0]\": Expected 2 members, got 1.");
         }
     });
 
@@ -121,8 +114,7 @@ describe("Starknet", function () {
             });
             expect.fail("Should have failed on passing more members than expected");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal("\"points[1]\": Expected 2 members, got 3.");
+            expectStarknetPluginErrorEqual(err, "\"points[1]\": Expected 2 members, got 3.");
         }
     });
 
@@ -206,8 +198,8 @@ describe("Starknet", function () {
             });
             expect.fail("Should have failed on passing too few members.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.eql(
+            expectStarknetPluginErrorEqual(
+                err,
                 "\"nested_tuple_type_alias[2][1]\": Expected 2 members, got 1."
             );
         }
@@ -224,8 +216,8 @@ describe("Starknet", function () {
             });
             expect.fail("Should have failed on passing too few members.");
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal(
+            expectStarknetPluginErrorEqual(
+                err,
                 "\"nested_tuple_type_alias[2]\": Expected 2 members, got 3."
             );
         }
@@ -236,8 +228,7 @@ describe("Starknet", function () {
         try {
             await account.invoke(contract, "increase_balance", ["10", "20"]);
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal(OBJECT_EXPECTATION);
+            expectStarknetPluginErrorEqual(err, OBJECT_EXPECTATION);
         }
     });
 
@@ -245,8 +236,7 @@ describe("Starknet", function () {
         try {
             await account.estimateFee(contract, "increase_balance", ["10", "20"]);
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal(OBJECT_EXPECTATION);
+            expectStarknetPluginErrorEqual(err, OBJECT_EXPECTATION);
         }
     });
 
@@ -256,8 +246,7 @@ describe("Starknet", function () {
                 "can put whatever here since it won't be checked"
             ]);
         } catch (err) {
-            expect(err).to.be.instanceOf(HardhatPluginError);
-            expect(err.message).to.equal(OBJECT_EXPECTATION);
+            expectStarknetPluginErrorEqual(err, OBJECT_EXPECTATION);
         }
     });
 
