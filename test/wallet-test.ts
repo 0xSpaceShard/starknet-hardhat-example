@@ -3,6 +3,7 @@ import { starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory, Wallet } from "hardhat/types/runtime";
 import { TIMEOUT } from "./constants";
 import { expectFeeEstimationStructure, getOZAccount } from "./util";
+import { expectStarknetPluginErrorEqual } from "./util";
 
 describe("Starknet", function () {
     this.timeout(TIMEOUT);
@@ -29,8 +30,9 @@ describe("Starknet", function () {
             expect.fail(
                 "Should have failed on passing a wallet not configured in 'hardhat.config' file."
             );
-        } catch (err: any) {
-            expect(err.message).to.equal(
+        } catch (err) {
+            expectStarknetPluginErrorEqual(
+                err,
                 "Invalid wallet name provided: invalidWallet.\nValid wallets: OpenZeppelin"
             );
         }

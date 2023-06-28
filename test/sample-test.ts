@@ -5,6 +5,8 @@ import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
 import {
     expectFeeEstimationStructure,
+    expectStarknetPluginError,
+    expectStarknetPluginErrorContain,
     OK_TX_STATUSES,
     expectAddressEquality,
     getOZAccount
@@ -74,8 +76,11 @@ describe("Starknet", function () {
                 { maxFee: MAX_FEE, overhead: 2 }
             );
             expect.fail("Should have failed on invoking using options with maxFee and overhead.");
-        } catch (err: any) {
-            expect(err.message).to.deep.contain("maxFee and overhead cannot be specified together");
+        } catch (err) {
+            expectStarknetPluginErrorContain(
+                err,
+                "maxFee and overhead cannot be specified together"
+            );
         }
     });
 
@@ -177,9 +182,10 @@ describe("Starknet", function () {
                 { maxFee: MAX_FEE }
             );
             expect.fail("Should have failed on invoking with an odd number.");
-        } catch (err: any) {
-            expect(err.message).to.deep.contain("Transaction rejected. Error message:");
-            expect(err.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
+        } catch (err) {
+            const error = expectStarknetPluginError(err);
+            expect(error.message).to.deep.contain("Transaction rejected. Error message:");
+            expect(error.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
         }
     });
 
@@ -190,9 +196,10 @@ describe("Starknet", function () {
 
         try {
             await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
-        } catch (err: any) {
-            expect(err.message).to.include("CONTRACT_ADDRESS_UNAVAILABLE");
-            expect(err.message).to.include(
+        } catch (err) {
+            const error = expectStarknetPluginError(err);
+            expect(error.message).to.include("CONTRACT_ADDRESS_UNAVAILABLE");
+            expect(error.message).to.include(
                 `Requested contract address ${contract.address} is unavailable for deployment`
             );
         }

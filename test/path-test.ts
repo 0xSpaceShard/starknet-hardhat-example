@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
+import { expectStarknetPluginErrorEqual } from "./util";
 
 const AMBIGUOUS_ERR_MSG =
     "More than one file was found because the path provided is ambiguous, please specify a relative path";
@@ -28,8 +29,8 @@ describe("getContractFactory", function () {
         try {
             await starknet.getContractFactory("util");
             expect.fail("Should have failed");
-        } catch (err: any) {
-            expect(err.message).to.equal(AMBIGUOUS_ERR_MSG);
+        } catch (err) {
+            expectStarknetPluginErrorEqual(err, AMBIGUOUS_ERR_MSG);
         }
 
         await starknet.getContractFactory("contracts/util");
@@ -40,8 +41,8 @@ describe("getContractFactory", function () {
         try {
             await starknet.getContractFactory("util.cairo");
             expect.fail("Should have failed");
-        } catch (err: any) {
-            expect(err.message).to.equal(AMBIGUOUS_ERR_MSG);
+        } catch (err) {
+            expectStarknetPluginErrorEqual(err, AMBIGUOUS_ERR_MSG);
         }
 
         await starknet.getContractFactory("contracts/util.cairo");
