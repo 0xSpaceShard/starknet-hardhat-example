@@ -31,7 +31,7 @@ export function expectStarknetPluginErrorEqual(err: Error, expectedMessage: stri
 
 export function expectStarknetPluginErrorContain(err: Error, expectedMessage: string) {
     expect(err).to.be.instanceOf(StarknetPluginError);
-    expect(err.message).to.equal(expectedMessage);
+    expect(err.message).to.contain(expectedMessage);
 }
 
 export function ensureEnvVar(varName: string): string {
