@@ -20,18 +20,19 @@ export function expectFeeEstimationStructure(fee: FeeEstimation) {
     expect(typeof fee.gas_usage).to.equal("bigint");
 }
 
-export function expectStarknetPluginError(err: Error) {
+export function expectStarknetPluginError(err: unknown): StarknetPluginError {
     expect(err).to.be.instanceOf(StarknetPluginError);
+    return <StarknetPluginError>err;
 }
 
-export function expectStarknetPluginErrorEqual(err: Error, expectedMessage: string) {
-    expect(err).to.be.instanceOf(StarknetPluginError);
-    expect(err.message).to.equal(expectedMessage);
+export function expectStarknetPluginErrorEqual(err: unknown, expectedMessage: string) {
+    const error = expectStarknetPluginError(err);
+    expect(error.message).to.equal(expectedMessage);
 }
 
-export function expectStarknetPluginErrorContain(err: Error, expectedMessage: string) {
-    expect(err).to.be.instanceOf(StarknetPluginError);
-    expect(err.message).to.contain(expectedMessage);
+export function expectStarknetPluginErrorContain(err: unknown, expectedMessage: string) {
+    const error = expectStarknetPluginError(err);
+    expect(error.message).to.contain(expectedMessage);
 }
 
 export function ensureEnvVar(varName: string): string {

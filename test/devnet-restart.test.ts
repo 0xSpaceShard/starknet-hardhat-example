@@ -36,8 +36,8 @@ describe("Devnet restart", function () {
             await account.invoke(contract, "increase_balance", { amount1: 10, amount2: 20 });
             expect.fail("Should throw");
         } catch (err) {
-            expectStarknetPluginError(err);
-            expect(err.message).to.match(
+            const error = expectStarknetPluginError(err);
+            expect(error.message).to.match(
                 /Requested contract address 0x[a-fA-F0-9]+ is not deployed/
             );
         }

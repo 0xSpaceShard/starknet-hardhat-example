@@ -183,9 +183,9 @@ describe("Starknet", function () {
             );
             expect.fail("Should have failed on invoking with an odd number.");
         } catch (err) {
-            expectStarknetPluginError(err);
-            expect(err.message).to.deep.contain("Transaction rejected. Error message:");
-            expect(err.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
+            const error = expectStarknetPluginError(err);
+            expect(error.message).to.deep.contain("Transaction rejected. Error message:");
+            expect(error.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
         }
     });
 
@@ -197,9 +197,9 @@ describe("Starknet", function () {
         try {
             await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
         } catch (err) {
-            expectStarknetPluginError(err);
-            expect(err.message).to.include("CONTRACT_ADDRESS_UNAVAILABLE");
-            expect(err.message).to.include(
+            const error = expectStarknetPluginError(err);
+            expect(error.message).to.include("CONTRACT_ADDRESS_UNAVAILABLE");
+            expect(error.message).to.include(
                 `Requested contract address ${contract.address} is unavailable for deployment`
             );
         }
