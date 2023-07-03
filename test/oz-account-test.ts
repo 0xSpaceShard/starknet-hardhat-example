@@ -4,6 +4,8 @@ import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime
 import { TIMEOUT } from "./constants";
 import {
     expectFeeEstimationStructure,
+    expectStarknetPluginErrorEqual,
+    expectStarknetPluginErrorContain,
     getOZAccount,
     mint,
     OZ_ACCOUNT_ADDRESS,
@@ -86,8 +88,9 @@ describe("OpenZeppelin account", function () {
         try {
             await starknet.OpenZeppelinAccount.getAccountFromAddress(OZ_ACCOUNT_ADDRESS, "0x0123");
             expect.fail("Should have failed on passing an incorrect private key.");
-        } catch (err: any) {
-            expect(err.message).to.equal(
+        } catch (err) {
+            expectStarknetPluginErrorEqual(
+                err,
                 "The provided private key is not compatible with the public key stored in the contract."
             );
         }
@@ -111,8 +114,8 @@ describe("OpenZeppelin account", function () {
                 { maxFee: estimatedFee.amount / 2n }
             );
             expect.fail("Should have failed earlier");
-        } catch (err: any) {
-            expect(err.message).to.contain("Actual fee exceeded max fee");
+        } catch (err) {
+            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
         }
 
         await account.invoke(
@@ -159,8 +162,8 @@ describe("OpenZeppelin account", function () {
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
             expect.fail("Should have failed on the previous line");
-        } catch (error: any) {
-            expect(error.message).to.contain("Actual fee exceeded max fee");
+        } catch (err) {
+            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
         }
     });
 

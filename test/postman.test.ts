@@ -12,6 +12,7 @@ import { TIMEOUT } from "./constants";
 import {
     expectAddressEquality,
     expectFeeEstimationStructure,
+    expectStarknetPluginErrorContain,
     getOZAccount,
     OK_TX_STATUSES
 } from "./util";
@@ -227,8 +228,9 @@ describe("Postman", function () {
                 user
             });
             expect.fail("Should have failed on the previous line");
-        } catch (error: any) {
-            expect(error.message).to.contain(
+        } catch (err) {
+            expectStarknetPluginErrorContain(
+                err,
                 "Cannot estimate message fee on \"withdraw\" - not an @l1_handler"
             );
         }

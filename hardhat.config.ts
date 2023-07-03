@@ -10,9 +10,13 @@ dotenv.config();
 const config: HardhatUserConfig = {
     solidity: "0.6.12",
     starknet: {
-        dockerizedVersion: "0.11.0.2", // alternatively choose one of the two venv options below
+        dockerizedVersion: "0.11.2", // alternatively choose one of the two venv options below
         // uses (my-venv) defined by `python -m venv path/to/my-venv`
         // venv: "path/to/my-venv",
+
+        // Instead of using the dockerized Scarb, uses the command you provide here
+        // Can be a path or a resolvable command
+        // scarbCommand: "scarb",
 
         // uses the currently active Python environment (hopefully with available Starknet commands!)
         // venv: "active",
@@ -38,8 +42,8 @@ const config: HardhatUserConfig = {
                 // Read about Devnet options here: https://0xSpaceShard.github.io/starknet-devnet/docs/guide/run
                 //
                 // *Account predeployment*
-                // "--seed",
-                // "42",
+                "--seed",
+                "42"
                 // "--accounts",
                 // "1",
                 // "--initial-balance", <VALUE>
