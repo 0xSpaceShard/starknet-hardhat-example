@@ -24,14 +24,7 @@ const config: HardhatUserConfig = {
 
         // the directory containing Cairo 1 compiler binaries
         // cairo1BinDir: "path/to/to/compiler/target/release",
-        network: "integrated-devnet",
-        wallets: {
-            OpenZeppelin: {
-                accountName: "OpenZeppelin",
-                modulePath: "starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount",
-                accountPath: "~/.starknet_accounts"
-            }
-        }
+        network: "integrated-devnet"
     },
     networks: {
         devnet: {
