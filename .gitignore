@@ -15,3 +15,4 @@ starknet-artifacts
 
 #build
 dist
+cairo-compiler
