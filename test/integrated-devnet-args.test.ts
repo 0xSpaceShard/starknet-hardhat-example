@@ -21,7 +21,8 @@ describe("Starknet with optional arguments in integrated devnet", function () {
         console.log("Deployed at", contract.address);
 
         const latestBlock = await starknet.getBlock();
-        const actualGasPrice = parseInt(latestBlock.gas_price, 16);
+        // for this test 'gas_price' should always have a positive value, '-1' should be unreachable
+        const actualGasPrice = parseInt(latestBlock.gas_price ?? "-1", 16);
         const expectedGasPrice = parseInt(ensureEnvVar("EXPECTED_GAS_PRICE"));
         expect(actualGasPrice).to.be.equal(expectedGasPrice);
     });
