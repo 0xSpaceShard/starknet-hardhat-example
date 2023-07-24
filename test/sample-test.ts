@@ -296,8 +296,7 @@ describe("Starknet", function () {
 
         // Get block by hash
         const blockByHash = await starknet.getBlock({ blockHash: tx.block_hash });
-        const blockTransactionHashes = blockByHash.transactions.map((tx) => tx.transaction_hash);
-        expect(blockTransactionHashes).to.include(preservedDeployTxHash);
+        expect(blockByHash.transactions).to.include(preservedDeployTxHash);
 
         // Get block by number
         const blockByNumber = await starknet.getBlock({ blockNumber: tx.block_number });
