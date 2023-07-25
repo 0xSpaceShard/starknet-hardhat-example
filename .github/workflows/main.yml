@@ -1,0 +1,60 @@
+name: Lint
+
+on:
+    # Trigger the workflow on push or pull request,
+    # but only for some branches
+    push:
+        branches:
+            - master
+            - plugin
+    pull_request:
+        branches:
+            - master
+            - plugin
+
+jobs:
+    run-linters:
+        name: Run linters and TS checks
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out Git repository
+              uses: actions/checkout@v3
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            # ESLint and Prettier must be in `package.json`
+            - name: Install Node.js dependencies
+              run: npm i
+
+            - name: Run TypeScript & file checks
+              run: |
+                set -e
+
+                # check typescript correctness
+                npx tsc --noEmit
+
+                # check all .sh files are executable
+                invalid_scripts=0
+                for script in $( find . -type f -iname *.sh ); do
+                    if [ ! -x $script ]; then
+                        echo "Script $script is not executable"
+                        invalid_scripts=$((invalid_scripts + 1))
+                    fi
+                done
+                if [ $invalid_scripts != 0 ]; then
+                    exit 1
+                fi
+
+                # check there are no it.only occurrences in the tests
+                grep -re "it\.only(" $(git ls-files '*.ts') && echo "Error: There are files with it.only(...)" && exit 2
+
+                # check for hardhat config type correctness
+                npx hardhat --typecheck --config hardhat.config.ts
+
+            - name: Run linters
+              continue-on-error: false
+              run: npm run lint
