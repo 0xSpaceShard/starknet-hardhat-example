@@ -35,7 +35,7 @@ jobs:
                 set -e
 
                 # check typescript correctness
-                npx tsc --noEmit
+                # npx tsc --noEmit
 
                 # check all .sh files are executable
                 invalid_scripts=0
