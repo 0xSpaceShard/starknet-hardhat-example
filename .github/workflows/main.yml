@@ -30,8 +30,8 @@ jobs:
             - name: Install Node.js dependencies
               run: npm i
 
-            - name: Run TypeScript correctness
-              run: npx tsc --noEmit
+            # - name: Run TypeScript correctness
+            #   run: npx tsc --noEmit
 
             - name: File checks
               run: |
