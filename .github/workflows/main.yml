@@ -30,8 +30,17 @@ jobs:
             - name: Install Node.js dependencies
               run: npm i
 
-            # - name: Run TypeScript correctness
-            #   run: npx tsc --noEmit
+            - name: Pull @shardlabs/starknet-hardhat-plugin
+              run: |
+                git clone https://github.com/shardlabs/starknet-hardhat-plugin.git
+                cd starknet-hardhat-plugin
+                npm install
+                npm link
+                cd ..
+                npm link @shardlabs/starknet-hardhat-plugin
+
+            - name: Run TypeScript correctness
+              run: npx tsc --noEmit
 
             - name: File checks
               run: |
