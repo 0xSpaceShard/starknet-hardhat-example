@@ -30,9 +30,9 @@ jobs:
             - name: Install Node.js dependencies
               run: npm i
 
-            - name: Pull @shardlabs/starknet-hardhat-plugin
+            - name: Pull starknet-hardhat-plugin
               run: |
-                git clone https://github.com/shardlabs/starknet-hardhat-plugin.git
+                git clone https://github.com/0xSpaceShard/starknet-hardhat-plugin.git
                 cd starknet-hardhat-plugin
                 npm install
                 npm link
