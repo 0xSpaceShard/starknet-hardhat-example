@@ -39,12 +39,13 @@ jobs:
                 cd ..
                 npm link @shardlabs/starknet-hardhat-plugin
 
-            - name: Run TypeScript correctness
-              run: npx tsc --noEmit
-
-            - name: File checks
+            - name: Run TypeScript correctness & File checks
               run: |
                 set -e
+
+                # Run TypeScript correctness
+                npx tsc --noEmit
+
                 # check all .sh files are executable
                 invalid_scripts=0
                 for script in $( find . -type f -iname *.sh ); do
