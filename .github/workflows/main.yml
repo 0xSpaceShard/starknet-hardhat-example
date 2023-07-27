@@ -42,7 +42,7 @@ jobs:
             - name: Run TypeScript correctness
               run: npx tsc --noEmit
 
-            - name: File checks
+            - name: File checks & Hardhat config file type correctness
               run: |
                 set -e
 
@@ -63,9 +63,6 @@ jobs:
 
                 # check for hardhat config type correctness
                 npx hardhat --typecheck --config hardhat.config.ts
-
-            # - name: Hardhat config file type correctness
-            #   run: npx hardhat --typecheck --config hardhat.config.ts
 
             - name: Run linters
               continue-on-error: false
