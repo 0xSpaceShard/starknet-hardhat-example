@@ -39,12 +39,12 @@ jobs:
                 cd ..
                 npm link @shardlabs/starknet-hardhat-plugin
 
-            - name: Run TypeScript correctness & File checks
+            - name: Run TypeScript correctness
+              run: npx tsc --noEmit
+
+            - name: File checks
               run: |
                 set -e
-
-                # Run TypeScript correctness
-                npx tsc --noEmit
 
                 # check all .sh files are executable
                 invalid_scripts=0
@@ -61,8 +61,11 @@ jobs:
                 # check there are no it.only occurrences in the tests
                 grep -re "it\.only(" $(git ls-files '*.ts') && echo "Error: There are files with it.only(...)" && exit 2
 
-            - name: Hardhat config file type correctness
-              run: npx hardhat --typecheck --config hardhat.config.ts
+                # check for hardhat config type correctness
+                npx hardhat --typecheck --config hardhat.config.ts
+
+            # - name: Hardhat config file type correctness
+            #   run: npx hardhat --typecheck --config hardhat.config.ts
 
             - name: Run linters
               continue-on-error: false
