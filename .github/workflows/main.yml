@@ -39,7 +39,7 @@ jobs:
             - name: Check for executables
               run: npm run check-executable
 
-            - name: Check for it.only files
+            - name: Check for "it.only" occurrence in files
               run: npm run check-it-only-file
 
             - name: check for hardhat config type correctness
