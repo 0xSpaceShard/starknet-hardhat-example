@@ -30,7 +30,7 @@ jobs:
             - name: Install Node.js dependencies
               run: npm i
 
-            - name: Pull starknet-hardhat-plugin
+            - name: Link starknet-hardhat-plugin to example repo
               run: npm run link-plugin
 
             - name: Run TypeScript correctness
@@ -47,3 +47,6 @@ jobs:
 
             - name: Run linter
               run: npm run lint
+
+            - name: Run format check
+              run: npm run format-check
