@@ -121,14 +121,17 @@ describe("OpenZeppelin account", function () {
                 err,
                 "Max fee must be greater or equal to the validation's actual fee"
             );
+            console.log("DEBUG success in assertion 1");
         }
 
+        console.log("DEBUG trying invoke");
         await account.invoke(
             mainContract,
             "increase_balance",
             { amount1: 10, amount2: 20 },
             { maxFee: estimatedFee.amount * 2n }
         );
+        console.log("DEBUG successful invoke");
 
         const { res: finalBalance } = await mainContract.call("get_balance");
         expect(finalBalance).to.equal(initialBalance + 30n);
@@ -168,10 +171,7 @@ describe("OpenZeppelin account", function () {
             await account.declare(mainContractFactory, { maxFee: 1 });
             expect.fail("Should have failed on the previous line");
         } catch (err) {
-            expectStarknetPluginErrorContain(
-                err,
-                "Max fee must be greater or equal to the validation's actual fee"
-            );
+            expectStarknetPluginErrorContain(err, "INSUFFICIENT_MAX_FEE");
         }
     });
 
