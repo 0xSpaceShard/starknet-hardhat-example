@@ -14,7 +14,7 @@ on:
 
 jobs:
     run-linters:
-        name: Run linters
+        name: Run linters and TS checks
         runs-on: ubuntu-latest
 
         steps:
@@ -30,6 +30,23 @@ jobs:
             - name: Install Node.js dependencies
               run: npm i
 
-            - name: Run linters
-              continue-on-error: false
+            - name: Link starknet-hardhat-plugin to example repo
+              run: npm run link-plugin
+
+            - name: Run TypeScript correctness
+              run: npx tsc --noEmit
+
+            - name: Check for executables
+              run: npm run check-executable
+
+            - name: Check all tests are executed
+              run: npm run check-all-tests
+
+            - name: check for hardhat config type correctness
+              run: npm run check-config-file
+
+            - name: Run linter
               run: npm run lint
+
+            - name: Run format check
+              run: npm run format-check

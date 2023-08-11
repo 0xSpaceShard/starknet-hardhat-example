@@ -6,7 +6,12 @@
   "scripts": {
     "test": "npx hardhat --network localhost test",
     "lint": "eslint $(git ls-files '*.ts')",
-    "format": "prettier-eslint --list-different --write $(git ls-files '*.ts')"
+    "format": "prettier-eslint --list-different --write $(git ls-files '*.ts')",
+    "format-check": "prettier-eslint $(git ls-files '*.ts') --list-different",
+    "check-executable": "./util_scripts/check_executable.sh",
+    "link-plugin": "./util_scripts/link_master_plugin.sh",
+    "check-all-tests": "grep -r 'it\\.only(' $(git ls-files '*.ts') && echo 'Error: There are files with it.only(...)' && exit 2 || true",
+    "check-config-file": "npx hardhat --typecheck --config hardhat.config.ts"
   },
   "author": "",
   "license": "ISC",
