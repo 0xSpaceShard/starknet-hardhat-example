@@ -7,8 +7,8 @@ async function main() {
 
     await hardhat.run("starknet-compile", {
         paths: ["cairo1-contracts/contract1.cairo"],
-        allowedLibfuncsListName: "experimental_v0.1.0",
-        addPythonicHints: true
+        addPythonicHints: true,
+        singleFile: true
     });
 }
 
