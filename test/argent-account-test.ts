@@ -19,6 +19,8 @@ describe("Argent account", function () {
     const argentAccountPrivateKey =
         "0x66826acbe6ab1e8612124c0cb413b17695119148aabfe010b1851a9b78ea295";
 
+    const wildcardMaxFee = 1e15; // maxFee which will be <= balance, but >= actual fee
+
     /**
      * Returns an instance of ArgenAccount. Expected to be deployed.
      */
@@ -61,14 +63,14 @@ describe("Argent account", function () {
 
         // use contract by doing: declare + deploy + invoke + call
         const contractFactory = await hardhat.starknet.getContractFactory("contract");
-        const txHash = await account.declare(contractFactory, { maxFee: 1e18 });
+        const txHash = await account.declare(contractFactory, { maxFee: wildcardMaxFee });
         console.log("Declared contract in tx", txHash);
 
         const initialBalance = 10n;
         const contract = await account.deploy(
             contractFactory,
             { initial_balance: initialBalance },
-            { maxFee: 1e18 }
+            { maxFee: wildcardMaxFee }
         );
         console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
 
@@ -115,7 +117,7 @@ describe("Argent account", function () {
 
         const newGuardianPrivateKey = "0x123";
         await account.setGuardian(newGuardianPrivateKey, {
-            maxFee: 1e18
+            maxFee: wildcardMaxFee
         });
         expect(account.guardianPrivateKey).to.equal(newGuardianPrivateKey);
 
@@ -124,7 +126,7 @@ describe("Argent account", function () {
         expect(balanceWithGuardian).to.equal(initialBalance + 5n);
 
         await account.setGuardian(undefined, {
-            maxFee: 1e18
+            maxFee: wildcardMaxFee
         });
         expect(account.guardianPrivateKey).to.be.undefined;
         await account.invoke(mainContract, "increase_balance", { amount1: 6n, amount2: 0 });
@@ -151,7 +153,10 @@ describe("Argent account", function () {
             );
             expect.fail("Should have failed earlier");
         } catch (err) {
-            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
+            expectStarknetPluginErrorContain(
+                err,
+                "Max fee must be greater or equal to the validation's actual fee"
+            );
         }
 
         await account.invoke(
@@ -197,13 +202,14 @@ describe("Argent account", function () {
         const account = await getArgentAccount();
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
+            expect.fail("Should have failed on the previous line");
         } catch (err) {
-            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
+            expectStarknetPluginErrorContain(err, "INSUFFICIENT_MAX_FEE");
         }
     });
 
     it("should declare class if maxFee sufficient", async function () {
         const account = await getArgentAccount();
-        await account.declare(mainContractFactory, { maxFee: 1e18 });
+        await account.declare(mainContractFactory, { maxFee: wildcardMaxFee });
     });
 });

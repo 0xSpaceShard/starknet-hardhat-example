@@ -1,9 +1,10 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
-import { TIMEOUT } from "../constants";
-import { getOZAccount } from "../util";
 import { uint256 } from "starknet";
+
+import { TIMEOUT } from "../constants";
 import { Account, StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+import { getOZAccount } from "../util";
 
 describe("Cairo 1 - Events", function () {
     this.timeout(TIMEOUT);
@@ -40,6 +41,9 @@ describe("Cairo 1 - Events", function () {
         const receipt = await starknet.getTransactionReceipt(txHash);
         const events = contract.decodeEvents(receipt.events);
 
+        const arrayAsObject = (array: bigint[]) => Object.fromEntries(Object.entries(array));
+        const tupleInt = starknet.shortStringToBigInt("tuple");
+
         expect(events).to.deep.equal([
             {
                 name: "BalanceChanged",
@@ -58,10 +62,10 @@ describe("Cairo 1 - Events", function () {
                         type_u128: 5n,
                         type_u256: BigInt(uint256.uint256ToBN({ low: 0, high: 1 }).toString()),
                         // type_array_u8: [1n, 2n, 3n],
-                        type_tuple: [starknet.shortStringToBigInt("tuple"), 1n],
+                        type_tuple: arrayAsObject([tupleInt, 1n]),
                         type_contract_address: BigInt(contract.address)
                     },
-                    type_tuple: [starknet.shortStringToBigInt("tuple"), 1n, 123456789n],
+                    type_tuple: arrayAsObject([tupleInt, 1n, 123456789n]),
                     caller_address: BigInt(account.address)
 
                     // for Array params :

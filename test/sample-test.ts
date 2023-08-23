@@ -161,7 +161,7 @@ describe("Starknet", function () {
         expect(res).to.deep.equal(70n);
     });
 
-    it("should handle rejected transactions", async function () {
+    it("should handle reverted transactions", async function () {
         const contract = contractFactory.getContractAt(preservedAddress);
 
         const { res: balanceBeforeEven } = await contract.call("get_balance");
@@ -184,7 +184,7 @@ describe("Starknet", function () {
             expect.fail("Should have failed on invoking with an odd number.");
         } catch (err) {
             const error = expectStarknetPluginError(err);
-            expect(error.message).to.deep.contain("Transaction rejected. Error message:");
+            expect(error.message).to.deep.contain("REVERTED");
             expect(error.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
         }
     });

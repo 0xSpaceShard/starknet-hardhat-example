@@ -18,6 +18,8 @@ describe("OpenZeppelin account", function () {
     let mainContractFactory: StarknetContractFactory;
     let mainContract: StarknetContract;
 
+    const wildcardMaxFee = 1e15; // maxFee which will be <= balance, but >= actual fee
+
     before(async function () {
         const deployerAccount = await getOZAccount();
 
@@ -49,14 +51,14 @@ describe("OpenZeppelin account", function () {
 
         // use contract by doing: declare + deploy + invoke + call
         const contractFactory = await hardhat.starknet.getContractFactory("contract");
-        const txHash = await account.declare(contractFactory, { maxFee: 1e18 });
+        const txHash = await account.declare(contractFactory, { maxFee: wildcardMaxFee });
         console.log("Declared contract in tx", txHash);
 
         const initialBalance = 10n;
         const contract = await account.deploy(
             contractFactory,
             { initial_balance: initialBalance },
-            { maxFee: 1e18 }
+            { maxFee: wildcardMaxFee }
         );
         console.log(`Deployed contract to ${contract.address} in tx ${contract.deployTxHash}`);
 
@@ -115,15 +117,21 @@ describe("OpenZeppelin account", function () {
             );
             expect.fail("Should have failed earlier");
         } catch (err) {
-            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
+            expectStarknetPluginErrorContain(
+                err,
+                "Max fee must be greater or equal to the validation's actual fee"
+            );
+            console.log("DEBUG success in assertion 1");
         }
 
+        console.log("DEBUG trying invoke");
         await account.invoke(
             mainContract,
             "increase_balance",
             { amount1: 10, amount2: 20 },
             { maxFee: estimatedFee.amount * 2n }
         );
+        console.log("DEBUG successful invoke");
 
         const { res: finalBalance } = await mainContract.call("get_balance");
         expect(finalBalance).to.equal(initialBalance + 30n);
@@ -163,12 +171,12 @@ describe("OpenZeppelin account", function () {
             await account.declare(mainContractFactory, { maxFee: 1 });
             expect.fail("Should have failed on the previous line");
         } catch (err) {
-            expectStarknetPluginErrorContain(err, "Actual fee exceeded max fee");
+            expectStarknetPluginErrorContain(err, "INSUFFICIENT_MAX_FEE");
         }
     });
 
     it("should declare class if maxFee sufficient", async function () {
         const account = await getOZAccount();
-        await account.declare(mainContractFactory, { maxFee: 1e18 });
+        await account.declare(mainContractFactory, { maxFee: wildcardMaxFee });
     });
 });
