@@ -1,13 +1,14 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
-import { starknet, network, ethers } from "hardhat";
+import { ethers, network, starknet, starknetLegacy } from "hardhat";
 import {
     Account,
     StarknetContractFactory,
     StarknetContract,
     HttpNetworkConfig
 } from "hardhat/types";
+
 import { TIMEOUT } from "./constants";
 import {
     expectAddressEquality,
@@ -49,7 +50,7 @@ describe("Postman", function () {
     before(async function () {
         account = await getOZAccount();
 
-        L2contractFactory = await starknet.getContractFactory("l1l2");
+        L2contractFactory = await starknetLegacy.getContractFactory("l1l2");
         await account.declare(L2contractFactory);
         l2contract = await account.deploy(L2contractFactory);
 
@@ -188,7 +189,7 @@ describe("Postman", function () {
         );
 
         expect(transaction_hash.startsWith("0x")).to.be.true;
-        const tx = await starknet.getTransaction(transaction_hash);
+        const tx = await starknetLegacy.getTransaction(transaction_hash);
         expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
         await account.invoke(l2contract, "increase_balance", {
             user,

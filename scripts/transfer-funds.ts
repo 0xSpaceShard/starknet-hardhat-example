@@ -1,4 +1,4 @@
-import hardhat, { starknet } from "hardhat";
+import { starknetLegacy } from "hardhat";
 import { ensureEnvVar } from "../test/util";
 import { StarknetContract } from "hardhat/types";
 import { TIMEOUT } from "../test/constants";
@@ -14,13 +14,13 @@ async function getBalance(token: StarknetContract, accountAddress: string) {
 describe("Argent account", function () {
     this.timeout(TIMEOUT);
     it("should be funded", async function () {
-        const tokenFactory = await hardhat.starknet.getContractFactory(
+        const tokenFactory = await starknetLegacy.getContractFactory(
             "../token-contract-artifacts/ERC20"
         );
         const tokenAddress = ensureEnvVar("TOKEN_ADDRESS");
         const token = tokenFactory.getContractAt(tokenAddress);
 
-        const sender = await starknet.OpenZeppelinAccount.getAccountFromAddress(
+        const sender = await starknetLegacy.OpenZeppelinAccount.getAccountFromAddress(
             ensureEnvVar("SENDER_ADDRESS"),
             ensureEnvVar("SENDER_PRIVATE_KEY")
         );

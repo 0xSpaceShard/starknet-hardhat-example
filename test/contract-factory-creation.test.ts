@@ -1,4 +1,4 @@
-import { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
 
 /**
  * Used for asserting minimum usability of the plugin.

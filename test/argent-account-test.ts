@@ -1,13 +1,14 @@
 import { expect } from "chai";
-import hardhat, { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+
 import { TIMEOUT } from "./constants";
 import {
     expectFeeEstimationStructure,
-    getOZAccount,
-    mint,
     expectStarknetPluginErrorContain,
-    expectStarknetPluginErrorEqual
+    expectStarknetPluginErrorEqual,
+    getOZAccount,
+    mint
 } from "./util";
 
 describe("Argent account", function () {
@@ -62,7 +63,7 @@ describe("Argent account", function () {
         console.log("Deployed account in tx", deploymentTxHash);
 
         // use contract by doing: declare + deploy + invoke + call
-        const contractFactory = await hardhat.starknet.getContractFactory("contract");
+        const contractFactory = await starknet.getContractFactory("contract");
         const txHash = await account.declare(contractFactory, { maxFee: wildcardMaxFee });
         console.log("Declared contract in tx", txHash);
 

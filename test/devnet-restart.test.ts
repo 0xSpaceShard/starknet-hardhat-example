@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { starknet, starknetLegacy } from "hardhat";
 import { Account, StarknetContractFactory } from "hardhat/types";
 
 import { TIMEOUT } from "./constants";
@@ -13,7 +13,7 @@ describe("Devnet restart", function () {
 
     before(async function () {
         account = await getOZAccount();
-        contractFactory = await starknet.getContractFactory("contract");
+        contractFactory = await starknetLegacy.getContractFactory("contract");
         // doesn't make sense to declare here since the state will be restarted in tests
     });
 

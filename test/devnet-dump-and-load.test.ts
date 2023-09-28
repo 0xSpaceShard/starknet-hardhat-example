@@ -1,5 +1,6 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { starknet, starknetLegacy } from "hardhat";
+
 import { TIMEOUT } from "./constants";
 import { getOZAccount } from "./util";
 
@@ -11,7 +12,7 @@ describe("Devnet Dump and Load", function () {
     it("Should persist devnet instance after dump and restart", async function () {
         const account = await getOZAccount();
 
-        const contractFactory = await starknet.getContractFactory("contract");
+        const contractFactory = await starknetLegacy.getContractFactory("contract");
         await account.declare(contractFactory);
         const contract = await account.deploy(contractFactory, { initial_balance: 0 });
 

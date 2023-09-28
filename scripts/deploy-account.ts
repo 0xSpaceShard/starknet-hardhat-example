@@ -1,4 +1,4 @@
-import { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
 
 async function keypress() {
     process.stdin.setRawMode(true);

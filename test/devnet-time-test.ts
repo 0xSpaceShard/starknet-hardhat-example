@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { starknet } from "hardhat";
+
 import { TIMEOUT } from "./constants";
 
 describe("Devnet Block Time", function () {

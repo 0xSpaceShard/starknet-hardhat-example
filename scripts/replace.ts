@@ -1,4 +1,5 @@
-import { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
+
 import { getOZAccount } from "../test/util";
 
 async function main() {

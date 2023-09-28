@@ -1,7 +1,7 @@
-import { expect } from "chai";
-import { starknet } from "hardhat";
-import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 import axios from "axios";
+import { expect } from "chai";
+import { starknet, starknetLegacy } from "hardhat";
+import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 
 import { TIMEOUT } from "./constants";
 import { getOZAccount } from "./util";
@@ -13,7 +13,7 @@ describe("Starknet with integrated devnet", function () {
         const account = await getOZAccount();
 
         console.log("Started deployment");
-        const contractFactory: StarknetContractFactory = await starknet.getContractFactory(
+        const contractFactory: StarknetContractFactory = await starknetLegacy.getContractFactory(
             "contract"
         );
         await account.declare(contractFactory);

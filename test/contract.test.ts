@@ -1,10 +1,13 @@
+import {
+    OpenZeppelinAccount,
+    StarknetContract,
+    StarknetContractFactory
+} from "@shardlabs/starknet-hardhat-plugin/dist/src/legacy";
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
+
 import { TIMEOUT } from "./constants";
-import { StarknetContractFactory } from "hardhat/types/runtime";
 import { getPredeployedOZAccount } from "./util";
-import { OpenZeppelinAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/account";
-import { StarknetContract } from "@shardlabs/starknet-hardhat-plugin/dist/src/types";
 
 describe("StarknetContract tests", function () {
     this.timeout(TIMEOUT);

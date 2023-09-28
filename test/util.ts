@@ -1,10 +1,9 @@
-import { OpenZeppelinAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/account";
-import { PredeployedAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/devnet-utils";
+import { FeeEstimation, StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin";
+import { OpenZeppelinAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/legacy";
+import { PredeployedAccount } from "@shardlabs/starknet-hardhat-plugin/dist/src/utils/devnet-utils";
 import axios from "axios";
 import { expect } from "chai";
-import { starknet } from "hardhat";
-import { FeeEstimation } from "@shardlabs/starknet-hardhat-plugin/dist/src/starknet-types";
-import { StarknetPluginError } from "@shardlabs/starknet-hardhat-plugin";
+import { starknet, starknetLegacy } from "hardhat";
 
 export const OK_TX_STATUSES = ["PENDING", "ACCEPTED_ON_L2", "ACCEPTED_ON_L1"];
 
@@ -79,7 +78,7 @@ export async function mint(address: string, amount: number, lite = true) {
  * Returns an instance of OZAccount. Expected to be deployed)
  */
 export async function getOZAccount() {
-    return await starknet.OpenZeppelinAccount.getAccountFromAddress(
+    return await starknetLegacy.OpenZeppelinAccount.getAccountFromAddress(
         OZ_ACCOUNT_ADDRESS,
         OZ_ACCOUNT_PRIVATE_KEY
     );
@@ -100,7 +99,7 @@ export async function getPredeployedAccount(index = 0): Promise<PredeployedAccou
  */
 export async function getPredeployedOZAccount(index = 0): Promise<OpenZeppelinAccount> {
     const account = await getPredeployedAccount(index);
-    return await starknet.OpenZeppelinAccount.getAccountFromAddress(
+    return await starknetLegacy.OpenZeppelinAccount.getAccountFromAddress(
         account.address,
         account.private_key
     );
@@ -116,7 +115,7 @@ export async function getPredeployedOZAccounts(count: number): Promise<OpenZeppe
     const slicedAccounts = predeployedAccounts.slice(0, count);
 
     const accountPromises = slicedAccounts.map(async ({ address, private_key }) => {
-        return await starknet.OpenZeppelinAccount.getAccountFromAddress(address, private_key);
+        return await starknetLegacy.OpenZeppelinAccount.getAccountFromAddress(address, private_key);
     });
 
     return await Promise.all(accountPromises);

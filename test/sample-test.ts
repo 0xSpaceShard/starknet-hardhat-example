@@ -1,8 +1,9 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
-import { StarknetContractFactory, Account } from "hardhat/types/runtime";
-import { TIMEOUT } from "./constants";
 import { BigNumber } from "ethers";
+import { starknetLegacy as starknet } from "hardhat";
+import { StarknetContractFactory, Account } from "hardhat/types/runtime";
+
+import { TIMEOUT } from "./constants";
 import {
     expectFeeEstimationStructure,
     expectStarknetPluginError,

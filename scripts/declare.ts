@@ -1,4 +1,5 @@
-import { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
+
 import { ensureEnvVar, getOZAccount } from "../test/util";
 
 /**

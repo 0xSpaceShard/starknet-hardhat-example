@@ -1,7 +1,8 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
-import { TIMEOUT } from "./constants";
+import { starknetLegacy as starknet } from "hardhat";
 import { Account, StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
+
+import { TIMEOUT } from "./constants";
 import { expectFeeEstimationStructure, getOZAccount, expectStarknetPluginErrorEqual } from "./util";
 
 describe("Starknet", function () {

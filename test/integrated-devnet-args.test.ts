@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
 import { StarknetContract, StarknetContractFactory } from "hardhat/types/runtime";
 
 import { TIMEOUT } from "./constants";

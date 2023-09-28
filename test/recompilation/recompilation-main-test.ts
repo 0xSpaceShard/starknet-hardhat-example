@@ -1,8 +1,8 @@
-import fs from "fs";
-import path from "path";
 import { expect } from "chai";
-import { starknet, config } from "hardhat";
+import { starknetLegacy as starknet, config } from "hardhat";
 import { StarknetContractFactory } from "hardhat/types";
+import fs from "node:fs";
+import path from "node:path";
 
 describe("Starknet", function () {
     const cacheDirpath = path.join(config.paths.cache, "cairo-files-cache.json");

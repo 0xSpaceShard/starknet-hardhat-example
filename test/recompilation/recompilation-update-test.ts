@@ -1,6 +1,7 @@
 import { expect } from "chai";
-import { starknet } from "hardhat";
+import { starknetLegacy as starknet } from "hardhat";
 import { Account, StarknetContractFactory } from "hardhat/types";
+
 import { getOZAccount } from "../util";
 
 describe("Starknet", function () {
