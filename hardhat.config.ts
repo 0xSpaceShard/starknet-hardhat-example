@@ -10,26 +10,30 @@ dotenv.config();
 const config: HardhatUserConfig = {
     solidity: "0.6.12",
     starknet: {
-        dockerizedVersion: "0.11.2", // alternatively choose one of the two venv options below
-        // uses (my-venv) defined by `python -m venv path/to/my-venv`
-        // venv: "path/to/my-venv",
-
-        // Instead of using the dockerized Scarb, uses the command you provide here
-        // Can be a path or a resolvable command
-        // scarbCommand: "scarb",
-
-        // uses the currently active Python environment (hopefully with available Starknet commands!)
-        // venv: "active",
-
-        recompile: false,
-
-        // the directory containing Cairo 1 compiler binaries
-        // cairo1BinDir: "path/to/cairo/target/release",
+        // One approach to Cairo 1 compilation is by using Scarb.
+        // For direct use of the Cairo compiler, check `compilerVersion` property
+        // Value can be a path or a resolvable command (e.g. `path/to/scarb-1.2.3` or `scarb`)
+        scarbCommand: "scarb",
 
         // which compiler to download from https://github.com/starkware-libs/cairo/releases
-        // compilerVersion: "1.1.0",
+        compilerVersion: "2.2.0",
 
-        network: "integrated-devnet"
+        // Alternatively to using `compilerVersion`, specify the directory containing Cairo 1 compiler binaries
+        // cairo1BinDir: "path/to/cairo/target/release",
+
+        // The Starknet network to be used
+        network: "integrated-devnet",
+
+        // Cairo 0 compilation is by default done using the latest stable Dockerized compiler.
+        // If you want to use an older Cairo 0 compiler, specify the full semver string:
+        // dockerizedVersion: "0.11.2",
+        // If you cannot use Docker use one of the following:
+        // venv: "path/to/my-venv", <- uses (my-venv) defined by `python -m venv path/to/my-venv`
+        // venv: "active",          <- uses active Python venv
+
+        // Whether to automatically recompile contracts or not
+        // Works with Cairo 0
+        recompile: false
     },
     networks: {
         devnet: {
@@ -40,8 +44,12 @@ const config: HardhatUserConfig = {
         },
         integratedDevnet: {
             url: "http://127.0.0.1:5050",
+
+            // Select whether to use a Devnet instance installed in your Python venv or a dockerizedVersion.
+            // Latest compatible dockerizedVersion is the default.
             // venv: "active",
             // dockerizedVersion: "<DEVNET_VERSION>",
+
             args: [
                 // Uncomment the lines below to activate Devnet features in your integrated-devnet instance
                 // Read about Devnet options here: https://0xSpaceShard.github.io/starknet-devnet/docs/guide/run

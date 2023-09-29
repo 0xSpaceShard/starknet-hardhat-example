@@ -1,4 +1,4 @@
-name: Lint
+name: Code check
 
 on:
     # Trigger the workflow on push or pull request,
@@ -14,7 +14,7 @@ on:
 
 jobs:
     run-linters:
-        name: Run linters and TS checks
+        name: Run code checks
         runs-on: ubuntu-latest
 
         steps:
@@ -40,7 +40,7 @@ jobs:
               run: npm run check-executable
 
             - name: Check all tests are executed
-              run: npm run check-all-tests
+              run: npm run check-all-tests-executed
 
             - name: check for hardhat config type correctness
               run: npm run check-config-file
