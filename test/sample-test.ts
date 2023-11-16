@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { starknetLegacy as starknet } from "hardhat";
+import { starknet, starknetLegacy } from "hardhat";
 import { StarknetContractFactory, Account } from "hardhat/types/runtime";
 
 import { TIMEOUT } from "./constants";
@@ -8,7 +8,6 @@ import {
     expectFeeEstimationStructure,
     expectStarknetPluginError,
     expectStarknetPluginErrorContain,
-    OK_TX_STATUSES,
     expectAddressEquality,
     getOZAccount
 } from "./util";
@@ -30,10 +29,10 @@ describe("Starknet", function () {
         account = await getOZAccount();
         console.log(`Using account at ${account.address} with public key ${account.publicKey}`);
 
-        contractFactory = await starknet.getContractFactory("contract");
+        contractFactory = await starknetLegacy.getContractFactory("contract");
         await account.declare(contractFactory);
 
-        eventsContractFactory = await starknet.getContractFactory("events");
+        eventsContractFactory = await starknetLegacy.getContractFactory("events");
         await account.declare(eventsContractFactory);
         console.log("Declared classes");
 
@@ -186,7 +185,6 @@ describe("Starknet", function () {
         } catch (err) {
             const error = expectStarknetPluginError(err);
             expect(error.message).to.deep.contain("REVERTED");
-            expect(error.message).to.deep.contain("An ASSERT_EQ instruction failed: 1 != 0.");
         }
     });
 
@@ -199,9 +197,12 @@ describe("Starknet", function () {
             await account.deploy(contractFactory, { initial_balance: 0 }, { salt });
         } catch (err) {
             const error = expectStarknetPluginError(err);
-            expect(error.message).to.include("CONTRACT_ADDRESS_UNAVAILABLE");
-            expect(error.message).to.include(
-                `Requested contract address ${contract.address} is unavailable for deployment`
+            expect(error.message).to.match(
+                new RegExp(
+                    `Requested ContractAddress.*${starknet.addAddressPadding(
+                        contract.address
+                    )}.*is unavailable for deployment`
+                )
             );
         }
     });
@@ -269,17 +270,17 @@ describe("Starknet", function () {
             { maxFee: MAX_FEE }
         );
 
-        const tx = await starknet.getTransaction(txHash);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tx: any = await starknetLegacy.getTransaction(txHash);
         console.log(tx);
-        expect(tx.transaction.transaction_hash).to.deep.equal(txHash);
-        expect(tx.status).to.be.oneOf(OK_TX_STATUSES);
-        expect(BigInt(tx.transaction.max_fee)).to.deep.equal(MAX_FEE);
-        expectAddressEquality(tx.transaction.sender_address, account.address);
+        expect(tx.transaction_hash).to.equal(txHash);
+        expect(BigInt(tx.max_fee)).to.equal(MAX_FEE);
+        expectAddressEquality(tx.sender_address, account.address);
 
-        const receipt = await starknet.getTransactionReceipt(txHash);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const receipt: any = await starknetLegacy.getTransactionReceipt(txHash);
         console.log(receipt);
-        expect(receipt.transaction_hash).to.deep.equal(txHash);
-        expect(receipt.status).to.be.oneOf(OK_TX_STATUSES);
+        expect(receipt.transaction_hash).to.equal(txHash);
         expectAddressEquality(receipt.events[0].from_address, contract.address);
     });
 
@@ -293,18 +294,19 @@ describe("Starknet", function () {
     });
 
     it("should handle block data", async function () {
-        const tx = await starknet.getTransaction(preservedDeployTxHash);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tx: any = await starknetLegacy.getTransactionReceipt(preservedDeployTxHash);
 
         // Get block by hash
-        const blockByHash = await starknet.getBlock({ blockHash: tx.block_hash });
+        const blockByHash = await starknetLegacy.getBlock({ blockHash: tx.block_hash });
         expect(blockByHash.transactions).to.include(preservedDeployTxHash);
 
         // Get block by number
-        const blockByNumber = await starknet.getBlock({ blockNumber: tx.block_number });
+        const blockByNumber = await starknetLegacy.getBlock({ blockNumber: tx.block_number });
         expect(blockByHash).to.deep.equal(blockByNumber);
 
         // Get latest block data
-        const latestBlock = await starknet.getBlock();
+        const latestBlock = await starknetLegacy.getBlock();
         expect(latestBlock.block_number).to.be.greaterThanOrEqual(blockByHash.block_number);
     });
 });

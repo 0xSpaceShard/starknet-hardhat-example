@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "axios": "^1.0.0",
-    "hardhat": "2.14.0",
-    "starknet": "^4.22.0"
+    "hardhat": "2.19.2"
   }
 }

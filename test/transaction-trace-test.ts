@@ -17,25 +17,24 @@ describe("Transaction trace", function () {
             amount2: 20
         });
 
-        const tx_trace = await starknet.getTransactionTrace(tx_hash);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tx_trace: any = await starknet.getTransactionTrace(tx_hash);
 
         const properties = [
-            "call_type",
+            "contract_address",
+            "entry_point_selector",
             "calldata",
             "caller_address",
             "class_hash",
-            "contract_address",
             "entry_point_type",
-            "events",
-            "execution_resources",
-            "internal_calls",
-            "messages",
+            "call_type",
             "result",
-            "selector"
+            "calls",
+            "events",
+            "messages"
         ];
-
         for (const property of properties) {
-            expect(tx_trace.function_invocation).to.have.property(property);
+            expect(tx_trace.execute_invocation).to.have.property(property);
             expect(tx_trace.validate_invocation).to.have.property(property);
         }
     });
