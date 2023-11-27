@@ -26,7 +26,7 @@ npx hardhat starknet-compile cairo1-contracts/contract1.cairo --single-file
 #### Compile a deprecated (Cairo 0) contract
 
 ```
-npx hardhat starknet-compile deprecated contracts/contract.cairo
+npx hardhat starknet-compile-deprecated contracts/contract.cairo
 ```
 
 ### Set up environment variables
