@@ -228,7 +228,7 @@ describe("Postman", function () {
                 user
             });
             expect.fail("Should have failed on the previous line");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorContain(
                 err,
                 "Cannot estimate message fee on \"withdraw\" - not an @l1_handler"

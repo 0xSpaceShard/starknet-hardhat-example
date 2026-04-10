@@ -90,7 +90,7 @@ describe("OpenZeppelin account", function () {
         try {
             await starknet.OpenZeppelinAccount.getAccountFromAddress(OZ_ACCOUNT_ADDRESS, "0x0123");
             expect.fail("Should have failed on passing an incorrect private key.");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorEqual(
                 err,
                 "The provided private key is not compatible with the public key stored in the contract."
@@ -116,7 +116,7 @@ describe("OpenZeppelin account", function () {
                 { maxFee: estimatedFee.amount / 2n }
             );
             expect.fail("Should have failed earlier");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorContain(
                 err,
                 "Max fee must be greater or equal to the validation's actual fee"
@@ -167,7 +167,7 @@ describe("OpenZeppelin account", function () {
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
             expect.fail("Should have failed on the previous line");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorContain(err, "INSUFFICIENT_MAX_FEE");
         }
     });

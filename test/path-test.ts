@@ -29,7 +29,7 @@ describe("getContractFactory", function () {
         try {
             await starknet.getContractFactory("util");
             expect.fail("Should have failed");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorEqual(err, AMBIGUOUS_ERR_MSG);
         }
 
@@ -41,7 +41,7 @@ describe("getContractFactory", function () {
         try {
             await starknet.getContractFactory("util.cairo");
             expect.fail("Should have failed");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorEqual(err, AMBIGUOUS_ERR_MSG);
         }
 

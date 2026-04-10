@@ -103,7 +103,7 @@ describe("Argent account", function () {
             const wrongKey = "0x0123";
             await starknet.ArgentAccount.getAccountFromAddress(argentAccountAddress, wrongKey);
             expect.fail("Should have failed on passing an incorrect private key.");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorEqual(
                 err,
                 "The provided private key is not compatible with the public key stored in the contract."
@@ -152,7 +152,7 @@ describe("Argent account", function () {
                 { maxFee: estimatedFee.amount / 2n }
             );
             expect.fail("Should have failed earlier");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorContain(
                 err,
                 "Max fee must be greater or equal to the validation's actual fee"
@@ -203,7 +203,7 @@ describe("Argent account", function () {
         try {
             await account.declare(mainContractFactory, { maxFee: 1 });
             expect.fail("Should have failed on the previous line");
-        } catch (err) {
+        } catch (err: unknown) {
             expectStarknetPluginErrorContain(err, "INSUFFICIENT_MAX_FEE");
         }
     });
